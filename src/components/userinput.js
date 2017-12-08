@@ -6,8 +6,8 @@ class Userinput extends Component {
   constructor(props) {
     super(props)
     this.state = {
-        term: 'Term',
-        location: 'Location'
+        term: 'Chinese',
+        location: 'Orlando'
     };
     this.yelpApi = new yelpApiService();
     this.handleChange = this.handleChange.bind(this);
@@ -21,7 +21,7 @@ class Userinput extends Component {
   }
 
   handleSubmit(e) {
-      this.yelpApi.getRestaurantData(this.state.term, this.state.location);
+      this.yelpApi.getRestaurantData(this.state.term, this.state.location)
       e.preventDefault();
   }
 
