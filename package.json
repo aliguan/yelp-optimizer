@@ -5,6 +5,7 @@
   "dependencies": {
     "axios": "^0.17.1",
     "dotenv": "^4.0.0",
+    "geocoder": "^0.2.3",
     "react": "^16.1.1",
     "react-dom": "^16.1.1",
     "react-router-dom": "^4.2.2",
