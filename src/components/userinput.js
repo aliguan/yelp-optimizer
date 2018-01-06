@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
 import PropTypes from 'prop-types'
-import YelpApiService from './yelpApiService.js'
+import ApiService from './ApiService.js'
 
 class Userinput extends Component {
   constructor(props) {    
@@ -12,7 +12,7 @@ class Userinput extends Component {
         location: 'Orlando',
         resultsArray: ['','','','','','','']
     };
-    this.yelpApi = new YelpApiService(this.state.resultsArray);
+    this.apiService = new ApiService(this.state.resultsArray);
     this.handleChange = this.handleChange.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
   }
@@ -36,8 +36,11 @@ class Userinput extends Component {
           var locationLatLong = data.results[0].geometry.location.lat + ',' + data.results[0].geometry.location.lng;
 
           // Do API requests and return a promise object to display results
-          // Probably need to change the yelpApi object name because this will end up being all the API requests (not just yelp)    
-          var promiseObj = this.yelpApi.getRestaurantData(this.state.term, this.state.budgetmax, this.state.budgetmin, locationLatLong);
+          var promiseObj = this.apiService.getData(this.state.term,
+             this.state.budgetmax, 
+             this.state.budgetmin, 
+             locationLatLong, 
+             this.state.location);
           promiseObj.then(function (data) {
 
             // Set the state in this component and re-render
