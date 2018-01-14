@@ -42,38 +42,67 @@ class Userinput extends Component {
     if (this.state.startDate) {
       // Convert the moment obj from the user input into a date object in javascript
       var date = this.state.startDate.toDate();
+      var geocoder = require('../../node_modules/geocoder');
       if (isDate(date)) {
         console.log(date)
+
         // Geocoding to convert user location input into lat/lon
-        var geocoder = require('../../node_modules/geocoder');
-        geocoder.geocode(this.state.location, function (err, data) {
+        geocoder.geocode(this.state.location, function (err, data_latlon) {
           // Check that there is data and results before constructing location lat long string
-          if (data) {
-            if (data.results) {
+          if (data_latlon) {
+            if (data_latlon.results) {
               // Construct lat/long string from geocoder from user input
-              var locationLatLong = data.results[0].geometry.location.lat + ',' + data.results[0].geometry.location.lng;
+              var lat = data_latlon.results[0].geometry.location.lat;
+              var lon = data_latlon.results[0].geometry.location.lng;
+              var locationLatLong = lat + ',' + lon;
 
-              // Do API requests and return a promise object to display results
-              var promiseObj = this.apiService.getData(this.state.term,
-                this.state.budgetmax,
-                this.state.budgetmin,
-                locationLatLong,
-                this.state.location,
-                date);
-              promiseObj.then(function (data) {
+              // Do reverse geocode to get the city from the lat long (for seat geek api call)
+              // this offers robustness to the user input for the location
+              geocoder.reverseGeocode(lat, lon, function (err, data_city) {
+                if (data_city) {
+                  if (data_city.results) {
 
-                // Set the state in this component and re-render
-                this.setState({ resultsArray: data.data });
-              }.bind(this), function (err) {
-                return err;
-              }).catch(function (e) {
-                console.log(e)
-              });
+                    var dataLength = data_city.results.length;
+                    var city = this.state.location;
+
+                    for (var i = 0; i < dataLength; i++) {
+                      if (data_city.results[i].types) {
+                        if (data_city.results[i].types[0] === "locality") {
+                          if (data_city.results[i].address_components) {
+                            city = data_city.results[i].address_components[0].long_name;
+                            break;
+                          }
+                        }
+                      }
+                    }
+
+                    // Do API requests and return a promise object to display results
+                    var promiseObj = this.apiService.getData(this.state.term,
+                      this.state.budgetmax,
+                      this.state.budgetmin,
+                      locationLatLong,
+                      city,
+                      date);
+                    promiseObj.then(function (data) {
+
+                      // Set the state in this component and re-render
+                      this.setState({ resultsArray: data.data });
+                    }.bind(this), function (err) {
+                      return err;
+                    }).catch(function (e) {
+                      console.log(e)
+                    });
+                  }
+                }
+              }.bind(this))
+
             }
           }
-        }.bind(this));
+        }.bind(this))
+
       }
     }
+
 
   }
 
