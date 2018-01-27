@@ -14,13 +14,15 @@ class Userinput extends Component {
       budgetmax: '40',
       budgetmin: '35',
       location: 'Orlando',
-      resultsArray: ['', '', '', '', '', '', ''],
-      startDate: moment()
+      resultsArray: [],
+      startDate: moment(),
+      savedEvents: []
     };
     this.apiService = new ApiService(this.state.resultsArray);
     this.handleChange = this.handleChange.bind(this);
     this.handleDateChange = this.handleDateChange.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
+    this.handleCheckbox = this.handleCheckbox.bind(this);
   }
 
   handleChange(e) {
@@ -35,9 +37,16 @@ class Userinput extends Component {
     });
   }
 
+  handleCheckbox(e) {
+
+    this.state.savedEvents.push(e.target.value);
+
+
+  }
+
   handleSubmit(e) {
     e.preventDefault();
-
+    console.log(this.state.savedEvents);
     // Check if state startDate is defined
     if (this.state.startDate) {
       // Convert the moment obj from the user input into a date object in javascript
@@ -76,6 +85,8 @@ class Userinput extends Component {
                       }
                     }
 
+                    //Check if any inputs are checked
+
                     // Do API requests and return a promise object to display results
                     var promiseObj = this.apiService.getData(this.state.term,
                       this.state.budgetmax,
@@ -107,12 +118,14 @@ class Userinput extends Component {
   }
 
   render() {
-    var ITINERARY_LENGTH = 7;
+    var ITINERARY_LENGTH = this.state.resultsArray.length;
     const { term, budgetmax, budgetmin, location } = this.state;
     var indents = [];
     for (var i = 0; i < ITINERARY_LENGTH; i++) {
-      indents.push(<div> {this.state.resultsArray[i]} <br /><br /></div>);
+        indents.push(<div><input onChange={this.handleCheckbox} type='checkbox' value={this.state.resultsArray[i]} />{this.state.resultsArray[i]}</div>);
     }
+
+
 
     return (
       <div className="Userinput">
@@ -125,7 +138,9 @@ class Userinput extends Component {
           <input type="submit" value="Submit" />
         </form>
         <div><br />
-          {indents}
+
+            {indents}
+
         </div>
       </div>
 
