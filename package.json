@@ -6,6 +6,8 @@
     "axios": "^0.17.1",
     "dotenv": "^4.0.0",
     "geocoder": "^0.2.3",
+    "idb": "^2.0.4",
+    "idb-keyval": "^2.3.0",
     "moment": "^2.20.1",
     "react": "^16.1.1",
     "react-datepicker": "^1.0.4",
