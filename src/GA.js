@@ -1,7 +1,13 @@
 module.exports = {
     // categories: breakfast, lunch, dinner, event
-    doGA: function(allData, budgetmax_in, budgetmin_in) {
+    doGA: function(allData, budgetmax_in, budgetmin_in, savedEvents_in, bestItineraryIndicesSaved_in) {
 
+      console.log("saved events array:")
+      console.log(savedEvents_in)
+      var savedUserInputs = false;
+      if (savedEvents_in.length>0 && bestItineraryIndicesSaved_in.length>0) {
+        savedUserInputs = true;
+      }
 
       var itinerarySize = 7;                          // number of things to do in the day
       var bestItinerary = new Array(itinerarySize);
@@ -28,6 +34,13 @@ module.exports = {
       var mutateRate = 85;                            // mutation rate (%)
       var numItemsArray = new Array(itinerarySize);
       numItemsArray = parsedDataAll.numItemsArrayOut.slice();
+
+      // Tune for low budget scenarios with saved user inputs
+      if (budgetmax_in <= 30) {
+        popSize = 120 + elitek;
+        mutateRate = 95;
+        crossRate = 70;
+      }
 
 
       var itineraryPopulation = new Array(popSize);   // population array (array of arrays)
@@ -66,6 +79,35 @@ module.exports = {
 
         // Populate with the elite itineraries first
         for (var j = 0; j < elitek; j++) {
+
+          // Save certain itinerary events/items based on user input
+          if (savedUserInputs) {
+            for (var isaved = 0; isaved < savedEvents_in.length; isaved++) {
+
+              if (savedEvents_in[isaved] === 0) {
+                iBestItinerary[0] = bestItineraryIndicesSaved_in[0];
+              }
+              else if (savedEvents_in[isaved] === 1) {
+                iBestItinerary[1] = bestItineraryIndicesSaved_in[1];
+              }
+              else if (savedEvents_in[isaved] === 2) {
+                iBestItinerary[2] = bestItineraryIndicesSaved_in[2];
+              }
+              else if (savedEvents_in[isaved] === 3) {
+                iBestItinerary[3] = bestItineraryIndicesSaved_in[3];
+              }
+              else if (savedEvents_in[isaved] === 4) {
+                iBestItinerary[4] = bestItineraryIndicesSaved_in[4];
+              }
+              else if (savedEvents_in[isaved] === 5) {
+                iBestItinerary[5] = bestItineraryIndicesSaved_in[5];
+              }
+              else {
+                iBestItinerary[6] = bestItineraryIndicesSaved_in[6];
+              }
+            }
+          }
+
           newItineraryPop[j] = [iBestItinerary[0],
           iBestItinerary[1],
           iBestItinerary[2],
@@ -73,6 +115,9 @@ module.exports = {
           iBestItinerary[4],
           iBestItinerary[5],
           iBestItinerary[6]];
+
+
+          
           popCnt = popCnt + 1;
         }
 
@@ -118,16 +163,54 @@ module.exports = {
             tempItinerary2 = mutate(tempItinerary2, numItemsArray);
           }
 
+          // Save certain itinerary events/items based on user input
+          if (savedUserInputs) {
+            for (var isaved = 0; isaved < savedEvents_in.length; isaved++) {
+
+              if (savedEvents_in[isaved] === 0) {
+                tempItinerary1[0] = bestItineraryIndicesSaved_in[0];
+                tempItinerary2[0] = bestItineraryIndicesSaved_in[0];
+              }
+              else if (savedEvents_in[isaved] === 1) {
+                tempItinerary1[1] = bestItineraryIndicesSaved_in[1];
+                tempItinerary2[1] = bestItineraryIndicesSaved_in[1];
+              }
+              else if (savedEvents_in[isaved] === 2) {
+                tempItinerary1[2] = bestItineraryIndicesSaved_in[2];
+                tempItinerary2[2] = bestItineraryIndicesSaved_in[2];
+              }
+              else if (savedEvents_in[isaved] === 3) {
+                tempItinerary1[3] = bestItineraryIndicesSaved_in[3];
+                tempItinerary2[3] = bestItineraryIndicesSaved_in[3];
+              }
+              else if (savedEvents_in[isaved] === 4) {
+                tempItinerary1[4] = bestItineraryIndicesSaved_in[4];
+                tempItinerary2[4] = bestItineraryIndicesSaved_in[4];
+              }
+              else if (savedEvents_in[isaved] === 5) {
+                tempItinerary1[5] = bestItineraryIndicesSaved_in[5];
+                tempItinerary2[5] = bestItineraryIndicesSaved_in[5];
+              }
+              else {
+                tempItinerary1[6] = bestItineraryIndicesSaved_in[6];
+                tempItinerary2[6] = bestItineraryIndicesSaved_in[6];
+              }
+            }
+          }
+
           // Append newly bred itineraries to current population
           newItineraryPop[popCnt] = [tempItinerary1[0], tempItinerary1[1], tempItinerary1[2], tempItinerary1[3],
           tempItinerary1[4], tempItinerary1[5], tempItinerary1[6]];
           newItineraryPop[popCnt + 1] = [tempItinerary2[0], tempItinerary2[1], tempItinerary2[2], tempItinerary2[3],
           tempItinerary2[4], tempItinerary2[5], tempItinerary2[6]];
+
+
+          
           popCnt = popCnt + 2;
         } // end while loop
 
         itineraryPopulation = newItineraryPop.slice(0);
-        bestItineraryObj = findBestItinerary(itineraryPopulation, parsedDataAll, budgetmax, budgetmin);
+        bestItineraryObj = findBestItinerary(itineraryPopulation, parsedDataAll, budgetmax, budgetmin, savedUserInputs);
         iBestItinerary = bestItineraryObj.bestItineraryOut;
         bestRating = bestItineraryObj.bestItineraryRatingOut;          
         bestCost = bestItineraryObj.bestItineraryCostOut;
@@ -165,8 +248,21 @@ module.exports = {
       bestItinerary[4] = '';
       bestItinerary[5] = '';
       bestItinerary[6] = '';
+
+      iBestItinerary[0] = -1;
+      iBestItinerary[1] = -1;
+      iBestItinerary[2] = -1;
+      iBestItinerary[3] = -1;
+      iBestItinerary[4] = -1;
+      iBestItinerary[5] = -1;
+      iBestItinerary[6] = -1;
     }
-    return bestItinerary;
+
+    return {
+      bestItinerary: bestItinerary,
+      bestItineraryIndices: iBestItinerary,
+      bestRating: bestRating,
+    };
   },
 
   preProcessData: function (allData_in) {
@@ -315,7 +411,7 @@ function pickRandomItineraryItemExcluding(numCategoryItems, iExcludeItem) { // N
 // }
 
 // Determine the "fittest" itinerary
-function findBestItinerary(itineraryPop_in, allData_in, budygetmax_in, budgetmin_in) {  
+function findBestItinerary(itineraryPop_in, allData_in, budygetmax_in, budgetmin_in, savedUserInputs_in) {  
   var budgetmax = budygetmax_in;
   var budgetmin = budgetmin_in;
   var maxItineraryRating = 0;
@@ -362,7 +458,10 @@ function findBestItinerary(itineraryPop_in, allData_in, budygetmax_in, budgetmin
   }
 
   // Garbage collection
-  if (maxItineraryRating === 0) {
+  if (maxItineraryRating === 0 && savedUserInputs_in) {
+    bestItinerary = itineraryPop_in[0];
+  }
+  else if (maxItineraryRating === 0) {
     bestItinerary = itineraryPop_in[0];
   }
 

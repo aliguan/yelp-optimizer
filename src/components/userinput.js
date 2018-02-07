@@ -19,7 +19,8 @@ class Userinput extends Component {
       location: 'Orlando',
       resultsArray: [],
       startDate: moment(),
-      savedEvents: []
+      savedEvents: [],
+      checked: [0,0,0,0,0,0,0],
     };
     this.apiService = new ApiService(this.state.resultsArray);
     this.handleChange = this.handleChange.bind(this);
@@ -41,20 +42,34 @@ class Userinput extends Component {
   }
 
   handleCheckbox(e) {
-
-    this.state.savedEvents.push(e.target.value);
-
-
+    // If the checkbox is checked, add the checkbox index to the states
+    let checked = this.state.checked.slice();
+    if (e.target.checked) {
+      this.state.savedEvents.push(e.target.value);   // e.target.value should be an integer value
+                                                     // from 0 to 6 inclusive   
+      checked[e.target.value] = 1;
+      this.setState({ checked: checked });
+    }
+    // If the checkbox is NOT checked, find and remove the checkbox index from the states
+    else {
+      var index = this.state.savedEvents.indexOf(e.target.value); // e.target.value should be an integer value
+                                                                  // from 0 to 6 inclusive   
+      if (index > -1) {
+        this.state.savedEvents.splice(index, 1);
+        checked[e.target.value] = 0;
+        this.setState({ checked: checked });
+      }
+    }
   }
 
   handleSubmit(e) {
     e.preventDefault();
     console.clear();
+
     var myStorage = window.localStorage;
     var doAPICallsFlag = true;
     var indexDBcompat = window.indexedDB;
 
-    console.log(this.state.savedEvents);
     // Check if state startDate is defined
     if (this.state.startDate) {
 
@@ -63,9 +78,9 @@ class Userinput extends Component {
       // It is fixed to the timestamp at the first time the date is selected in the UI.
       var today = moment();
 
-      var geocoder = require('../../node_modules/geocoder');
+      var geocoder = require('geocoder');
       if (isDate(date)) {
-        console.log(date)
+        //console.log(date)
 
         // Geocoding to convert user location input into lat/lon
         geocoder.geocode(this.state.location, function (err, data_latlon) {
@@ -111,11 +126,24 @@ class Userinput extends Component {
                         date);
                       promiseObj.then(function (data) {
 
+                        // Set saved events to empty because if an API call is needed, this means
+                        // the event data has changed. It doesn't make sense to use the previously 
+                        // saved events selected by the user.
+                        var savedEvents = [];
+                        var bestItineraryIndicesParsed = [];
+
                         // Do optimization to find locally "best" itinerary
-                        var optimItinerary = genAlgo.doGA(data.data, this.state.budgetmax, this.state.budgetmin);
+                        var optimItinerary = genAlgo.doGA(data.data, this.state.budgetmax, this.state.budgetmin, savedEvents, bestItineraryIndicesParsed);
 
                         // Set the state in this component and re-render
-                        this.setState({ resultsArray: optimItinerary });
+                        this.setState({
+                          resultsArray: optimItinerary.bestItinerary,
+                          savedEvents: savedEvents,
+                          checked: [0,0,0,0,0,0,0], //reset the checkboxes to being unchecked
+                        });
+
+                        var prevBestItineraryStr = JSON.stringify(optimItinerary.bestItineraryIndices);
+                        myStorage.setItem("prevBestItinerarySavedIndices", prevBestItineraryStr);
 
                         // Put the data returned from API calls (yelp, meetup, etc) into the client's browser
                         // for persistent storage
@@ -140,17 +168,30 @@ class Userinput extends Component {
                       console.log("No need to do API calls!!!")
                       if (indexDBcompat) {
                         idb_keyval.get('apiData').then(val => {
+
+                          // Save the previously saved events by the user as persistent data in 
+                          // client side as a string
+                          var savedEvents = [];
+                          if (this.state.savedEvents.length > 0 && null !== myStorage.getItem('prevBestItinerarySavedIndices')) {
+                            var bestItineraryIndicesParsed = JSON.parse(myStorage.getItem("prevBestItinerarySavedIndices"));
+                            savedEvents = this.state.savedEvents.map(Number);
+                          }
+
                           // Do optimization to find locally "best" itinerary
-                          var optimItinerary = genAlgo.doGA(val, this.state.budgetmax, this.state.budgetmin);
+                          var optimItinerary = genAlgo.doGA(val, this.state.budgetmax, this.state.budgetmin, savedEvents, bestItineraryIndicesParsed);
+
+                          var prevBestItineraryStr = JSON.stringify(optimItinerary.bestItineraryIndices);
+                          myStorage.setItem("prevBestItinerarySavedIndices", prevBestItineraryStr);
 
                           // Set the state in this component and re-render
-                          this.setState({ resultsArray: optimItinerary });
+                          this.setState({
+                            resultsArray: optimItinerary.bestItinerary,
+                          });
+
                         }
                         );
+                      }
                     }
-                    }
-
-
                   }
                 }
               }.bind(this))
@@ -169,8 +210,16 @@ class Userinput extends Component {
     var ITINERARY_LENGTH = this.state.resultsArray.length;
     const { term, budgetmax, budgetmin, location } = this.state;
     var indents = [];
-    for (var i = 0; i < ITINERARY_LENGTH; i++) {
-        indents.push(<div><input onChange={this.handleCheckbox} type='checkbox' value={this.state.resultsArray[i]} />{this.state.resultsArray[i]}</div>);
+    // Only allow check boxes to show up if data can be saved client side
+    if (window.indexedDB) {
+      for (var i = 0; i < ITINERARY_LENGTH; i++) {
+        indents.push(<div><input checked={this.state.checked[i]} onChange={this.handleCheckbox} type='checkbox' value={i} />{this.state.resultsArray[i]}</div>);
+      }
+    }
+    else {
+      for (var i = 0; i < ITINERARY_LENGTH; i++) {
+        indents.push(<div>{this.state.resultsArray[i]}</div>);
+      }      
     }
 
 
@@ -218,7 +267,7 @@ function isDate(d) {
 // Returns true if locally stored data is "stale" or at a different location therefore new API calls 
 // need to be made
 function determineAPICallBool(myStorage_in, date_in, today_in, latLon_in, indexDBcompat_in) {
-  if (myStorage_in && indexDBcompat_in) {
+  if (myStorage_in) { //} && indexDBcompat_in) {
 
     var isToday;
     if (date_in.toDate().getDate() === today_in.toDate().getDate()) {
@@ -316,7 +365,6 @@ function xHoursPassed(currentDateTimeMoment, locallyStoredDateTimeStr, elapsedHo
   var locStoredDateTimePlusXHours = moment(locallyStoredDateTimeStr).add(elapsedHours, 'hours');
   return currentDateTimeMoment.isAfter(locStoredDateTimePlusXHours.format());
 }
-
 
 Userinput.propTypes = {}
 
