@@ -215,7 +215,7 @@ module.exports = {
         bestRating = bestItineraryObj.bestItineraryRatingOut;          
         bestCost = bestItineraryObj.bestItineraryCostOut;
         allItineraryRatings = bestItineraryObj.allItineraryRatingsOut;
-        allItineraryRatingsSum = bestItineraryObj.allItineraryValSumOut;
+        allItineraryRatingsSum = round2NearestHundredth(bestItineraryObj.allItineraryValSumOut);
 
         if (i % 50 === 0) {
         console.log("best rating " + i + "th iter: " + bestRating);
@@ -228,40 +228,65 @@ module.exports = {
     console.log("----gen algo end----")
     //console.log("End population")
     //console.log(itineraryPopulation)
-    console.log("best rating: " + bestRating);
-    console.log("best cost: " + bestCost);
-    console.log("population rating sum: " + allItineraryRatingsSum);
-    if (bestRating > 0) {
-      bestItinerary[0] = allData[0].Event1[iBestItinerary[0]].name + " - $" + allData[0].Event1[iBestItinerary[0]].cost + ", Rating: " + allData[0].Event1[iBestItinerary[0]].rating;
-      bestItinerary[1] = allData[1].Breakfast[iBestItinerary[1]].name + " - $" + allData[1].Breakfast[iBestItinerary[1]].cost + ", Rating: " + allData[1].Breakfast[iBestItinerary[1]].rating;
-      bestItinerary[2] = allData[2].Event2[iBestItinerary[2]].name + " - $" + allData[2].Event2[iBestItinerary[2]].cost + ", Rating: " + allData[2].Event2[iBestItinerary[2]].rating;
-      bestItinerary[3] = allData[3].Lunch[iBestItinerary[3]].name + " - $" + allData[3].Lunch[iBestItinerary[3]].cost + ", Rating: " + allData[3].Lunch[iBestItinerary[3]].rating;
-      bestItinerary[4] = allData[4].Event3[iBestItinerary[4]].name + " - $" + allData[4].Event3[iBestItinerary[4]].cost + ", Rating: " + allData[4].Event3[iBestItinerary[4]].rating;
-      bestItinerary[5] = allData[5].Dinner[iBestItinerary[5]].name + " - $" + allData[5].Dinner[iBestItinerary[5]].cost + ", Rating: " + allData[5].Dinner[iBestItinerary[5]].rating;
-      bestItinerary[6] = allData[6].Event4[iBestItinerary[6]].name + " - $" + allData[6].Event4[iBestItinerary[6]].cost + ", Rating: " + allData[6].Event4[iBestItinerary[6]].rating;
-    }
-    else {
-      bestItinerary[0] = 'No Itineraries found.';
-      bestItinerary[1] = '';
-      bestItinerary[2] = '';
-      bestItinerary[3] = '';
-      bestItinerary[4] = '';
-      bestItinerary[5] = '';
-      bestItinerary[6] = '';
+      console.log("best rating: " + bestRating);
+      console.log("best cost: " + bestCost);
+      console.log("population rating sum: " + allItineraryRatingsSum);
 
-      iBestItinerary[0] = -1;
-      iBestItinerary[1] = -1;
-      iBestItinerary[2] = -1;
-      iBestItinerary[3] = -1;
-      iBestItinerary[4] = -1;
-      iBestItinerary[5] = -1;
-      iBestItinerary[6] = -1;
+      var urls = ['', '', '', '', '', '', ''];
+      var locations = ['', '', '', '', '', '', ''];
+
+      if (bestRating > 0) {
+        bestItinerary[0] = allData[0].Event1[iBestItinerary[0]].name + " - $" + allData[0].Event1[iBestItinerary[0]].cost + ", Rating: " + allData[0].Event1[iBestItinerary[0]].rating;
+        bestItinerary[1] = allData[1].Breakfast[iBestItinerary[1]].name + " - $" + allData[1].Breakfast[iBestItinerary[1]].cost + ", Rating: " + allData[1].Breakfast[iBestItinerary[1]].rating;
+        bestItinerary[2] = allData[2].Event2[iBestItinerary[2]].name + " - $" + allData[2].Event2[iBestItinerary[2]].cost + ", Rating: " + allData[2].Event2[iBestItinerary[2]].rating;
+        bestItinerary[3] = allData[3].Lunch[iBestItinerary[3]].name + " - $" + allData[3].Lunch[iBestItinerary[3]].cost + ", Rating: " + allData[3].Lunch[iBestItinerary[3]].rating;
+        bestItinerary[4] = allData[4].Event3[iBestItinerary[4]].name + " - $" + allData[4].Event3[iBestItinerary[4]].cost + ", Rating: " + allData[4].Event3[iBestItinerary[4]].rating;
+        bestItinerary[5] = allData[5].Dinner[iBestItinerary[5]].name + " - $" + allData[5].Dinner[iBestItinerary[5]].cost + ", Rating: " + allData[5].Dinner[iBestItinerary[5]].rating;
+        bestItinerary[6] = allData[6].Event4[iBestItinerary[6]].name + " - $" + allData[6].Event4[iBestItinerary[6]].cost + ", Rating: " + allData[6].Event4[iBestItinerary[6]].rating;
+
+        // Return url    
+        urls[0] = allData[0].Event1[iBestItinerary[0]].url;
+        urls[1] = allData[1].Breakfast[iBestItinerary[1]].url;
+        urls[2] = allData[2].Event2[iBestItinerary[2]].url;
+        urls[3] = allData[3].Lunch[iBestItinerary[3]].url;
+        urls[4] = allData[4].Event3[iBestItinerary[4]].url;
+        urls[5] = allData[5].Dinner[iBestItinerary[5]].url;
+        urls[6] = allData[6].Event4[iBestItinerary[6]].url;
+
+        // Return location
+        locations[0] = allData[0].Event1[iBestItinerary[0]].location;
+        locations[1] = allData[1].Breakfast[iBestItinerary[1]].location;
+        locations[2] = allData[2].Event2[iBestItinerary[2]].location;
+        locations[3] = allData[3].Lunch[iBestItinerary[3]].location;
+        locations[4] = allData[4].Event3[iBestItinerary[4]].location;
+        locations[5] = allData[5].Dinner[iBestItinerary[5]].location;
+        locations[6] = allData[6].Event4[iBestItinerary[6]].location;
+      }
+      else {
+        bestItinerary[0] = 'No Itineraries found.';
+        bestItinerary[1] = '';
+        bestItinerary[2] = '';
+        bestItinerary[3] = '';
+        bestItinerary[4] = '';
+        bestItinerary[5] = '';
+        bestItinerary[6] = '';
+
+        iBestItinerary[0] = -1;
+        iBestItinerary[1] = -1;
+        iBestItinerary[2] = -1;
+        iBestItinerary[3] = -1;
+        iBestItinerary[4] = -1;
+        iBestItinerary[5] = -1;
+        iBestItinerary[6] = -1;
     }
 
+    
     return {
       bestItinerary: bestItinerary,
       bestItineraryIndices: iBestItinerary,
       bestRating: bestRating,
+      bestUrls: urls,
+      bestLocations: locations,
     };
   },
 
@@ -298,6 +323,38 @@ module.exports = {
       breakfastCosts = allData_in[1].Breakfast.map(a => a.cost);
       breakfastRatings = allData_in[1].Breakfast.map(a => a.rating);
 
+      var irand = 0;
+      var drate = 0;
+      // Randomize the ratings for every optimization (everytime the user presses the button)
+      // so that the same restaurants don't show up (i.e. there isn't much different between a 4 rating
+      // and a 5 rating but 4 rated restaurants almost never show up)      
+      for (var i = 0; i < numBreakfast; i++) {
+        irand = randomIntFromInterval(1, 10);        
+        if (irand < 3) {
+          drate = -0.5;
+        }
+        else if (irand < 5 ) {
+          drate = 0.5;
+        }
+        else if (irand === 5) {
+          if (breakfastRatings[i] >=4.5) {
+            drate = -1;
+          }          
+        }
+        else if (irand === 6) {
+          if (breakfastRatings[i] <= 4) {
+            drate = 1;
+          }       
+        }
+        else {
+          drate = 0;
+        }
+        breakfastRatings[i] = breakfastRatings[i] + drate;
+        if (breakfastRatings[i]>5) {
+          breakfastRatings[i]=5;
+        }
+      }
+
       var numEvent2 = allData_in[2].Event2.length;
       var event2Costs = new Array(numEvent2);
       var event2Ratings = new Array(numEvent2);
@@ -310,6 +367,36 @@ module.exports = {
       lunchCosts = allData_in[3].Lunch.map(a => a.cost);
       lunchRatings = allData_in[3].Lunch.map(a => a.rating);
 
+      // Randomize the ratings for every optimization (everytime the user presses the button)
+      // so that the same restaurants don't show up (i.e. there isn't much different between a 4 rating
+      // and a 5 rating but 4 rated restaurants almost never show up)      
+      for (i = 0; i < numLunch; i++) {
+        irand = randomIntFromInterval(1, 10);        
+        if (irand < 3) {
+          drate = -0.5;
+        }
+        else if (irand < 5 ) {
+          drate = 0.5;
+        }
+        else if (irand === 5) {
+          if (breakfastRatings[i] >=4.5) {
+            drate = -1;
+          }          
+        }
+        else if (irand === 6) {
+          if (breakfastRatings[i] <= 4) {
+            drate = 1;
+          }       
+        }
+        else {
+          drate = 0;
+        }
+        lunchRatings[i] = lunchRatings[i] + drate;
+        if (lunchRatings[i]>5) {
+          lunchRatings[i]=5;
+        }
+      }      
+
       var numEvent3 = allData_in[4].Event3.length;
       var event3Costs = new Array(numEvent3);
       var event3Ratings = new Array(numEvent3);
@@ -321,6 +408,37 @@ module.exports = {
       var dinnerRatings = new Array(numDinner);
       dinnerCosts = allData_in[5].Dinner.map(a => a.cost);
       dinnerRatings = allData_in[5].Dinner.map(a => a.rating);
+
+      // Randomize the ratings for every optimization (everytime the user presses the button)
+      // so that the same restaurants don't show up (i.e. there isn't much different between a 4 rating
+      // and a 5 rating but 4 rated restaurants almost never show up)      
+      for (i = 0; i < numDinner; i++) {
+        irand = randomIntFromInterval(1, 10);        
+        if (irand < 3) {
+          drate = -0.5;
+        }
+        else if (irand < 5 ) {
+          drate = 0.5;
+        }
+        else if (irand === 5) {
+          if (breakfastRatings[i] >=4.5) {
+            drate = -1;
+          }          
+        }
+        else if (irand === 6) {
+          if (breakfastRatings[i] <= 4) {
+            drate = 1;
+          }       
+        }
+        else {
+          drate = 0;
+        }
+        dinnerRatings[i] = dinnerRatings[i] + drate;
+        lunchRatings[i] = lunchRatings[i] + drate;
+        if (dinnerRatings[i]>5) {
+          dinnerRatings[i]=5;
+        }
+      }        
 
       var numEvent4 = allData_in[6].Event4.length;
       var event4Costs = new Array(numEvent4);
@@ -426,7 +544,7 @@ function findBestItinerary(itineraryPop_in, allData_in, budygetmax_in, budgetmin
 
     // Get the cost of each itinerary
     itineraryCost = getTotalCost(itineraryPop_in[i], allData_in);
-    itineraryCost = Math.round(itineraryCost);
+    itineraryCost = round2NearestHundredth(itineraryCost);
 
     // Set the rating of the itinerary to zero if it exceeds the budget
     if (itineraryCost > budgetmax) {
@@ -544,7 +662,7 @@ function getTotalRating(itinerary_in, allData_in) {
     }
     totalRating = totalRating + itineraryItemRating;
   }
-  totalRating = Math.round(totalRating);
+  totalRating = round2NearestHundredth(totalRating);
   
   return totalRating;
 }
@@ -608,6 +726,9 @@ function crossover(itinerary1_in, itinerary2_in) {
   return itineraryOut;
 }
 
+function round2NearestHundredth(number) {
+  return Math.round(100*number)/100;
+}
 
 function mutate(itinerary_in, numItemsArray_in) {
   var irand = randomIntFromInterval(0, 10); // If 0-6 chosen, individual items will be mutated

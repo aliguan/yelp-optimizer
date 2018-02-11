@@ -15,7 +15,7 @@ render() {
            }}
            className="maps col-md-6"
            style={maps}
-        >
+       
 
         <Marker onClick={this.onMarkerClick}
                 name={'Current location'} />
