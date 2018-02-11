@@ -46,14 +46,14 @@ class Userinput extends Component {
     let checked = this.state.checked.slice();
     if (e.target.checked) {
       this.state.savedEvents.push(e.target.value);   // e.target.value should be an integer value
-                                                     // from 0 to 6 inclusive   
+                                                     // from 0 to 6 inclusive
       checked[e.target.value] = 1;
       this.setState({ checked: checked });
     }
     // If the checkbox is NOT checked, find and remove the checkbox index from the states
     else {
       var index = this.state.savedEvents.indexOf(e.target.value); // e.target.value should be an integer value
-                                                                  // from 0 to 6 inclusive   
+                                                                  // from 0 to 6 inclusive
       if (index > -1) {
         this.state.savedEvents.splice(index, 1);
         checked[e.target.value] = 0;
@@ -127,7 +127,7 @@ class Userinput extends Component {
                       promiseObj.then(function (data) {
 
                         // Set saved events to empty because if an API call is needed, this means
-                        // the event data has changed. It doesn't make sense to use the previously 
+                        // the event data has changed. It doesn't make sense to use the previously
                         // saved events selected by the user.
                         var savedEvents = [];
                         var bestItineraryIndicesParsed = [];
@@ -135,8 +135,10 @@ class Userinput extends Component {
                         // Do optimization to find locally "best" itinerary
                         var optimItinerary = genAlgo.doGA(data.data, this.state.budgetmax, this.state.budgetmin, savedEvents, bestItineraryIndicesParsed);
 
-                        console.log(optimItinerary.bestUrls)
+                        console.log(optimItinerary.bestUrls);
+                        // this.getLocations(optimItinerary.bestUrls);
                         console.log(optimItinerary.bestLocations)
+                        this.props.getLocations(optimItinerary.bestLocations);
 
                         // Set the state in this component and re-render
                         this.setState({
@@ -166,13 +168,13 @@ class Userinput extends Component {
 
                     }
                     // No need to do the API calls from yelp, meetup, etc because inputs (date and location)
-                    // have not changed. The 
+                    // have not changed. The
                     else {
                       console.log("No need to do API calls!!!")
                       if (indexDBcompat) {
                         idb_keyval.get('apiData').then(val => {
 
-                          // Save the previously saved events by the user as persistent data in 
+                          // Save the previously saved events by the user as persistent data in
                           // client side as a string
                           var savedEvents = [];
                           if (this.state.savedEvents.length > 0 && null !== myStorage.getItem('prevBestItinerarySavedIndices')) {
@@ -225,7 +227,7 @@ class Userinput extends Component {
     else {
       for (var i = 0; i < ITINERARY_LENGTH; i++) {
         indents.push(<div>{this.state.resultsArray[i]}</div>);
-      }      
+      }
     }
 
 
@@ -270,7 +272,7 @@ function isDate(d) {
   }
 }
 
-// Returns true if locally stored data is "stale" or at a different location therefore new API calls 
+// Returns true if locally stored data is "stale" or at a different location therefore new API calls
 // need to be made
 function determineAPICallBool(myStorage_in, date_in, today_in, latLon_in, indexDBcompat_in) {
   if (myStorage_in) { //} && indexDBcompat_in) {
@@ -355,7 +357,7 @@ function determineAPICallBool(myStorage_in, date_in, today_in, latLon_in, indexD
       return true; // do the API calls!
     }
     else {
-      return false; // don't the API calls because data is already stored locally and a previous 
+      return false; // don't the API calls because data is already stored locally and a previous
                     // API call was made
     }
   }
