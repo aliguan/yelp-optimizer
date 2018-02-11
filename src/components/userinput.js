@@ -135,6 +135,9 @@ class Userinput extends Component {
                         // Do optimization to find locally "best" itinerary
                         var optimItinerary = genAlgo.doGA(data.data, this.state.budgetmax, this.state.budgetmin, savedEvents, bestItineraryIndicesParsed);
 
+                        console.log(optimItinerary.bestUrls)
+                        console.log(optimItinerary.bestLocations)
+
                         // Set the state in this component and re-render
                         this.setState({
                           resultsArray: optimItinerary.bestItinerary,
@@ -182,6 +185,9 @@ class Userinput extends Component {
 
                           var prevBestItineraryStr = JSON.stringify(optimItinerary.bestItineraryIndices);
                           myStorage.setItem("prevBestItinerarySavedIndices", prevBestItineraryStr);
+
+                          console.log(optimItinerary.bestUrls)
+                          console.log(optimItinerary.bestLocations)
 
                           // Set the state in this component and re-render
                           this.setState({
