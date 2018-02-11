@@ -7,6 +7,7 @@ import genAlgo from '../GA.js'
 import idb_keyval from 'idb-keyval'
 
 import 'react-datepicker/dist/react-datepicker.css';
+import 'bootstrap/dist/css/bootstrap.min.css';
 
 class Userinput extends Component {
   constructor(props) {
@@ -112,7 +113,7 @@ class Userinput extends Component {
                           }
                         }
                       }
-                    }
+                  }
 
                     // Determine whether or not API calls need to be made
                     doAPICallsFlag = determineAPICallBool(myStorage, this.state.startDate, today, locationLatLong, indexDBcompat);
@@ -233,7 +234,7 @@ class Userinput extends Component {
 
 
     return (
-      <div className="Userinput">
+      <div className="Userinput col-md-6">
         <form onSubmit={this.handleSubmit}>
           <DatePicker selected={this.state.startDate} onChange={this.handleDateChange} />
           <input type="text" name="term" style={{ width: 90 }} value={term} onChange={this.handleChange} />

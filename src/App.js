@@ -3,6 +3,9 @@ import PropTypes from 'prop-types'
 import logo from './logo.svg';
 import './App.css';
 import Userinput from './components/userinput.js';
+import GoogleApiWrapper from './components/googlemaps.js';
+import './maps.css';
+import jquery from 'jquery';
 
 class App extends Component {
     constructor(props) {
@@ -24,9 +27,8 @@ console.log(locations);
   render() {
     return (
       <div className="App">
-        <header className="App-header">
 
-        </header>
+        <GoogleApiWrapper/>
         <Userinput getLocations={this.handleLocations} />
       </div>
     );
