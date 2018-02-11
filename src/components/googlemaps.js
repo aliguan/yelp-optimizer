@@ -9,13 +9,13 @@ render() {
     return (
       <Map google={this.props.google}
            zoom={14}
-           initialCenter={{
+            initialCenter={{
                lat: 28.538336,
                lng: -81.379234
            }}
            className="maps col-md-6"
            style={maps}
-       
+        >
 
         <Marker onClick={this.onMarkerClick}
                 name={'Current location'} />
