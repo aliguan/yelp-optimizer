@@ -4,25 +4,39 @@ import {Map, InfoWindow, Marker, GoogleApiWrapper, google} from 'google-maps-rea
 import React, { Component } from 'react';
 
 export class MapContainer extends Component {
+    constructor(props) {
+        super(props);
+    }
 
-render() {
-    return (
-      <Map google={this.props.google}
-           zoom={14}
-            initialCenter={{
-               lat: 28.538336,
-               lng: -81.379234
-           }}
-           className="maps col-md-6"
-           style={maps}
-        >
 
-        <Marker onClick={this.onMarkerClick}
-                name={'Current location'} />
-      </Map>
+    render() {
+        var markers = [];
+        if(this.props.locations.length > 0) {
+            for(var i = 0; i < this.props.locations.length; i++) {
+                markers.push(<Marker onClick={this.onMarkerClick}
+                   name={'Current location'}
+                   position={this.props.locations[i]}/>)
 
-    );
-  }
+            }
+
+        }
+
+        return (
+          <Map google={this.props.google}
+               zoom={14}
+                initialCenter={{
+                   lat: 28.538336,
+                   lng: -81.379234
+               }}
+               className="maps col-md-6"
+               style={maps}
+            >
+
+            {markers}
+          </Map>
+
+        );
+      }
 }
 
 const maps = {

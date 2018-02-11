@@ -137,9 +137,8 @@ class Userinput extends Component {
                         var optimItinerary = genAlgo.doGA(data.data, this.state.budgetmax, this.state.budgetmin, savedEvents, bestItineraryIndicesParsed);
 
                         console.log(optimItinerary.bestUrls);
-                        // this.getLocations(optimItinerary.bestUrls);
                         console.log(optimItinerary.bestLocations)
-                        this.props.getLocations(optimItinerary.bestLocations);
+                        this.props.getData(optimItinerary.bestLocations, optimItinerary.bestUrls);
 
                         // Set the state in this component and re-render
                         this.setState({
@@ -191,6 +190,7 @@ class Userinput extends Component {
 
                           console.log(optimItinerary.bestUrls)
                           console.log(optimItinerary.bestLocations)
+                          this.props.getData(optimItinerary.bestLocations, optimItinerary.bestUrls);
 
                           // Set the state in this component and re-render
                           this.setState({
