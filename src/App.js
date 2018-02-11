@@ -12,25 +12,26 @@ class App extends Component {
         super(props);
         this.state = {
             itinLocations: [],
-            itinUrls: []
+            itinUrls: [],
+            center: '',
         }
 
     this.handleData = this.handleData.bind(this);
     }
 
-    handleData(locations, urls) {
+    handleData(locations, urls, center) {
         this.setState({
             itinLocations: locations,
-            itinUrls: urls
+            itinUrls: urls,
+            center: center
         })
-        console.log(this.state);
     }
 
   render() {
     return (
       <div className="App">
 
-        <GoogleApiWrapper locations={this.state.itinLocations} urls={this.state.itinUrls}/>
+        <GoogleApiWrapper locations={this.state.itinLocations} urls={this.state.itinUrls} center={this.state.center}/>
         <Userinput getData={this.handleData} />
       </div>
     );

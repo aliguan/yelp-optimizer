@@ -92,7 +92,10 @@ class Userinput extends Component {
               var lat = data_latlon.results[0].geometry.location.lat;
               var lon = data_latlon.results[0].geometry.location.lng;
               var locationLatLong = lat + ',' + lon;
-
+              var mapCenter = {
+                  lat: data_latlon.results[0].geometry.location.lat,
+                  lng: data_latlon.results[0].geometry.location.lng
+              };
 
               // Do reverse geocode to get the city from the lat long (for seat geek api call)
               // this offers robustness to the user input for the location
@@ -138,7 +141,7 @@ class Userinput extends Component {
 
                         console.log(optimItinerary.bestUrls);
                         console.log(optimItinerary.bestLocations)
-                        this.props.getData(optimItinerary.bestLocations, optimItinerary.bestUrls);
+                        this.props.getData(optimItinerary.bestLocations, optimItinerary.bestUrls, mapCenter);
 
                         // Set the state in this component and re-render
                         this.setState({
@@ -190,7 +193,7 @@ class Userinput extends Component {
 
                           console.log(optimItinerary.bestUrls)
                           console.log(optimItinerary.bestLocations)
-                          this.props.getData(optimItinerary.bestLocations, optimItinerary.bestUrls);
+                          this.props.getData(optimItinerary.bestLocations, optimItinerary.bestUrls, mapCenter);
 
                           // Set the state in this component and re-render
                           this.setState({
