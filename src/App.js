@@ -13,7 +13,7 @@ class App extends Component {
         this.state = {
             itinLocations: [],
             itinUrls: [],
-            center: '',
+            center: {},
         }
 
     this.handleData = this.handleData.bind(this);
