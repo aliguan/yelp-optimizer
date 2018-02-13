@@ -22,7 +22,7 @@ export class MapContainer extends Component {
         }
         return (
           <Map google={this.props.google}
-               zoom={12}
+               zoom={10}
                center={this.props.center}
                className="maps col-md-6"
                style={maps}
