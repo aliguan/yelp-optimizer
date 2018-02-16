@@ -78,7 +78,7 @@ class Userinput extends Component {
       var date = this.state.startDate.toDate(); // This does not change if the date selected in the UI does change
       // It is fixed to the timestamp at the first time the date is selected in the UI.
       var today = moment();
-
+      console.log('im a string --->' + date.toString());
       var geocoder = require('geocoder');
       if (isDate(date)) {
         //console.log(date)
@@ -127,7 +127,8 @@ class Userinput extends Component {
                       var promiseObj = this.apiService.getData(this.state.term,
                         locationLatLong,
                         city,
-                        date);
+                        date,
+                        date.toString());
                       promiseObj.then(function (data) {
 
                         // Set saved events to empty because if an API call is needed, this means
