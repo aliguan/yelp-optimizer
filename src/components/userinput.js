@@ -22,6 +22,7 @@ class Userinput extends Component {
       startDate: moment(),
       savedEvents: [],
       checked: [0,0,0,0,0,0,0],
+      totalCost: 0,
     };
     this.apiService = new ApiService(this.state.resultsArray);
     this.handleChange = this.handleChange.bind(this);
@@ -78,7 +79,7 @@ class Userinput extends Component {
       var date = this.state.startDate.toDate(); // This does not change if the date selected in the UI does change
       // It is fixed to the timestamp at the first time the date is selected in the UI.
       var today = moment();
-      console.log('im a string --->' + date.toString());
+
       var geocoder = require('geocoder');
       if (isDate(date)) {
         //console.log(date)
@@ -149,6 +150,7 @@ class Userinput extends Component {
                           resultsArray: optimItinerary.bestItinerary,
                           savedEvents: savedEvents,
                           checked: [0,0,0,0,0,0,0], //reset the checkboxes to being unchecked
+                          totalCost: optimItinerary.totalCost,
                         });
 
                         var prevBestItineraryStr = JSON.stringify(optimItinerary.bestItineraryIndices);
@@ -199,6 +201,7 @@ class Userinput extends Component {
                           // Set the state in this component and re-render
                           this.setState({
                             resultsArray: optimItinerary.bestItinerary,
+                            totalCost: optimItinerary.totalCost,
                           });
 
                         }
@@ -227,13 +230,14 @@ class Userinput extends Component {
     if (window.indexedDB) {
       for (var i = 0; i < ITINERARY_LENGTH; i++) {
         indents.push(<div><input checked={this.state.checked[i]} onChange={this.handleCheckbox} type='checkbox' value={i} />{this.state.resultsArray[i]}</div>);
-      }
+      }      
     }
     else {
       for (var i = 0; i < ITINERARY_LENGTH; i++) {
         indents.push(<div>{this.state.resultsArray[i]}</div>);
       }
     }
+    indents.push(<div><b>Total Cost: ${this.state.totalCost} </b></div>)
 
 
 
@@ -241,7 +245,7 @@ class Userinput extends Component {
       <div className="Userinput col-md-6">
         <form onSubmit={this.handleSubmit}>
           <DatePicker selected={this.state.startDate} onChange={this.handleDateChange} />
-          <input type="text" name="term" style={{ width: 90 }} value={term} onChange={this.handleChange} />
+          {/*<input type="text" name="term" style={{ width: 90 }} value={term} onChange={this.handleChange} />*/}
           <input type="text" name="budgetmax" style={{ width: 30 }} value={budgetmax} onChange={this.handleChange} />
           <input type="text" name="budgetmin" style={{ width: 30 }} value={budgetmin} onChange={this.handleChange} />
           <input type="text" name="location" value={location} onChange={this.handleChange} />

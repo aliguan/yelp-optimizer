@@ -234,6 +234,7 @@ module.exports = {
 
     var urls = ['', '', '', '', '', '', ''];
     var locations = ['', '', '', '', '', '', ''];
+    var totalCost = bestCost;
 
     if (bestRating > 0) {
       bestItinerary[0] = allData[0].Event1[iBestItinerary[0]].name + " - $" + allData[0].Event1[iBestItinerary[0]].cost + ", Rating: " + allData[0].Event1[iBestItinerary[0]].rating;
@@ -278,6 +279,7 @@ module.exports = {
       iBestItinerary[4] = -1;
       iBestItinerary[5] = -1;
       iBestItinerary[6] = -1;
+      totalCost = 0;
     }
 
 
@@ -287,6 +289,7 @@ module.exports = {
       bestRating: bestRating,
       bestUrls: urls,
       bestLocations: locations,
+      totalCost: totalCost,
     };
   },
 
