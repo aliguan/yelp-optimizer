@@ -20,8 +20,10 @@ class Userinput extends Component {
       location: 'Orlando',
       resultsArray: [],
       startDate: moment(),
-      savedEvents: [],
-      checked: [0,0,0,0,0,0,0],
+      savedEvents: [], // acutal indices of the user saved events
+      eliminatedEvents: [], // indices of the user eliminated itinerary slots (0-6)
+      checked: [0,0,0,0,0,0,0], // for displaying checked or unchecked in user saved events
+      eliminated: [0,0,0,0,0,0,0], // for displaying checked or unchecked in eliminating itinerary slots
       totalCost: 0,
     };
     this.apiService = new ApiService(this.state.resultsArray);
@@ -29,6 +31,7 @@ class Userinput extends Component {
     this.handleDateChange = this.handleDateChange.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
     this.handleCheckbox = this.handleCheckbox.bind(this);
+    this.handleEliminate = this.handleEliminate.bind(this);
   }
 
   handleChange(e) {
@@ -60,6 +63,27 @@ class Userinput extends Component {
         this.state.savedEvents.splice(index, 1);
         checked[e.target.value] = 0;
         this.setState({ checked: checked });
+      }
+    }
+  }
+
+  handleEliminate(e) {
+    // If the checkbox is checked, add the checkbox index to the states
+    let eliminated = this.state.eliminated.slice();
+    if (e.target.checked) {
+      this.state.eliminatedEvents.push(e.target.value);   // e.target.value should be an integer value
+                                                     // from 0 to 6 inclusive
+      eliminated[e.target.value] = 1;
+      this.setState({ eliminated: eliminated });
+    }
+    // If the checkbox is unchecked, find and remove the checkbox index from the states
+    else {
+      var index = this.state.eliminatedEvents.indexOf(e.target.value); // e.target.value should be an integer value
+                                                                  // from 0 to 6 inclusive
+      if (index > -1) {
+        this.state.eliminatedEvents.splice(index, 1);
+        eliminated[e.target.value] = 0;
+        this.setState({ eliminated: eliminated });
       }
     }
   }
@@ -136,10 +160,11 @@ class Userinput extends Component {
                         // the event data has changed. It doesn't make sense to use the previously
                         // saved events selected by the user.
                         var savedEvents = [];
+                        var eliminatedEvents = [];
                         var bestItineraryIndicesParsed = [];
 
                         // Do optimization to find locally "best" itinerary
-                        var optimItinerary = genAlgo.doGA(data.data, this.state.budgetmax, this.state.budgetmin, savedEvents, bestItineraryIndicesParsed);
+                        var optimItinerary = genAlgo.doGA(data.data, this.state.budgetmax, this.state.budgetmin, savedEvents, eliminatedEvents, bestItineraryIndicesParsed);
 
                         console.log(optimItinerary.bestUrls);
                         console.log(optimItinerary.bestLocations)
@@ -150,9 +175,12 @@ class Userinput extends Component {
                           resultsArray: optimItinerary.bestItinerary,
                           savedEvents: savedEvents,
                           checked: [0,0,0,0,0,0,0], //reset the checkboxes to being unchecked
+                          eliminated: [0,0,0,0,0,0,0], //reset the checkboxes for the eliminated slots
+                          eliminatedEvents: eliminatedEvents,
                           totalCost: optimItinerary.totalCost,
                         });
 
+                        // Save the user saved events into persistent memory client side
                         var prevBestItineraryStr = JSON.stringify(optimItinerary.bestItineraryIndices);
                         myStorage.setItem("prevBestItinerarySavedIndices", prevBestItineraryStr);
 
@@ -188,9 +216,14 @@ class Userinput extends Component {
                             savedEvents = this.state.savedEvents.map(Number);
                           }
 
-                          // Do optimization to find locally "best" itinerary
-                          var optimItinerary = genAlgo.doGA(val, this.state.budgetmax, this.state.budgetmin, savedEvents, bestItineraryIndicesParsed);
+                          // Get which itinerary items/events are eliminated and not used in the GA (ie the user wants the 
+                          // item/event set to "none/free itinerary item")
+                          var eliminatedEvents = this.state.eliminatedEvents.map(Number);
 
+                          // Do optimization to find locally "best" itinerary
+                          var optimItinerary = genAlgo.doGA(val, this.state.budgetmax, this.state.budgetmin, savedEvents, eliminatedEvents,  bestItineraryIndicesParsed);
+
+                          // Save the user saved events into persistent memory client side
                           var prevBestItineraryStr = JSON.stringify(optimItinerary.bestItineraryIndices);
                           myStorage.setItem("prevBestItinerarySavedIndices", prevBestItineraryStr);
 
@@ -218,8 +251,6 @@ class Userinput extends Component {
 
       }
     }
-
-
   }
 
   render() {
@@ -229,7 +260,12 @@ class Userinput extends Component {
     // Only allow check boxes to show up if data can be saved client side
     if (window.indexedDB) {
       for (var i = 0; i < ITINERARY_LENGTH; i++) {
-        indents.push(<div><input checked={this.state.checked[i]} onChange={this.handleCheckbox} type='checkbox' value={i} />{this.state.resultsArray[i]}</div>);
+        indents.push(<div>
+          <input checked={this.state.checked[i]} onChange={this.handleCheckbox} type='checkbox' value={i} />
+          {this.state.resultsArray[i]}
+          <input checked={this.state.eliminated[i]} onChange={this.handleEliminate} type='checkbox' value={i} />
+          <hr></hr>
+          </div>);
       }      
     }
     else {

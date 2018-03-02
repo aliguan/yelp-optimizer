@@ -1,12 +1,19 @@
 module.exports = {
   // categories: breakfast, lunch, dinner, event
-  doGA: function (allData, budgetmax_in, budgetmin_in, savedEvents_in, bestItineraryIndicesSaved_in) {
+  doGA: function (allData, budgetmax_in, budgetmin_in, savedEvents_in, eliminatedEvents_in, bestItineraryIndicesSaved_in) {
 
     console.log("saved events array:")
     console.log(savedEvents_in)
+    console.log("eliminated events array:")
+    console.log(eliminatedEvents_in)
     var savedUserInputs = false;
     if (savedEvents_in.length > 0 && bestItineraryIndicesSaved_in.length > 0) {
       savedUserInputs = true;
+    }
+
+    var eliminateItems = false;
+    if (eliminatedEvents_in.length > 0) {
+      eliminateItems = true;
     }
 
     var itinerarySize = 7;                          // number of things to do in the day
@@ -26,7 +33,7 @@ module.exports = {
     }
 
     // Initialize constants for GA
-    var maxIter = 100 * 2; //100;                              // max iterations
+    var maxIter = 100 * 2+1; //100;                              // max iterations
 
     var elitek = 5; //1                                // number of elite iteneraries passed onto the next generation
     var popSize = 60 + elitek;                      // population size for each generation
@@ -104,6 +111,35 @@ module.exports = {
             }
             else {
               iBestItinerary[6] = bestItineraryIndicesSaved_in[6];
+            }
+          }
+        }
+ 
+        // This portion of code sets the itinerary item slot to always be "none/free itinerary" item if user has checked some of those checkboexes.
+        // This assumes that the "none/free itinerary" item is ALWAYS the last item in the choices from parsedDataAll
+        // The "none/free itinerary" is added in api-router.js in formatAllData function.
+        if (eliminateItems) {
+          for (var ielim = 0; ielim < eliminatedEvents_in.length; ielim++) {
+            if (eliminatedEvents_in[ielim] === 0) {
+              iBestItinerary[0] = numItemsArray[0] - 1;
+            }
+            else if (eliminatedEvents_in[ielim] === 1) {
+              iBestItinerary[1] = numItemsArray[1] - 1;
+            }
+            else if (eliminatedEvents_in[ielim] === 2) {
+              iBestItinerary[2] = numItemsArray[2] - 1;
+            }
+            else if (eliminatedEvents_in[ielim] === 3) {
+              iBestItinerary[3] = numItemsArray[3] - 1;
+            }
+            else if (eliminatedEvents_in[ielim] === 4) {
+              iBestItinerary[4] = numItemsArray[4] - 1;
+            }
+            else if (eliminatedEvents_in[ielim] === 5) {
+              iBestItinerary[5] = numItemsArray[5] - 1;
+            }
+            else {
+              iBestItinerary[6] = numItemsArray[6] - 1;
             }
           }
         }
@@ -198,6 +234,42 @@ module.exports = {
           }
         }
 
+        // This portion of code sets the itinerary item slot to always be "none/free itinerary" item if user has checked some of those checkboexes.
+        // This assumes that the "none/free itinerary" item is ALWAYS the last item in the choices from parsedDataAll
+        // The "none/free itinerary" is added in api-router.js in formatAllData function.
+        if (eliminateItems) {
+          for (var ielim = 0; ielim < eliminatedEvents_in.length; ielim++) {
+            if (eliminatedEvents_in[ielim] === 0) {
+              tempItinerary1[0] = numItemsArray[0] - 1;
+              tempItinerary2[0] = numItemsArray[0] - 1;
+            }
+            else if (eliminatedEvents_in[ielim] === 1) {
+              tempItinerary1[1] = numItemsArray[1] - 1;
+              tempItinerary2[1] = numItemsArray[1] - 1;
+            }
+            else if (eliminatedEvents_in[ielim] === 2) {
+              tempItinerary1[2] = numItemsArray[2] - 1;
+              tempItinerary2[2] = numItemsArray[2] - 1;
+            }
+            else if (eliminatedEvents_in[ielim] === 3) {
+              tempItinerary1[3] = numItemsArray[3] - 1;
+              tempItinerary2[3] = numItemsArray[3] - 1;
+            }
+            else if (eliminatedEvents_in[ielim] === 4) {
+              tempItinerary1[4] = numItemsArray[4] - 1;
+              tempItinerary2[4] = numItemsArray[4] - 1;
+            }
+            else if (eliminatedEvents_in[ielim] === 5) {
+              tempItinerary1[5] = numItemsArray[5] - 1;
+              tempItinerary2[5] = numItemsArray[5] - 1;
+            }
+            else {
+              tempItinerary1[6] = numItemsArray[6] - 1;
+              tempItinerary2[6] = numItemsArray[6] - 1;
+            }
+          }
+        }
+
         // Append newly bred itineraries to current population
         newItineraryPop[popCnt] = [tempItinerary1[0], tempItinerary1[1], tempItinerary1[2], tempItinerary1[3],
         tempItinerary1[4], tempItinerary1[5], tempItinerary1[6]];
@@ -217,7 +289,7 @@ module.exports = {
       allItineraryRatings = bestItineraryObj.allItineraryRatingsOut;
       allItineraryRatingsSum = round2NearestHundredth(bestItineraryObj.allItineraryValSumOut);
 
-      if (i % 50 === 0) {
+      if (i % 100 === 0) {
         console.log("best rating " + i + "th iter: " + bestRating);
         console.log("best cost " + i + "th iter: " + bestCost);
         console.log("pop rating sum: " + i + "th iter: " + allItineraryRatingsSum);
@@ -652,8 +724,8 @@ function getTotalRating(itinerary_in, allData_in) {
   var totalRating = 0;
   var itineraryItemRating = 0;
   var len = itinerary_in.length;
-  var MAX_DTIME_MORNING = 270; // equavilant to 2 hours (set this to something very small to avoid running this logic)
-  var MAX_DTIME_AFTERNOON = 300; // equavilant to 2 hours (set this to something very small to avoid running this logic)
+  var MAX_DTIME_MORNING = 270; // equavilant to 2.5? hours (set this to something very small to avoid running this logic)
+  var MAX_DTIME_AFTERNOON = 300; // equavilant to 3 hours (set this to something very small to avoid running this logic)
   var RATING_SF = 0.75;
 
   for (var i = 0; i < len; i++) {
@@ -698,7 +770,7 @@ function getTotalRating(itinerary_in, allData_in) {
       dtime2 = event3Time - event2Time;
     }
     if (event3Time <= 2400 && event4Time <= 2400) {
-      dtime3 = event3Time - event4Time;
+      dtime3 = event4Time - event3Time;
     }
     if (dtime1 <= MAX_DTIME_MORNING || dtime2 <= MAX_DTIME_AFTERNOON || dtime3 <= MAX_DTIME_AFTERNOON) {
       totalRating = totalRating * RATING_SF;
