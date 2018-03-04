@@ -5,6 +5,7 @@ import DatePicker from 'react-datepicker';
 import moment from 'moment';
 import genAlgo from '../GA.js'
 import idb_keyval from 'idb-keyval'
+import globalStyles from '../App.css'
 
 import 'react-datepicker/dist/react-datepicker.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
@@ -14,10 +15,10 @@ class Userinput extends Component {
     super(props)
 
     this.state = {
-      term: 'Chinese',
-      budgetmax: '140',
-      budgetmin: '35',
-      location: 'Orlando',
+      term: '',
+      budgetmax: '',
+      budgetmin: '',
+      location: '',
       resultsArray: [],
       startDate: moment(),
       savedEvents: [], // acutal indices of the user saved events
@@ -216,7 +217,7 @@ class Userinput extends Component {
                             savedEvents = this.state.savedEvents.map(Number);
                           }
 
-                          // Get which itinerary items/events are eliminated and not used in the GA (ie the user wants the 
+                          // Get which itinerary items/events are eliminated and not used in the GA (ie the user wants the
                           // item/event set to "none/free itinerary item")
                           var eliminatedEvents = this.state.eliminatedEvents.map(Number);
 
@@ -266,7 +267,7 @@ class Userinput extends Component {
           <input checked={this.state.eliminated[i]} onChange={this.handleEliminate} type='checkbox' value={i} />
           <hr></hr>
           </div>);
-      }      
+      }
     }
     else {
       for (var i = 0; i < ITINERARY_LENGTH; i++) {
@@ -279,13 +280,23 @@ class Userinput extends Component {
 
     return (
       <div className="Userinput col-md-6">
-        <form onSubmit={this.handleSubmit}>
-          <DatePicker selected={this.state.startDate} onChange={this.handleDateChange} />
+        <form className="form-card" onSubmit={this.handleSubmit}>
+            <h4 className="background-color form-header">Plan Your Trip</h4>
+            <div className="form-group mb-2">
+                <label for="datePicker"><i class="far fa-calendar-alt fa-2x"></i></label>
+                <DatePicker id="datePicker" className="textInput" selected={this.state.startDate} onChange={this.handleDateChange} />
+            </div>
           {/*<input type="text" name="term" style={{ width: 90 }} value={term} onChange={this.handleChange} />*/}
-          <input type="text" name="budgetmax" style={{ width: 30 }} value={budgetmax} onChange={this.handleChange} />
-          <input type="text" name="budgetmin" style={{ width: 30 }} value={budgetmin} onChange={this.handleChange} />
-          <input type="text" name="location" value={location} onChange={this.handleChange} />
-          <input type="submit" value="Submit" />
+          <div className="form-group mb-2">
+              <label for="location"><i class="far fa-money-bill-alt fa-2x"></i> </label>
+              <input className="max-width textInput" type="text" name="budgetmin" value={budgetmin} onChange={this.handleChange} placeholder="Min" />
+              <input className="max-width textInput" type="text" name="budgetmax" value={budgetmax} onChange={this.handleChange} placeholder="Max" />
+          </div>
+          <div className="form-group mb-2">
+              <label for="location"><i class="far fa-paper-plane fa-2x"></i> </label>
+              <input id="location" className="textInput" type="text" name="location" value={location} onChange={this.handleChange} placeholder="Location" />
+          </div>
+          <input className="btn btn-primary" type="submit" value="GO!" />
         </form>
         <div><br />
 

@@ -29,7 +29,7 @@ class App extends Component {
 
   render() {
     return (
-      <div className="App">
+      <div className="App clearfix background-color">
 
         <GoogleApiWrapper locations={this.state.itinLocations} urls={this.state.itinUrls} center={this.state.center}/>
         <Userinput getData={this.handleData} />
