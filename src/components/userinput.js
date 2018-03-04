@@ -29,6 +29,8 @@ class Userinput extends Component {
       eliminated: [0,0,0,0,0,0,0], // for displaying checked or unchecked in eliminating itinerary slots
       eventFilterFlags: [1,1,1], // ordered left to right: meetup, eventbrite, seatgeek
       totalCost: 0,
+      expanded: true,
+      options: false
     };
     this.apiService = new ApiService(this.state.resultsArray);
     this.handleChange = this.handleChange.bind(this);
@@ -37,6 +39,9 @@ class Userinput extends Component {
     this.handleCheckbox = this.handleCheckbox.bind(this);
     this.handleEliminate = this.handleEliminate.bind(this);
     this.handleFilter = this.handleFilter.bind(this);
+    this.handleExpand = this.handleExpand.bind(this);
+    this.handleMoreOptions= this.handleMoreOptions.bind(this);
+
   }
 
   handleChange(e) {
@@ -107,9 +112,20 @@ class Userinput extends Component {
     }
   }
 
+  handleExpand(e) {
+      this.setState(prevState => ({
+          expanded: !prevState.expanded
+      }));
+  }
+
+  handleMoreOptions(e) {
+      this.setState(prevState => ({
+        options: !prevState.options
+      }));
+  }
+
   handleSubmit(e) {
     e.preventDefault();
-    console.clear();
 
     var myStorage = window.localStorage;
     var doAPICallsFlag = true;
@@ -200,7 +216,12 @@ class Userinput extends Component {
                           eliminated: [0,0,0,0,0,0,0], //reset the checkboxes for the eliminated slots
                           eliminatedEvents: eliminatedEvents,
                           totalCost: optimItinerary.totalCost,
+
                         });
+
+                        this.setState(prevState => ({
+                            expanded: !prevState.expanded
+                        }));
 
                         // Save the user saved events into persistent memory client side
                         var prevBestItineraryStr = JSON.stringify(optimItinerary.bestItineraryIndices);
@@ -262,6 +283,10 @@ class Userinput extends Component {
                             totalCost: optimItinerary.totalCost,
                           });
 
+                          this.setState(prevState => ({
+                              expanded: !prevState.expanded
+                          }));
+
                         }
                         );
                       }
@@ -279,6 +304,24 @@ class Userinput extends Component {
   }
 
   render() {
+    var formStyles = ['form-body'];
+    var optionStyles = ['more-options'];
+
+    if(this.state.resultsArray.length > 0 || this.state.expanded == false) {
+        formStyles.push('hidden');
+    }
+
+    if(this.state.resultsArray.length > 0 && this.state.expanded == true) {
+         formStyles = ['form-body'];
+    }
+
+    if(this.state.options == false) {
+        optionStyles.push('hidden');
+    }  else {
+        optionStyles = ['more-options'];
+    }
+
+
     var ITINERARY_LENGTH = this.state.resultsArray.length;
     const { term, budgetmax, budgetmin, location } = this.state;
     var indents = [];
@@ -300,13 +343,14 @@ class Userinput extends Component {
     }
     indents.push(<div><b>Total Cost: ${this.state.totalCost} </b></div>)
 
+    var options = [];
     const NUM_EVENT_APIS = 3;
     var filters = [];
     var filterNames =["Meetup","Eventbrite","Seatgeek"];
     for (var i = 0; i < NUM_EVENT_APIS; i++) {
-      indents.push(<div>
+      options.push(<li>
         <input checked={this.state.eventFilterFlags[i]} onChange={this.handleFilter} type='checkbox' value={i} />{filterNames[i]}
-        </div>);
+        </li>);
     }
 
 
@@ -314,22 +358,46 @@ class Userinput extends Component {
       <div className="Userinput col-md-6">
         <form className="form-card" onSubmit={this.handleSubmit}>
             <h4 className="background-color form-header">Plan Your Trip</h4>
-            <div className="form-group mb-2">
-                <label for="datePicker"><i class="far fa-calendar-alt fa-2x"></i></label>
-                <DatePicker id="datePicker" className="textInput" selected={this.state.startDate} onChange={this.handleDateChange} />
+            <div className={ formStyles.join(' ') }>
+                <div className="form-group mb-2">
+                    <label htmlFor="datePicker"><i className="far fa-calendar-alt fa-2x"></i></label>
+                    <DatePicker required id="datePicker" className="textInput" selected={this.state.startDate} onChange={this.handleDateChange} />
+                </div>
+              {/*<input type="text" name="term" style={{ width: 90 }} value={term} onChange={this.handleChange} />*/}
+              <div className="form-group mb-2">
+                  <label htmlFor="budget"><i className="far fa-money-bill-alt fa-2x"></i> </label>
+                  <input required className="max-width textInput" type="number" name="budgetmin" value={budgetmin} onChange={this.handleChange} placeholder="Min" />
+                  <input required className="max-width textInput" type="number" name="budgetmax" value={budgetmax} onChange={this.handleChange} placeholder="Max" />
+              </div>
+              <div className="form-group mb-2">
+                  <label htmlFor="location"><i className="far fa-paper-plane fa-2x"></i> </label>
+                  <input required id="location" className="textInput" type="text" name="location" value={location} onChange={this.handleChange} placeholder="Location" />
+              </div>
+
+              <div className="results">
+                  <a href="javascript:void(0)" onClick={this.handleMoreOptions}> { this.state.options == false ? 'More Options' : 'Less Options' } <i className="fas fa-sort-down"></i></a>
+              </div>
+
+              <div className={ optionStyles.join(' ')}>
+
+                  <h5>Include results from: </h5>
+                  <ul className="options">
+                      {options}
+                  </ul>
+              </div>
             </div>
-          {/*<input type="text" name="term" style={{ width: 90 }} value={term} onChange={this.handleChange} />*/}
-          <div className="form-group mb-2">
-              <label for="location"><i class="far fa-money-bill-alt fa-2x"></i> </label>
-              <input className="max-width textInput" type="text" name="budgetmin" value={budgetmin} onChange={this.handleChange} placeholder="Min" />
-              <input className="max-width textInput" type="text" name="budgetmax" value={budgetmax} onChange={this.handleChange} placeholder="Max" />
-          </div>
-          <div className="form-group mb-2">
-              <label for="location"><i class="far fa-paper-plane fa-2x"></i> </label>
-              <input id="location" className="textInput" type="text" name="location" value={location} onChange={this.handleChange} placeholder="Location" />
-          </div>
-          <input className="btn btn-primary" type="submit" value="GO!" />
+
+
+
+            <input className="btn btn-primary btn-md go-btn" type="submit" value={ this.state.expanded == true ? 'GO!' : 'Find Again' } />
+                <div className="results">
+                    <p>
+                        <a href="javascript:void(0)" onClick={this.handleExpand}> { this.state.expanded == true ? '' : 'Change Search' }
+                    </a>
+                </p>
+              </div>
         </form>
+
         <div><br />
 
             {indents}
@@ -540,7 +608,7 @@ function processAPIDataForGA(events_in, eventFilterFlags_in) {
     if (yelpEventsGlobal.Event4.length > 1) {
       events.Event4 = events.Event4.concat(yelpEventsGlobal.Event4);
     }
-    
+
   }
   if (doEventbriteCalls) {
     if (eventbriteGlobal.Event1.length > 1) {

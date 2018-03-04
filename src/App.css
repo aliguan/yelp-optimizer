@@ -77,6 +77,41 @@
     margin: 10px;
 }
 
+.go-btn {
+    width: 100%;
+    margin-top: 2rem;
+}
+
+.results {
+    text-align: center;
+    margin-top: 1rem;
+}
+
+.results p {
+    margin-bottom: 0;
+}
+
+.results a {
+    color: grey;
+}
+
+.hidden {
+    display: none !important;
+}
+
+.more-options {
+    margin-top: 2rem;
+}
+
+.options {
+    padding: 0;
+}
+.options li {
+    list-style-type: none;
+    display: inline-block;
+    width: calc(100%/3);
+}
+
 @keyframes App-logo-spin {
   from { transform: rotate(0deg); }
   to { transform: rotate(360deg); }
