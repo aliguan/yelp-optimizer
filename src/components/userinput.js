@@ -10,6 +10,8 @@ import globalStyles from '../App.css'
 import 'react-datepicker/dist/react-datepicker.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
 
+
+
 class Userinput extends Component {
   constructor(props) {
     super(props)
@@ -25,6 +27,7 @@ class Userinput extends Component {
       eliminatedEvents: [], // indices of the user eliminated itinerary slots (0-6)
       checked: [0,0,0,0,0,0,0], // for displaying checked or unchecked in user saved events
       eliminated: [0,0,0,0,0,0,0], // for displaying checked or unchecked in eliminating itinerary slots
+      eventFilterFlags: [1,1,1], // ordered left to right: meetup, eventbrite, seatgeek
       totalCost: 0,
     };
     this.apiService = new ApiService(this.state.resultsArray);
@@ -33,6 +36,7 @@ class Userinput extends Component {
     this.handleSubmit = this.handleSubmit.bind(this);
     this.handleCheckbox = this.handleCheckbox.bind(this);
     this.handleEliminate = this.handleEliminate.bind(this);
+    this.handleFilter = this.handleFilter.bind(this);
   }
 
   handleChange(e) {
@@ -45,6 +49,20 @@ class Userinput extends Component {
     this.setState({
       startDate: e
     });
+  }
+
+  handleFilter(e) {
+    // If the checkbox is checked, add the checkbox index to the states
+    let eventFilterFlags = this.state.eventFilterFlags.slice();
+    if (e.target.checked) {
+      eventFilterFlags[e.target.value] = 1;
+      this.setState({ eventFilterFlags: eventFilterFlags });
+    }
+    // If the checkbox is unchecked, find and remove the checkbox index from the states
+    else {
+      eventFilterFlags[e.target.value] = 0;
+      this.setState({ eventFilterFlags: eventFilterFlags });
+    }
   }
 
   handleCheckbox(e) {
@@ -164,8 +182,11 @@ class Userinput extends Component {
                         var eliminatedEvents = [];
                         var bestItineraryIndicesParsed = [];
 
+                        // Preprocess data for genetic algo
+                        var dataForGA = processAPIDataForGA(data.data, this.state.eventFilterFlags);
+
                         // Do optimization to find locally "best" itinerary
-                        var optimItinerary = genAlgo.doGA(data.data, this.state.budgetmax, this.state.budgetmin, savedEvents, eliminatedEvents, bestItineraryIndicesParsed);
+                        var optimItinerary = genAlgo.doGA(dataForGA, this.state.budgetmax, this.state.budgetmin, savedEvents, eliminatedEvents, bestItineraryIndicesParsed);
 
                         console.log(optimItinerary.bestUrls);
                         console.log(optimItinerary.bestLocations)
@@ -221,8 +242,11 @@ class Userinput extends Component {
                           // item/event set to "none/free itinerary item")
                           var eliminatedEvents = this.state.eliminatedEvents.map(Number);
 
+                          // Preprocess data for genetic algo
+                          var dataForGA = processAPIDataForGA(val, this.state.eventFilterFlags);
+
                           // Do optimization to find locally "best" itinerary
-                          var optimItinerary = genAlgo.doGA(val, this.state.budgetmax, this.state.budgetmin, savedEvents, eliminatedEvents,  bestItineraryIndicesParsed);
+                          var optimItinerary = genAlgo.doGA(dataForGA, this.state.budgetmax, this.state.budgetmin, savedEvents, eliminatedEvents,  bestItineraryIndicesParsed);
 
                           // Save the user saved events into persistent memory client side
                           var prevBestItineraryStr = JSON.stringify(optimItinerary.bestItineraryIndices);
@@ -276,6 +300,14 @@ class Userinput extends Component {
     }
     indents.push(<div><b>Total Cost: ${this.state.totalCost} </b></div>)
 
+    const NUM_EVENT_APIS = 3;
+    var filters = [];
+    var filterNames =["Meetup","Eventbrite","Seatgeek"];
+    for (var i = 0; i < NUM_EVENT_APIS; i++) {
+      indents.push(<div>
+        <input checked={this.state.eventFilterFlags[i]} onChange={this.handleFilter} type='checkbox' value={i} />{filterNames[i]}
+        </div>);
+    }
 
 
     return (
@@ -303,6 +335,10 @@ class Userinput extends Component {
             {indents}
 
         </div>
+
+        <div>
+
+          </div>
       </div>
 
     )
@@ -429,6 +465,217 @@ function xHoursPassed(currentDateTimeMoment, locallyStoredDateTimeStr, elapsedHo
   var locStoredDateTimePlusXHours = moment(locallyStoredDateTimeStr).add(elapsedHours, 'hours');
   return currentDateTimeMoment.isAfter(locStoredDateTimePlusXHours.format());
 }
+
+
+function processAPIDataForGA(events_in, eventFilterFlags_in) {
+  var meetupItemsGlobal = events_in.meetupItemsGlobal;
+  var yelpEventsGlobal = events_in.yelpEventsGlobal;
+  var eventbriteGlobal = events_in.eventbriteGlobal;
+  var seatgeekItemsGlobal = events_in.seatgeekItemsGlobal;
+  var yelpBreakfastItemsGlobal = events_in.yelpBreakfastItemsGlobal;
+  var yelpLunchItemsGlobal = events_in.yelpLunchItemsGlobal;
+  var yelpDinnerItemsGlobal = events_in.yelpDinnerItemsGlobal;
+
+  var numMeetupEvents = meetupItemsGlobal.Event1.length +
+    meetupItemsGlobal.Event2.length +
+    meetupItemsGlobal.Event3.length +
+    meetupItemsGlobal.Event4.length;
+
+  var numYelpEvents = yelpEventsGlobal.Event1.length +
+  yelpEventsGlobal.Event2.length +
+  yelpEventsGlobal.Event3.length +
+  yelpEventsGlobal.Event4.length;
+
+  var numEventbriteEvents = eventbriteGlobal.Event1.length +
+  eventbriteGlobal.Event2.length +
+  eventbriteGlobal.Event3.length +
+  eventbriteGlobal.Event4.length;
+
+  var numSeatgeekEvents = seatgeekItemsGlobal.Event1.length +
+  seatgeekItemsGlobal.Event2.length +
+  seatgeekItemsGlobal.Event3.length +
+  seatgeekItemsGlobal.Event4.length;
+
+  console.log("num meetup events: " + numMeetupEvents);
+  console.log("num yelp events: " + numYelpEvents);
+  console.log("num eb events: " + numEventbriteEvents);
+  console.log("num sg events: " + numSeatgeekEvents);
+
+  var doMeetupCalls = eventFilterFlags_in[0];
+  var doYelpEventCalls = false;
+  var doEventbriteCalls = eventFilterFlags_in[1];
+  var doSeatgeekCalls = eventFilterFlags_in[2];
+
+  var events= {
+    Event1: [],
+    Event2: [],
+    Event3: [],
+    Event4: [],
+  }
+
+  if (doMeetupCalls) {
+    if (meetupItemsGlobal.Event1.length > 1) {
+      events.Event1 = events.Event1.concat(meetupItemsGlobal.Event1);
+    }
+    if (meetupItemsGlobal.Event2.length > 1) {
+      events.Event2 = events.Event2.concat(meetupItemsGlobal.Event2);
+    }
+    if (meetupItemsGlobal.Event3.length > 1) {
+      events.Event3 = events.Event3.concat(meetupItemsGlobal.Event3);
+    }
+    if (meetupItemsGlobal.Event4.length > 1) {
+      events.Event4 = events.Event4.concat(meetupItemsGlobal.Event4);
+    }
+  }
+  if (doYelpEventCalls) {
+    if (yelpEventsGlobal.Event1.length > 1) {
+      events.Event1 = events.Event1.concat(yelpEventsGlobal.Event1);
+    }
+    if (yelpEventsGlobal.Event2.length > 1) {
+      events.Event2 = events.Event2.concat(yelpEventsGlobal.Event2);
+    }
+    if (yelpEventsGlobal.Event3.length > 1) {
+      events.Event3 = events.Event3.concat(yelpEventsGlobal.Event3);
+    }
+    if (yelpEventsGlobal.Event4.length > 1) {
+      events.Event4 = events.Event4.concat(yelpEventsGlobal.Event4);
+    }
+    
+  }
+  if (doEventbriteCalls) {
+    if (eventbriteGlobal.Event1.length > 1) {
+      events.Event1 = events.Event1.concat(eventbriteGlobal.Event1);
+    }
+    if (eventbriteGlobal.Event2.length > 1) {
+      events.Event2 = events.Event2.concat(eventbriteGlobal.Event2);
+    }
+    if (eventbriteGlobal.Event3.length > 1) {
+      events.Event3 = events.Event3.concat(eventbriteGlobal.Event3);
+    }
+    if (eventbriteGlobal.Event4.length > 1) {
+      events.Event4 = events.Event4.concat(eventbriteGlobal.Event4);
+    }
+  }
+  if (doSeatgeekCalls) {
+    if (seatgeekItemsGlobal.Event1.length > 1) {
+      events.Event1 = events.Event1.concat(seatgeekItemsGlobal.Event1);
+    }
+    if (seatgeekItemsGlobal.Event2.length > 1) {
+      events.Event2 = events.Event2.concat(seatgeekItemsGlobal.Event2);
+    }
+    if (seatgeekItemsGlobal.Event3.length > 1) {
+      events.Event3 = events.Event3.concat(seatgeekItemsGlobal.Event3);
+    }
+    if (seatgeekItemsGlobal.Event4.length > 1) {
+      events.Event4 = events.Event4.concat(seatgeekItemsGlobal.Event4);
+    }
+  }
+
+  var itineraries = formatAllData(yelpBreakfastItemsGlobal,
+    yelpLunchItemsGlobal,
+    yelpDinnerItemsGlobal,
+    events);
+
+    return itineraries;
+}
+
+
+// Format all data
+function formatAllData(yelpBreakfastItems, yelpLunchItems, yelpDinnerItems, events) {
+  const noneItem = {
+    name: "None/Free Itinerary Slot",
+    cost: 0,
+    rating: 4.4,
+    time: "9999",
+    location: {},
+  }
+  const noneItemEvent = {
+    name: "None/Free Itinerary Slot",
+    cost: 0,
+    rating: 10.5,
+    time: "9999",
+    location: {},
+  }
+
+  try {
+      var numYelpBreakfastItems = yelpBreakfastItems.length;
+      var numYelpLunchItems = yelpLunchItems.length;
+      var numYelpDinnerItems = yelpDinnerItems.length;
+      var numEvent1 = events.Event1.length;
+      var numEvent2 = events.Event2.length;
+      var numEvent3 = events.Event3.length;
+      var numEvent4 = events.Event4.length;
+      console.log("numYelpBreakfastItems: " + numYelpBreakfastItems)
+      console.log("numYelpLunchItems: " + numYelpLunchItems)
+      console.log("numYelpDinnerItems: " + numYelpDinnerItems)
+      console.log("events1: " + numEvent1)
+      console.log("events2: " + numEvent2)
+      console.log("events3: " + numEvent3)
+      console.log("events4: " + numEvent4)
+      var itineraries = [];
+
+      if (numYelpBreakfastItems >= 0 &&
+          numYelpLunchItems >= 0 &&
+          numYelpDinnerItems >= 0 &&
+          numEvent1 >= 0 &&
+          numEvent2 >= 0 &&
+          numEvent3 >= 0 &&
+          numEvent4 >= 0) {
+          var items;
+          var key;
+          for (var i = 0; i < 7; i++) {
+              if (i === 0) {
+                  key = 'Event1';
+                  items = events.Event1;
+                  items.push(noneItemEvent);
+              } else if (i === 2) {
+                  key = 'Event2';
+                  items = events.Event2;
+                  items.push(noneItemEvent);
+              } else if (i === 4) {
+                  key = 'Event3';
+                  items = events.Event3;
+                  items.push(noneItemEvent);
+              } else if (i === 6) {
+                  key = 'Event4';
+                  items = events.Event4;
+                  items.push(noneItemEvent);
+              } else if (i === 1) {
+                  key = 'Breakfast';
+                  var tempYelpItems = yelpBreakfastItems;
+                  // Add a none itinerary item at the end
+                  tempYelpItems.push(noneItem);
+                  items = tempYelpItems;
+              } else if (i === 3) {
+                  key = 'Lunch';
+                  var tempYelpItems = yelpLunchItems;
+                  // Add a none itinerary item at the end
+                  tempYelpItems.push(noneItem);
+                  items = tempYelpItems;
+              } else {
+                  key = 'Dinner';
+                  var tempYelpItems = yelpDinnerItems;
+                  // Add a none itinerary item at the end
+                  tempYelpItems.push(noneItem);
+                  items = tempYelpItems;
+              }
+              var itemObj = {};
+              itemObj[key] = items;
+              itineraries.push(itemObj);
+          }
+          return itineraries;
+      } else {
+          console.log("Not enough items")
+          return -1;
+      }
+  }
+  catch (e) {
+      console.log('error in formatAllData')
+      console.log(e)
+  }
+}
+
+
 
 Userinput.propTypes = {}
 
