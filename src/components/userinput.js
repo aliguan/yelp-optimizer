@@ -472,6 +472,7 @@ function processAPIDataForGA(events_in, eventFilterFlags_in) {
   var yelpEventsGlobal = events_in.yelpEventsGlobal;
   var eventbriteGlobal = events_in.eventbriteGlobal;
   var seatgeekItemsGlobal = events_in.seatgeekItemsGlobal;
+  var googlePlacesGlobal = events_in.googlePlacesGlobal;
   var yelpBreakfastItemsGlobal = events_in.yelpBreakfastItemsGlobal;
   var yelpLunchItemsGlobal = events_in.yelpLunchItemsGlobal;
   var yelpDinnerItemsGlobal = events_in.yelpDinnerItemsGlobal;
@@ -482,24 +483,30 @@ function processAPIDataForGA(events_in, eventFilterFlags_in) {
     meetupItemsGlobal.Event4.length;
 
   var numYelpEvents = yelpEventsGlobal.Event1.length +
-  yelpEventsGlobal.Event2.length +
-  yelpEventsGlobal.Event3.length +
-  yelpEventsGlobal.Event4.length;
+    yelpEventsGlobal.Event2.length +
+    yelpEventsGlobal.Event3.length +
+    yelpEventsGlobal.Event4.length;
 
   var numEventbriteEvents = eventbriteGlobal.Event1.length +
-  eventbriteGlobal.Event2.length +
-  eventbriteGlobal.Event3.length +
-  eventbriteGlobal.Event4.length;
+    eventbriteGlobal.Event2.length +
+    eventbriteGlobal.Event3.length +
+    eventbriteGlobal.Event4.length;
 
   var numSeatgeekEvents = seatgeekItemsGlobal.Event1.length +
-  seatgeekItemsGlobal.Event2.length +
-  seatgeekItemsGlobal.Event3.length +
-  seatgeekItemsGlobal.Event4.length;
+    seatgeekItemsGlobal.Event2.length +
+    seatgeekItemsGlobal.Event3.length +
+    seatgeekItemsGlobal.Event4.length;
+
+  var numGooglePlaces = googlePlacesGlobal.Event1.length +
+    googlePlacesGlobal.Event2.length +
+    googlePlacesGlobal.Event3.length +
+    googlePlacesGlobal.Event4.length;
 
   console.log("num meetup events: " + numMeetupEvents);
   console.log("num yelp events: " + numYelpEvents);
   console.log("num eb events: " + numEventbriteEvents);
   console.log("num sg events: " + numSeatgeekEvents);
+  console.log("num goog places: " + numGooglePlaces);
 
   var doMeetupCalls = eventFilterFlags_in[0];
   var doYelpEventCalls = false;
@@ -570,6 +577,22 @@ function processAPIDataForGA(events_in, eventFilterFlags_in) {
       events.Event4 = events.Event4.concat(seatgeekItemsGlobal.Event4);
     }
   }
+
+  // Google places
+  if (googlePlacesGlobal.Event1.length > 1) {
+    events.Event1 = events.Event1.concat(googlePlacesGlobal.Event1);
+  }
+  if (googlePlacesGlobal.Event2.length > 1) {
+    events.Event2 = events.Event2.concat(googlePlacesGlobal.Event2);
+  }
+  if (googlePlacesGlobal.Event3.length > 1) {
+    events.Event3 = events.Event3.concat(googlePlacesGlobal.Event3);
+  }
+  if (googlePlacesGlobal.Event4.length > 1) {
+    events.Event4 = events.Event4.concat(googlePlacesGlobal.Event4);
+  }
+
+
 
   var itineraries = formatAllData(yelpBreakfastItemsGlobal,
     yelpLunchItemsGlobal,
