@@ -283,10 +283,6 @@ class Userinput extends Component {
                             totalCost: optimItinerary.totalCost,
                           });
 
-                          this.setState(prevState => ({
-                              expanded: !prevState.expanded
-                          }));
-
                         }
                         );
                       }
@@ -386,8 +382,6 @@ class Userinput extends Component {
                   </ul>
               </div>
             </div>
-
-
 
             <input className="btn btn-primary btn-md go-btn" type="submit" value={ this.state.expanded == true ? 'GO!' : 'Find Again' } />
                 <div className="results">
