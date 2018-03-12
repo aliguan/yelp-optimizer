@@ -26,28 +26,33 @@
     background-color: rgb(246, 249, 250);
 }
 
-.max-width {
-    width: 85px;
-    padding-left: 1 rem;
-}
 
 .create-inline {
     display: inline;
 }
 
+.Userinput {
+    padding: 25px;
+}
+
 .textInput {
-    background-color: #f9fafa;
-    border-color: #d4d9dd;
+    background-color: rgba(255, 255, 255, 0.3);
     transition: .2s;
     margin: 0;
-    font-size: 1rem;
-    padding: .75rem 1rem;
+    font-size: 18px;
+    padding: 0.75rem 1rem;
     outline: none;
-    border: 2px solid #d4d9dd;
-    border-radius: 4px;
-    box-shadow: 0;
-    box-sizing: border-box;
-    color: #40484a;
+    line-height: 2;
+    color: white!important;
+    -webkit-font-smoothing: antialiased;
+    font-weight: bold;
+    border: none;
+    width: 100%;
+}
+
+.textInput::placeholder {
+    color: white;
+    font-weight: bold
 }
 
 .submitButton {
@@ -56,20 +61,22 @@
 }
 
 .form-card {
-    padding: 30px;
-    border-radius: 5px;
-    background: white;
+    padding: 20px;
+    /* background: #007bff; */
+    background-color: #2e93ff;
     text-align: left;
     box-shadow: 0px 2px 5px rgba(0,0,0,0.15);
 }
 
 .form-header {
-    background-color: #007bff;
+    /* background-color: #007bff; */
+    background-color: #2e93ff;
     border-radius: 5px 5px 0 0;
     text-align: center;
-    font-weight: 500;
-    padding: 20px;
-    margin: -30px -30px 30px;
+    font-weight: 700;
+    font-size: 1.8rem;
+    padding: 20px 0 10px 0;
+    margin: -20px -20px 5px;
     color: white;
 }
 
@@ -79,7 +86,12 @@
 
 .go-btn {
     width: 100%;
-    margin-top: 2rem;
+    margin-top: 1rem;
+    color: white!important;
+    font-size: 1.3rem!important;
+    font-weight: bold!important;
+    background-color: #ee6774!important;
+    border-color: #ee6774!important;
 }
 
 .results {
@@ -92,7 +104,10 @@
 }
 
 .results a {
-    color: grey;
+    color: white;
+}
+.results a:hover {
+    color: white;
 }
 
 .hidden {
@@ -110,6 +125,10 @@
     list-style-type: none;
     display: inline-block;
     width: calc(100%/3);
+}
+
+.budget {
+    margin-top: 2.3rem;
 }
 
 @keyframes App-logo-spin {

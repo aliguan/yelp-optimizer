@@ -356,18 +356,19 @@ class Userinput extends Component {
             <h4 className="background-color form-header">Plan Your Trip</h4>
             <div className={ formStyles.join(' ') }>
                 <div className="form-group mb-2">
-                    <label htmlFor="datePicker"><i className="far fa-calendar-alt fa-2x"></i></label>
+                    <label htmlFor="location"> </label>
+                    <input required id="location" className="textInput" type="text" name="location" value={location} onChange={this.handleChange} placeholder="Where are you going?" />
+                </div>
+
+                <div className="form-group mb-2">
+                    <label htmlFor="datePicker"></label>
                     <DatePicker required id="datePicker" className="textInput" selected={this.state.startDate} onChange={this.handleDateChange} />
                 </div>
               {/*<input type="text" name="term" style={{ width: 90 }} value={term} onChange={this.handleChange} />*/}
-              <div className="form-group mb-2">
-                  <label htmlFor="budget"><i className="far fa-money-bill-alt fa-2x"></i> </label>
-                  <input required className="max-width textInput" type="number" name="budgetmin" value={budgetmin} onChange={this.handleChange} placeholder="Min" />
-                  <input required className="max-width textInput" type="number" name="budgetmax" value={budgetmax} onChange={this.handleChange} placeholder="Max" />
-              </div>
-              <div className="form-group mb-2">
-                  <label htmlFor="location"><i className="far fa-paper-plane fa-2x"></i> </label>
-                  <input required id="location" className="textInput" type="text" name="location" value={location} onChange={this.handleChange} placeholder="Location" />
+              <div className="form-group mb-2 budget">
+                  <label htmlFor="budget"></label>
+                  <input required className="col-md-5 textInput" type="number" name="budgetmin" value={budgetmin} onChange={this.handleChange} placeholder="$ Min" />
+                  <input required className="offset-md-2 col-md-5 textInput" type="number" name="budgetmax" value={budgetmax} onChange={this.handleChange} placeholder="$ Max" />
               </div>
 
               <div className="results">
@@ -383,7 +384,7 @@ class Userinput extends Component {
               </div>
             </div>
 
-            <input className="btn btn-primary btn-md go-btn" type="submit" value={ this.state.expanded == true ? 'GO!' : 'Find Again' } />
+            <input className="btn btn-danger btn-md go-btn" type="submit" value={ this.state.expanded == true ? 'GO!' : 'Find Again' } />
                 <div className="results">
                     <p>
                         <a href="javascript:void(0)" onClick={this.handleExpand}> { this.state.expanded == true ? '' : 'Change Search' }
