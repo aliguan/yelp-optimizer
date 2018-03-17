@@ -220,7 +220,6 @@ class Userinput extends Component {
                           eliminated: [0, 0, 0, 0, 0, 0, 0], //reset the checkboxes for the eliminated slots
                           eliminatedEvents: eliminatedEvents,
                           totalCost: optimItinerary.totalCost,
-
                         });
 
                         this.setState(prevState => ({
@@ -285,30 +284,44 @@ class Userinput extends Component {
                           // Do optimization to find locally "best" itinerary
                           var optimItinerary = genAlgo.doGA(dataForGA, this.state.budgetmax, this.state.budgetmin, eliminatedEvents);
 
-                          // Save the user saved events into persistent memory client side
-                          var prevBestItineraryObjs = JSON.stringify({
-                            Event1: dataForGA[0].Event1[optimItinerary.bestItineraryIndices[0]],
-                            Breakfast: dataForGA[1].Breakfast[optimItinerary.bestItineraryIndices[1]],
-                            Event2: dataForGA[2].Event2[optimItinerary.bestItineraryIndices[2]],
-                            Lunch: dataForGA[3].Lunch[optimItinerary.bestItineraryIndices[3]],
-                            Event3: dataForGA[4].Event3[optimItinerary.bestItineraryIndices[4]],
-                            Dinner: dataForGA[5].Dinner[optimItinerary.bestItineraryIndices[5]],
-                            Event4: dataForGA[6].Event4[optimItinerary.bestItineraryIndices[6]],
-                          });
+                          if (optimItinerary.bestItineraryIndices[0] === -1) { // No itinerary was found/ error occurred
+                            // reset stuff
+                            this.setState({
+                              resultsArray: optimItinerary.bestItinerary,
+                              checked: [0, 0, 0, 0, 0, 0, 0], //reset the checkboxes to being unchecked
+                              eliminated: [0, 0, 0, 0, 0, 0, 0], //reset the checkboxes for the eliminated slots                              
+                              totalCost: optimItinerary.totalCost,
+                              savedEvents: [],
+                              eliminatedEvents: [],
+                              totalCost: 0,                              
+                            });
+                          }
+                          else {
+                            // Save the user saved events into persistent memory client side
+                            var prevBestItineraryObjs = JSON.stringify({
+                              Event1: dataForGA[0].Event1[optimItinerary.bestItineraryIndices[0]],
+                              Breakfast: dataForGA[1].Breakfast[optimItinerary.bestItineraryIndices[1]],
+                              Event2: dataForGA[2].Event2[optimItinerary.bestItineraryIndices[2]],
+                              Lunch: dataForGA[3].Lunch[optimItinerary.bestItineraryIndices[3]],
+                              Event3: dataForGA[4].Event3[optimItinerary.bestItineraryIndices[4]],
+                              Dinner: dataForGA[5].Dinner[optimItinerary.bestItineraryIndices[5]],
+                              Event4: dataForGA[6].Event4[optimItinerary.bestItineraryIndices[6]],
+                            });
 
-                          var prevBestItineraryStr = JSON.stringify(optimItinerary.bestItineraryIndices);
-                          myStorage.setItem("prevBestItinerarySavedIndices", prevBestItineraryStr);
-                          myStorage.setItem("prevBestItinerarySavedObjects", prevBestItineraryObjs);
+                            var prevBestItineraryStr = JSON.stringify(optimItinerary.bestItineraryIndices);
+                            myStorage.setItem("prevBestItinerarySavedIndices", prevBestItineraryStr);
+                            myStorage.setItem("prevBestItinerarySavedObjects", prevBestItineraryObjs);
 
-                          console.log(optimItinerary.bestUrls)
-                          console.log(optimItinerary.bestLocations)
-                          this.props.getData(optimItinerary.bestLocations, optimItinerary.bestUrls, mapCenter);
+                            console.log(optimItinerary.bestUrls)
+                            console.log(optimItinerary.bestLocations)
+                            this.props.getData(optimItinerary.bestLocations, optimItinerary.bestUrls, mapCenter);
 
-                          // Set the state in this component and re-render
-                          this.setState({
-                            resultsArray: optimItinerary.bestItinerary,
-                            totalCost: optimItinerary.totalCost,
-                          });
+                            // Set the state in this component and re-render
+                            this.setState({
+                              resultsArray: optimItinerary.bestItinerary,
+                              totalCost: optimItinerary.totalCost,
+                            });
+                          }
 
                         }
                         );
