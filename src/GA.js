@@ -1,15 +1,12 @@
 module.exports = {
   // categories: breakfast, lunch, dinner, event
-  doGA: function (allData, budgetmax_in, budgetmin_in, savedEvents_in, eliminatedEvents_in, bestItineraryIndicesSaved_in) {
+  doGA: function (allData, budgetmax_in, budgetmin_in, eliminatedEvents_in) {
 
-    console.log("saved events array:")
-    console.log(savedEvents_in)
+
     console.log("eliminated events array:")
     console.log(eliminatedEvents_in)
-    var savedUserInputs = false;
-    if (savedEvents_in.length > 0 && bestItineraryIndicesSaved_in.length > 0) {
-      savedUserInputs = true;
-    }
+    console.log(allData)  
+
 
     var eliminateItems = false;
     if (eliminatedEvents_in.length > 0) {
@@ -68,8 +65,6 @@ module.exports = {
 
     // Create first population to initialize GA
     itineraryPopulation = this.initializePopulation(popSize, itinerarySize, numItemsArray);
-    //console.log("Initial Population:")
-    //console.log(itineraryPopulation);
     console.log("----gen algo start----")
 
     // Find the "fittest" itinerary and return some itinerary stats
@@ -86,35 +81,6 @@ module.exports = {
 
       // Populate with the elite itineraries first
       for (var j = 0; j < elitek; j++) {
-
-        // Save certain itinerary events/items based on user input
-        if (savedUserInputs) {
-          for (var isaved = 0; isaved < savedEvents_in.length; isaved++) {
-
-            if (savedEvents_in[isaved] === 0) {
-              iBestItinerary[0] = bestItineraryIndicesSaved_in[0];
-            }
-            else if (savedEvents_in[isaved] === 1) {
-              iBestItinerary[1] = bestItineraryIndicesSaved_in[1];
-            }
-            else if (savedEvents_in[isaved] === 2) {
-              iBestItinerary[2] = bestItineraryIndicesSaved_in[2];
-            }
-            else if (savedEvents_in[isaved] === 3) {
-              iBestItinerary[3] = bestItineraryIndicesSaved_in[3];
-            }
-            else if (savedEvents_in[isaved] === 4) {
-              iBestItinerary[4] = bestItineraryIndicesSaved_in[4];
-            }
-            else if (savedEvents_in[isaved] === 5) {
-              iBestItinerary[5] = bestItineraryIndicesSaved_in[5];
-            }
-            else {
-              iBestItinerary[6] = bestItineraryIndicesSaved_in[6];
-            }
-          }
-        }
- 
         // This portion of code sets the itinerary item slot to always be "none/free itinerary" item if user has checked some of those checkboexes.
         // This assumes that the "none/free itinerary" item is ALWAYS the last item in the choices from parsedDataAll
         // The "none/free itinerary" is added in api-router.js in formatAllData function.
@@ -151,8 +117,6 @@ module.exports = {
         iBestItinerary[4],
         iBestItinerary[5],
         iBestItinerary[6]];
-
-
 
         popCnt = popCnt + 1;
       }
@@ -199,41 +163,6 @@ module.exports = {
           tempItinerary2 = mutate(tempItinerary2, numItemsArray);
         }
 
-        // Save certain itinerary events/items based on user input
-        if (savedUserInputs) {
-          for (var isaved = 0; isaved < savedEvents_in.length; isaved++) {
-
-            if (savedEvents_in[isaved] === 0) {
-              tempItinerary1[0] = bestItineraryIndicesSaved_in[0];
-              tempItinerary2[0] = bestItineraryIndicesSaved_in[0];
-            }
-            else if (savedEvents_in[isaved] === 1) {
-              tempItinerary1[1] = bestItineraryIndicesSaved_in[1];
-              tempItinerary2[1] = bestItineraryIndicesSaved_in[1];
-            }
-            else if (savedEvents_in[isaved] === 2) {
-              tempItinerary1[2] = bestItineraryIndicesSaved_in[2];
-              tempItinerary2[2] = bestItineraryIndicesSaved_in[2];
-            }
-            else if (savedEvents_in[isaved] === 3) {
-              tempItinerary1[3] = bestItineraryIndicesSaved_in[3];
-              tempItinerary2[3] = bestItineraryIndicesSaved_in[3];
-            }
-            else if (savedEvents_in[isaved] === 4) {
-              tempItinerary1[4] = bestItineraryIndicesSaved_in[4];
-              tempItinerary2[4] = bestItineraryIndicesSaved_in[4];
-            }
-            else if (savedEvents_in[isaved] === 5) {
-              tempItinerary1[5] = bestItineraryIndicesSaved_in[5];
-              tempItinerary2[5] = bestItineraryIndicesSaved_in[5];
-            }
-            else {
-              tempItinerary1[6] = bestItineraryIndicesSaved_in[6];
-              tempItinerary2[6] = bestItineraryIndicesSaved_in[6];
-            }
-          }
-        }
-
         // This portion of code sets the itinerary item slot to always be "none/free itinerary" item if user has checked some of those checkboexes.
         // This assumes that the "none/free itinerary" item is ALWAYS the last item in the choices from parsedDataAll
         // The "none/free itinerary" is added in api-router.js in formatAllData function.
@@ -276,13 +205,11 @@ module.exports = {
         newItineraryPop[popCnt + 1] = [tempItinerary2[0], tempItinerary2[1], tempItinerary2[2], tempItinerary2[3],
         tempItinerary2[4], tempItinerary2[5], tempItinerary2[6]];
 
-
-
         popCnt = popCnt + 2;
       } // end while loop
 
       itineraryPopulation = newItineraryPop.slice(0);
-      bestItineraryObj = findBestItinerary(itineraryPopulation, parsedDataAll, budgetmax, budgetmin, savedUserInputs);
+      bestItineraryObj = findBestItinerary(itineraryPopulation, parsedDataAll, budgetmax, budgetmin);
       iBestItinerary = bestItineraryObj.bestItineraryOut;
       bestRating = bestItineraryObj.bestItineraryRatingOut;
       bestCost = bestItineraryObj.bestItineraryCostOut;
@@ -608,15 +535,8 @@ function pickRandomItineraryItemExcluding(numCategoryItems, iExcludeItem) { // N
   return iItineraryItem;
 }
 
-// // Check if value is present in array
-// function isInArray(value, array) {
-//   var valueStr = value.toString();
-//   var arrayStr = array.toString();
-//   return arrayStr.indexOf(valueStr) > -1;
-// }
-
 // Determine the "fittest" itinerary
-function findBestItinerary(itineraryPop_in, allData_in, budygetmax_in, budgetmin_in, savedUserInputs_in) {
+function findBestItinerary(itineraryPop_in, allData_in, budygetmax_in, budgetmin_in) {
   var budgetmax = budygetmax_in;
   var budgetmin = budgetmin_in;
   var maxItineraryRating = 0;
@@ -642,9 +562,7 @@ function findBestItinerary(itineraryPop_in, allData_in, budygetmax_in, budgetmin
     }
     // Otherwise, calculate the total rating of the itinerary
     else {
-      //console.log(itineraryPop_in[i])
       itineraryRating = getTotalRating(itineraryPop_in[i], allData_in);
-      //console.log(itineraryRating)
     }
 
     // Save all the total ratings for later use
@@ -663,10 +581,7 @@ function findBestItinerary(itineraryPop_in, allData_in, budygetmax_in, budgetmin
   }
 
   // Garbage collection
-  if (maxItineraryRating === 0 && savedUserInputs_in) {
-    bestItinerary = itineraryPop_in[0];
-  }
-  else if (maxItineraryRating === 0) {
+  if (maxItineraryRating === 0) {
     bestItinerary = itineraryPop_in[0];
   }
 
