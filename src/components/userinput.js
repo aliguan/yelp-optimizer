@@ -27,7 +27,7 @@ class Userinput extends Component {
       eliminatedEvents: [], // indices of the user eliminated itinerary slots (0-6)
       checked: [0, 0, 0, 0, 0, 0, 0], // for displaying checked or unchecked in user saved events
       eliminated: [0, 0, 0, 0, 0, 0, 0], // for displaying checked or unchecked in eliminating itinerary slots
-      eventFilterFlags: [1, 1, 1], // ordered left to right: meetup, eventbrite, seatgeek
+      eventFilterFlags: [1, 1, 1, 1], // ordered left to right: meetup, eventbrite, seatgeek, google places
       totalCost: 0,
       expanded: true,
       options: false
@@ -367,9 +367,9 @@ class Userinput extends Component {
     indents.push(<div><b>Total Cost: ${this.state.totalCost} </b></div>)
 
     var options = [];
-    const NUM_EVENT_APIS = 3;
+    const NUM_EVENT_APIS = 4;
     var filters = [];
-    var filterNames = ["Meetup", "Eventbrite", "Seatgeek"];
+    var filterNames = ["Meetup", "Eventbrite", "Seatgeek","Local Parks"];
     for (var i = 0; i < NUM_EVENT_APIS; i++) {
       options.push(<li>
         <input checked={this.state.eventFilterFlags[i]} onChange={this.handleFilter} type='checkbox' value={i} />{filterNames[i]}
@@ -615,7 +615,7 @@ function processAPIDataForGA(events_in, eventFilterFlags_in, savedEvents_in, sav
   var includeYelpEvents = false;
   var includeEventbriteEvents = eventFilterFlags_in[1];
   var includeSeatgeekEvents = eventFilterFlags_in[2];
-  var includeGooglePlaces = true;
+  var includeGooglePlaces = eventFilterFlags_in[3];
 
   // Constants. These are filler itinerary items
   const NONE_ITEM = {
