@@ -37,7 +37,7 @@ class Userinput extends Component {
       itinUrls: [],
       center: {},
     };
-    this.apiService = new ApiService(this.state.resultsArray);
+    this.apiService = new ApiService();
     this.handleChange = this.handleChange.bind(this);
     this.handleDateChange = this.handleDateChange.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
@@ -221,14 +221,21 @@ class Userinput extends Component {
                         // Do optimization to find locally "best" itinerary
                         var optimItinerary = genAlgo.doGA(dataForGA, this.state.budgetmax, this.state.budgetmin, eliminatedEvents);
 
-                        console.log(optimItinerary.bestUrls);
-                        console.log(optimItinerary.bestLocations)
+                        // Construct output for display (aray of objects in correct itinerary order)
+                        var resultsArrayOutput = [dataForGA[0].Event1[optimItinerary.bestItineraryIndices[0]], //Event 1
+                          dataForGA[1].Breakfast[optimItinerary.bestItineraryIndices[1]], //Breakfast
+                          dataForGA[2].Event2[optimItinerary.bestItineraryIndices[2]],//Event 2
+                          dataForGA[3].Lunch[optimItinerary.bestItineraryIndices[3]], //Lunch
+                          dataForGA[4].Event3[optimItinerary.bestItineraryIndices[4]],//Event 3
+                          dataForGA[5].Dinner[optimItinerary.bestItineraryIndices[5]], //Dinner
+                          dataForGA[6].Event4[optimItinerary.bestItineraryIndices[6]] ];//Event 4
+
                         // Output data to map
                         this.handleData(optimItinerary.bestLocations, optimItinerary.bestUrls, mapCenter);
 
                         // Set the state in this component and re-render
                         this.setState({
-                          resultsArray: optimItinerary.bestItinerary,
+                          resultsArray: resultsArrayOutput,
                           savedEvents: savedEvents,
                           checked: [0, 0, 0, 0, 0, 0, 0], //reset the checkboxes to being unchecked
                           eliminated: [0, 0, 0, 0, 0, 0, 0], //reset the checkboxes for the eliminated slots
@@ -298,10 +305,19 @@ class Userinput extends Component {
                           // Do optimization to find locally "best" itinerary
                           var optimItinerary = genAlgo.doGA(dataForGA, this.state.budgetmax, this.state.budgetmin, eliminatedEvents);
 
+                          // Construct output for display (aray of objects in correct itinerary order)
+                          var resultsArrayOutput = [dataForGA[0].Event1[optimItinerary.bestItineraryIndices[0]], //Event 1
+                          dataForGA[1].Breakfast[optimItinerary.bestItineraryIndices[1]], //Breakfast
+                          dataForGA[2].Event2[optimItinerary.bestItineraryIndices[2]],//Event 2
+                          dataForGA[3].Lunch[optimItinerary.bestItineraryIndices[3]], //Lunch
+                          dataForGA[4].Event3[optimItinerary.bestItineraryIndices[4]],//Event 3
+                          dataForGA[5].Dinner[optimItinerary.bestItineraryIndices[5]], //Dinner
+                          dataForGA[6].Event4[optimItinerary.bestItineraryIndices[6]] ];//Event 4
+
                           if (optimItinerary.bestItineraryIndices[0] === -1) { // No itinerary was found/ error occurred
                             // reset stuff
                             this.setState({
-                              resultsArray: optimItinerary.bestItinerary,
+                              resultsArray: [],
                               checked: [0, 0, 0, 0, 0, 0, 0], //reset the checkboxes to being unchecked
                               eliminated: [0, 0, 0, 0, 0, 0, 0], //reset the checkboxes for the eliminated slots
                               totalCost: optimItinerary.totalCost,
@@ -310,7 +326,7 @@ class Userinput extends Component {
                               totalCost: 0,
                             });
                           }
-                          else {
+                          else { // An itinerary was found and presumably no errors occured
                             // Save the user saved events into persistent memory client side
                             var prevBestItineraryObjs = JSON.stringify({
                               Event1: dataForGA[0].Event1[optimItinerary.bestItineraryIndices[0]],
@@ -333,7 +349,7 @@ class Userinput extends Component {
 
                             // Set the state in this component and re-render
                             this.setState({
-                              resultsArray: optimItinerary.bestItinerary,
+                              resultsArray: resultsArrayOutput,
                               totalCost: optimItinerary.totalCost,
                             });
                           }
@@ -382,7 +398,7 @@ class Userinput extends Component {
         indents.push(<ul>
         <li>
             <input checked={this.state.checked[i]} onChange={this.handleCheckbox} type='checkbox' value={i} />
-                <p>{this.state.resultsArray[i]}</p>
+                <p>{this.state.resultsArray[i].name}</p>
             <input checked={this.state.eliminated[i]} onChange={this.handleEliminate} type='checkbox' value={i} />
         </li>
           <hr></hr>
@@ -391,7 +407,7 @@ class Userinput extends Component {
     }
     else {
       for (var i = 0; i < ITINERARY_LENGTH; i++) {
-        indents.push(<li>{this.state.resultsArray[i]}</li>);
+        indents.push(<li>{this.state.resultsArray[i].name}</li>);
       }
     }
     indents.push(<div><b>Total Cost: ${this.state.totalCost} </b></div>)
