@@ -231,7 +231,6 @@ class Userinput extends Component {
                           dataForGA[6].Event4[optimItinerary.bestItineraryIndices[6]] ];//Event 4
 
                         resultsArrayOutput = convertTimeToAMPM(resultsArrayOutput);
-                        console.log(resultsArrayOutput);
 
                         // Output data to map
                         this.handleData(optimItinerary.bestLocations, optimItinerary.bestUrls, mapCenter);
@@ -318,7 +317,6 @@ class Userinput extends Component {
                           dataForGA[6].Event4[optimItinerary.bestItineraryIndices[6]] ];//Event 4
 
                           resultsArrayOutput = convertTimeToAMPM(resultsArrayOutput);
-                          console.log(resultsArrayOutput);
 
                           if (optimItinerary.bestItineraryIndices[0] === -1) { // No itinerary was found/ error occurred
                             // reset stuff
