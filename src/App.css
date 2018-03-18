@@ -22,17 +22,8 @@
   font-size: large;
 }
 
-.background-color {
-    background-color: rgb(246, 249, 250);
-}
-
-
 .create-inline {
     display: inline;
-}
-
-.Userinput {
-    padding: 25px;
 }
 
 .textInput {
@@ -70,8 +61,7 @@
 
 .form-header {
     /* background-color: #007bff; */
-    background-color: #2e93ff;
-    border-radius: 5px 5px 0 0;
+    background-color: white;
     text-align: center;
     font-weight: 700;
     font-size: 1.8rem;
@@ -126,9 +116,8 @@
     display: inline-block;
     width: calc(100%/3);
 }
-
-.budget {
-    margin-top: 2.3rem;
+.datePickerWrapper {
+    margin-top: -24px;
 }
 
 @keyframes App-logo-spin {

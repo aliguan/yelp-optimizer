@@ -6,6 +6,8 @@ import moment from 'moment';
 import genAlgo from '../GA.js'
 import idb_keyval from 'idb-keyval'
 import globalStyles from '../App.css'
+import GoogleApiWrapper from './googlemaps.js';
+import '../maps.css';
 
 import 'react-datepicker/dist/react-datepicker.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
@@ -18,9 +20,9 @@ class Userinput extends Component {
 
     this.state = {
       term: '',
-      budgetmax: '',
-      budgetmin: '',
-      location: '',
+      budgetmax: 600,
+      budgetmin: 0,
+      location: 'San Francisco, CA',
       resultsArray: [],
       startDate: moment(),
       savedEvents: [], // acutal indices of the user saved events
@@ -30,7 +32,10 @@ class Userinput extends Component {
       eventFilterFlags: [1, 1, 1, 1], // ordered left to right: meetup, eventbrite, seatgeek, google places
       totalCost: 0,
       expanded: true,
-      options: false
+      options: false,
+      itinLocations: [],
+      itinUrls: [],
+      center: {},
     };
     this.apiService = new ApiService(this.state.resultsArray);
     this.handleChange = this.handleChange.bind(this);
@@ -41,6 +46,7 @@ class Userinput extends Component {
     this.handleFilter = this.handleFilter.bind(this);
     this.handleExpand = this.handleExpand.bind(this);
     this.handleMoreOptions = this.handleMoreOptions.bind(this);
+    this.handleData = this.handleData.bind(this);
 
   }
 
@@ -122,6 +128,14 @@ class Userinput extends Component {
     this.setState(prevState => ({
       options: !prevState.options
     }));
+  }
+
+  handleData(locations, urls, center) {
+      this.setState({
+          itinLocations: locations,
+          itinUrls: urls,
+          center: center
+      })
   }
 
   handleSubmit(e) {
@@ -210,7 +224,7 @@ class Userinput extends Component {
                         console.log(optimItinerary.bestUrls);
                         console.log(optimItinerary.bestLocations)
                         // Output data to map
-                        this.props.getData(optimItinerary.bestLocations, optimItinerary.bestUrls, mapCenter);
+                        this.handleData(optimItinerary.bestLocations, optimItinerary.bestUrls, mapCenter);
 
                         // Set the state in this component and re-render
                         this.setState({
@@ -289,11 +303,11 @@ class Userinput extends Component {
                             this.setState({
                               resultsArray: optimItinerary.bestItinerary,
                               checked: [0, 0, 0, 0, 0, 0, 0], //reset the checkboxes to being unchecked
-                              eliminated: [0, 0, 0, 0, 0, 0, 0], //reset the checkboxes for the eliminated slots                              
+                              eliminated: [0, 0, 0, 0, 0, 0, 0], //reset the checkboxes for the eliminated slots
                               totalCost: optimItinerary.totalCost,
                               savedEvents: [],
                               eliminatedEvents: [],
-                              totalCost: 0,                              
+                              totalCost: 0,
                             });
                           }
                           else {
@@ -312,9 +326,10 @@ class Userinput extends Component {
                             myStorage.setItem("prevBestItinerarySavedIndices", prevBestItineraryStr);
                             myStorage.setItem("prevBestItinerarySavedObjects", prevBestItineraryObjs);
 
-                            console.log(optimItinerary.bestUrls)
+                            console.log("OPEUIFDHGLDFGH ---> ");
+                            console.log(optimItinerary);
                             console.log(optimItinerary.bestLocations)
-                            this.props.getData(optimItinerary.bestLocations, optimItinerary.bestUrls, mapCenter);
+                            this.handleData(optimItinerary.bestLocations, optimItinerary.bestUrls, mapCenter);
 
                             // Set the state in this component and re-render
                             this.setState({
@@ -364,17 +379,19 @@ class Userinput extends Component {
     // Only allow check boxes to show up if data can be saved client side
     if (window.indexedDB) {
       for (var i = 0; i < ITINERARY_LENGTH; i++) {
-        indents.push(<div>
-          <input checked={this.state.checked[i]} onChange={this.handleCheckbox} type='checkbox' value={i} />
-          {this.state.resultsArray[i]}
-          <input checked={this.state.eliminated[i]} onChange={this.handleEliminate} type='checkbox' value={i} />
+        indents.push(<ul>
+        <li>
+            <input checked={this.state.checked[i]} onChange={this.handleCheckbox} type='checkbox' value={i} />
+                <p>{this.state.resultsArray[i]}</p>
+            <input checked={this.state.eliminated[i]} onChange={this.handleEliminate} type='checkbox' value={i} />
+        </li>
           <hr></hr>
-        </div>);
+        </ul>);
       }
     }
     else {
       for (var i = 0; i < ITINERARY_LENGTH; i++) {
-        indents.push(<div>{this.state.resultsArray[i]}</div>);
+        indents.push(<li>{this.state.resultsArray[i]}</li>);
       }
     }
     indents.push(<div><b>Total Cost: ${this.state.totalCost} </b></div>)
@@ -391,24 +408,28 @@ class Userinput extends Component {
 
 
     return (
-      <div className="Userinput col-md-6">
+      <div className="Userinput">
         <form className="form-card" onSubmit={this.handleSubmit}>
-          <h4 className="background-color form-header">Plan Your Trip</h4>
+          <h4 className="form-header">Plan Your Trip</h4>
           <div className={formStyles.join(' ')}>
-            <div className="form-group mb-2">
-              <label htmlFor="location"> </label>
-              <input required id="location" className="textInput" type="text" name="location" value={location} onChange={this.handleChange} placeholder="Where are you going?" />
-            </div>
+              <div className="row">
+                  <div className="col-md-8 form-group mb-2">
+                    <label htmlFor="location"> </label>
+                    <input required id="location" className="textInput" type="text" name="location" value={location} onChange={this.handleChange} autocomplete="address-level2" placeholder="Where are you going?" />
+                  </div>
+
+                  <div className="col-md-4 form-group mb-2 datePickerWrapper">
+                    <label htmlFor="datePicker"></label>
+                    <DatePicker required id="datePicker" className="textInput" selected={this.state.startDate} onChange={this.handleDateChange} />
+                  </div>
+              {/*<input type="text" name="term" style={{ width: 90 }} value={term} onChange={this.handleChange} />*/}
+              </div>
 
             <div className="form-group mb-2">
-              <label htmlFor="datePicker"></label>
-              <DatePicker required id="datePicker" className="textInput" selected={this.state.startDate} onChange={this.handleDateChange} />
-            </div>
-            {/*<input type="text" name="term" style={{ width: 90 }} value={term} onChange={this.handleChange} />*/}
-            <div className="form-group mb-2 budget">
               <label htmlFor="budget"></label>
-              <input required className="col-md-5 textInput" type="number" name="budgetmin" value={budgetmin} onChange={this.handleChange} placeholder="$ Min" />
-              <input required className="offset-md-2 col-md-5 textInput" type="number" name="budgetmax" value={budgetmax} onChange={this.handleChange} placeholder="$ Max" />
+
+              <input required className="col-md-5 textInput" type="number" min="0" name="budgetmin" value={budgetmin} onChange={this.handleChange} placeholder="$ Min" />
+              <input required className="offset-md-2 col-md-5 textInput" min="0" type="number" name="budgetmax" value={budgetmax} onChange={this.handleChange} placeholder="$ Max" />
             </div>
 
             <div className="results">
@@ -433,14 +454,13 @@ class Userinput extends Component {
           </div>
         </form>
 
-        <div><br />
-
-          {indents}
-
-        </div>
-
-        <div>
-
+        <div className="row">
+            <div class="col-md-6">
+                {indents}
+            </div>
+            <div class="col-md-6">
+                <GoogleApiWrapper locations={this.state.itinLocations} urls={this.state.itinUrls} center={this.state.center}/>
+            </div>
         </div>
       </div>
 
@@ -646,7 +666,7 @@ function processAPIDataForGA(events_in, eventFilterFlags_in, savedEvents_in, sav
     location: {},
   }
 
-  // Initialize array that will be returned and formatted for the GA 
+  // Initialize array that will be returned and formatted for the GA
   var itineraries = [ //array of objects with one key per object. the key holds another array of objects
     { Event1: [] }, // 0
     { Breakfast: [] }, //1

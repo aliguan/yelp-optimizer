@@ -24,7 +24,7 @@ export class MapContainer extends Component {
           <Map google={this.props.google}
                zoom={12}
                center={this.props.center}
-               className="maps col-md-6"
+               className="maps"
                style={maps}
             >
 
@@ -36,7 +36,6 @@ export class MapContainer extends Component {
 }
 
 const maps = {
-    position: 'relative',
     height: '100vh',
 }
 
