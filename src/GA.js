@@ -5,6 +5,7 @@ module.exports = {
 
     console.log("eliminated events array:")
     console.log(eliminatedEvents_in)
+    console.log("all data GA.js:")
     console.log(allData)
 
 

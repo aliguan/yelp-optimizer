@@ -146,7 +146,9 @@ class Userinput extends Component {
     var myStorage = window.localStorage;
     var doAPICallsFlag = true;
     var indexDBcompat = window.indexedDB;
-
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+  // myStorage.clear();
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////    
     // Check if state startDate is defined
     if (this.state.startDate) {
 
@@ -229,8 +231,6 @@ class Userinput extends Component {
                           dataForGA[4].Event3[optimItinerary.bestItineraryIndices[4]],//Event 3
                           dataForGA[5].Dinner[optimItinerary.bestItineraryIndices[5]], //Dinner
                           dataForGA[6].Event4[optimItinerary.bestItineraryIndices[6]] ];//Event 4
-
-                        resultsArrayOutput = convertTimeToAMPM(resultsArrayOutput);
 
                         // Output data to map
                         this.handleData(optimItinerary.bestLocations, optimItinerary.bestUrls, mapCenter);
@@ -316,7 +316,6 @@ class Userinput extends Component {
                           dataForGA[5].Dinner[optimItinerary.bestItineraryIndices[5]], //Dinner
                           dataForGA[6].Event4[optimItinerary.bestItineraryIndices[6]] ];//Event 4
 
-                          resultsArrayOutput = convertTimeToAMPM(resultsArrayOutput);
 
                           if (optimItinerary.bestItineraryIndices[0] === -1) { // No itinerary was found/ error occurred
                             // reset stuff
@@ -346,6 +345,7 @@ class Userinput extends Component {
                             myStorage.setItem("prevBestItinerarySavedIndices", prevBestItineraryStr);
                             myStorage.setItem("prevBestItinerarySavedObjects", prevBestItineraryObjs);
 
+                            console.log("optimItinerary.bestlocations:")
                             console.log(optimItinerary.bestLocations)
                             this.handleData(optimItinerary.bestLocations, optimItinerary.bestUrls, mapCenter);
 
@@ -876,11 +876,11 @@ function processAPIDataForGA(events_in, eventFilterFlags_in, savedEvents_in, sav
 
 function convertTimeToAMPM(resultsArray_in) {
   var resultsArray_out = resultsArray_in.slice();
-  var time;
-  for (var i = 0; i < resultsArray_in.length; i++) {
-    time = misc.convertMilTime(resultsArray_out[i].time);
-    if (time != -1) {
-      resultsArray_out[i].time = misc.convertMilTime(resultsArray_out[i].time);
+  var timeConverted;
+  for (var i = 0; i < resultsArray_out.length; i++) {
+    timeConverted = misc.convertMilTime(resultsArray_out[i].time);
+    if (timeConverted != -1) {
+      resultsArray_out[i].time = timeConverted;
     }
   }
   return resultsArray_out;
