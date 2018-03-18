@@ -443,25 +443,26 @@ class Userinput extends Component {
         <form className="form-card" onSubmit={this.handleSubmit}>
           <h4 className="form-header">Plan Your Trip</h4>
           <div className={formStyles.join(' ')}>
-              <div className="">
-                  <div className="col-md-8 form-group mb-2">
-                    <label htmlFor="location"> </label>
+              <div className="row">
+                  <div className="col-md-5 form-group mb-2">
+                    <span class="plane-icon fas fa-plane"></span>
                     <input required id="location" className="textInput" type="text" name="location" value={location} onChange={this.handleChange} autocomplete="address-level2" placeholder="Where are you going?" />
                   </div>
 
-                  <div className="col-md-4 form-group mb-2 datePickerWrapper">
+                  <div className="col-md-3 form-group mb-2 datePickerWrapper">
                     <label htmlFor="datePicker"></label>
                     <DatePicker required id="datePicker" className="textInput" selected={this.state.startDate} onChange={this.handleDateChange} />
                   </div>
               {/*<input type="text" name="term" style={{ width: 90 }} value={term} onChange={this.handleChange} />*/}
+                <div className="col-md-2 form-group mb-2">
+                    <input required className="textInput" type="number" min="0" name="budgetmin" value={budgetmin} onChange={this.handleChange} placeholder="$ Min" />
+                </div>
+                <div className="col-md-2 form-group mb-2">
+                    <input required className="textInput" min="0" type="number" name="budgetmax" value={budgetmax} onChange={this.handleChange} placeholder="$ Max" />
+                </div>
               </div>
 
-            <div className="form-group mb-2">
-              <label htmlFor="budget"></label>
 
-              <input required className="col-md-5 textInput" type="number" min="0" name="budgetmin" value={budgetmin} onChange={this.handleChange} placeholder="$ Min" />
-              <input required className="offset-md-2 col-md-5 textInput" min="0" type="number" name="budgetmax" value={budgetmax} onChange={this.handleChange} placeholder="$ Max" />
-            </div>
 
             <div className="results">
               <a href="javascript:void(0)" onClick={this.handleMoreOptions}> {this.state.options == false ? 'More Options' : 'Less Options'} <i className="fas fa-sort-down"></i></a>
