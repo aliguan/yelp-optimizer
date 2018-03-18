@@ -230,6 +230,7 @@ class Userinput extends Component {
                           dataForGA[5].Dinner[optimItinerary.bestItineraryIndices[5]], //Dinner
                           dataForGA[6].Event4[optimItinerary.bestItineraryIndices[6]] ];//Event 4
 
+                    console.log(resultsArrayOutput);
                         // Output data to map
                         this.handleData(optimItinerary.bestLocations, optimItinerary.bestUrls, mapCenter);
 
@@ -342,8 +343,6 @@ class Userinput extends Component {
                             myStorage.setItem("prevBestItinerarySavedIndices", prevBestItineraryStr);
                             myStorage.setItem("prevBestItinerarySavedObjects", prevBestItineraryObjs);
 
-                            console.log("OPEUIFDHGLDFGH ---> ");
-                            console.log(optimItinerary);
                             console.log(optimItinerary.bestLocations)
                             this.handleData(optimItinerary.bestLocations, optimItinerary.bestUrls, mapCenter);
 

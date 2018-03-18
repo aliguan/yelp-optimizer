@@ -5,7 +5,7 @@ module.exports = {
 
     console.log("eliminated events array:")
     console.log(eliminatedEvents_in)
-    console.log(allData)  
+    console.log(allData)
 
 
     var eliminateItems = false;
@@ -244,7 +244,7 @@ module.exports = {
       bestItinerary[5] = allData[5].Dinner[iBestItinerary[5]].name + " - $" + allData[5].Dinner[iBestItinerary[5]].cost + ", Rating: " + allData[5].Dinner[iBestItinerary[5]].rating;
       bestItinerary[6] = allData[6].Event4[iBestItinerary[6]].name + " - $" + allData[6].Event4[iBestItinerary[6]].cost + ", Rating: " + allData[6].Event4[iBestItinerary[6]].rating;
 
-      // Return url    
+      // Return url
       urls[0] = allData[0].Event1[iBestItinerary[0]].url;
       urls[1] = allData[1].Breakfast[iBestItinerary[1]].url;
       urls[2] = allData[2].Event2[iBestItinerary[2]].url;
@@ -334,7 +334,7 @@ module.exports = {
       var drate = 0;
       // Randomize the ratings for every optimization (everytime the user presses the button)
       // so that the same restaurants don't show up (i.e. there isn't much different between a 4 rating
-      // and a 5 rating but 4 rated restaurants almost never show up)      
+      // and a 5 rating but 4 rated restaurants almost never show up)
       for (var i = 0; i < numBreakfast; i++) {
         irand = randomIntFromInterval(1, 10);
         if (irand < 3) {
@@ -377,7 +377,7 @@ module.exports = {
 
       // Randomize the ratings for every optimization (everytime the user presses the button)
       // so that the same restaurants don't show up (i.e. there isn't much different between a 4 rating
-      // and a 5 rating but 4 rated restaurants almost never show up)      
+      // and a 5 rating but 4 rated restaurants almost never show up)
       for (i = 0; i < numLunch; i++) {
         irand = randomIntFromInterval(1, 10);
         if (irand < 3) {
@@ -420,7 +420,7 @@ module.exports = {
 
       // Randomize the ratings for every optimization (everytime the user presses the button)
       // so that the same restaurants don't show up (i.e. there isn't much different between a 4 rating
-      // and a 5 rating but 4 rated restaurants almost never show up)      
+      // and a 5 rating but 4 rated restaurants almost never show up)
       for (i = 0; i < numDinner; i++) {
         irand = randomIntFromInterval(1, 10);
         if (irand < 3) {
@@ -805,4 +805,32 @@ function mutate(itinerary_in, numItemsArray_in) {
   }
 
   return mutatedItinerary;
+}
+
+function convertMilTime() {
+    time = time.split(':'); // convert to array
+
+    // fetch
+    var hours = Number(time[0]);
+    var minutes = Number(time[1]);
+    var seconds = Number(time[2]);
+
+    // calculate
+    var timeValue;
+
+    if (hours > 0 && hours <= 12)
+    {
+      timeValue= "" + hours;
+    } else if (hours > 12)
+    {
+      timeValue= "" + (hours - 12);
+    }
+    else if (hours == 0)
+    {
+      timeValue= "12";
+    }
+
+    timeValue += (minutes < 10) ? ":0" + minutes : ":" + minutes;  // get minutes
+    timeValue += (seconds < 10) ? ":0" + seconds : ":" + seconds;  // get seconds
+    timeValue += (hours >= 12) ? " P.M." : " A.M.";  // get AM/PM
 }
