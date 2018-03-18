@@ -396,24 +396,36 @@ class Userinput extends Component {
     var indents = [];
     // Only allow check boxes to show up if data can be saved client side
     if (window.indexedDB) {
-      for (var i = 0; i < ITINERARY_LENGTH; i++) {
-        indents.push(<ul className="itinContainer">
-        <li>
-            <input checked={this.state.checked[i]} onChange={this.handleCheckbox} type='checkbox' value={i} />
-                <span>{this.state.resultsArray[i].time} </span>
-                <a href={this.state.resultsArray[i].url}>{this.state.resultsArray[i].name}</a>
-            <input checked={this.state.eliminated[i]} onChange={this.handleEliminate} type='checkbox' value={i} />
-        </li>
-          <hr></hr>
-        </ul>);
-      }
+        for (var i = 0; i < ITINERARY_LENGTH; i++) {
+            indents.push(
+                <tr className="itinContainer">
+                    <td><input checked={this.state.checked[i]} onChange={this.handleCheckbox} type='checkbox' value={i} /></td>
+                    <td><strong>{this.state.resultsArray[i].time ? this.state.resultsArray[i].time : ''}</strong></td>
+                    <td><a href={this.state.resultsArray[i].url}>{this.state.resultsArray[i].name} </a></td>
+                    <td className="text-success"><strong>${this.state.resultsArray[i].cost}</strong>  </td>
+                    <td><input checked={this.state.eliminated[i]} onChange={this.handleEliminate} type='checkbox' value={i} /></td>
+                    <hr></hr>
+                </tr>
+            );
+        }
     }
     else {
       for (var i = 0; i < ITINERARY_LENGTH; i++) {
-        indents.push(<li>{this.state.resultsArray[i].name}</li>);
+          indents.push(
+              <tr className="itinContainer">
+                  <td><input checked={this.state.checked[i]} onChange={this.handleCheckbox} type='checkbox' value={i} /></td>
+                  <td><strong>{this.state.resultsArray[i].time ? this.state.resultsArray[i].time : ''}</strong></td>
+                  <td><a href={this.state.resultsArray[i].url}>{this.state.resultsArray[i].name} </a></td>
+                  <td className="text-success"><strong>${this.state.resultsArray[i].cost}</strong>  </td>
+                  <td><input checked={this.state.eliminated[i]} onChange={this.handleEliminate} type='checkbox' value={i} /></td>
+                  <hr></hr>
+              </tr>
+          );
       }
     }
-    indents.push(<div><b>Total Cost: ${this.state.totalCost} </b></div>)
+
+    var total = [];
+    total.push(<div><b>Total Cost: ${this.state.totalCost} </b></div>)
 
     var options = [];
     const NUM_EVENT_APIS = 4;
@@ -431,7 +443,7 @@ class Userinput extends Component {
         <form className="form-card" onSubmit={this.handleSubmit}>
           <h4 className="form-header">Plan Your Trip</h4>
           <div className={formStyles.join(' ')}>
-              <div className="row">
+              <div className="">
                   <div className="col-md-8 form-group mb-2">
                     <label htmlFor="location"> </label>
                     <input required id="location" className="textInput" type="text" name="location" value={location} onChange={this.handleChange} autocomplete="address-level2" placeholder="Where are you going?" />
@@ -472,13 +484,21 @@ class Userinput extends Component {
             </p>
           </div>
         </form>
+        <div className="container-fluid">
+            <div className="row">
+                <div class="col-md-6">
 
-        <div className="row">
-            <div class="col-md-6">
-                {indents}
-            </div>
-            <div class="col-md-6">
-                <GoogleApiWrapper locations={this.state.itinLocations} urls={this.state.itinUrls} center={this.state.center}/>
+                    <table >
+                        {indents}
+                    </table>
+
+                    <div class="totalCost">
+                        {total}
+                    </div>
+                </div>
+                <div class="mapsfix col-md-6">
+                    <GoogleApiWrapper locations={this.state.itinLocations} urls={this.state.itinUrls} center={this.state.center}/>
+                </div>
             </div>
         </div>
       </div>
