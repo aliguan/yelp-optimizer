@@ -230,7 +230,6 @@ class Userinput extends Component {
                           dataForGA[5].Dinner[optimItinerary.bestItineraryIndices[5]], //Dinner
                           dataForGA[6].Event4[optimItinerary.bestItineraryIndices[6]] ];//Event 4
 
-                    console.log(resultsArrayOutput);
                         // Output data to map
                         this.handleData(optimItinerary.bestLocations, optimItinerary.bestUrls, mapCenter);
 
@@ -394,10 +393,11 @@ class Userinput extends Component {
     // Only allow check boxes to show up if data can be saved client side
     if (window.indexedDB) {
       for (var i = 0; i < ITINERARY_LENGTH; i++) {
-        indents.push(<ul>
+        indents.push(<ul className="itinContainer">
         <li>
             <input checked={this.state.checked[i]} onChange={this.handleCheckbox} type='checkbox' value={i} />
-                <p>{this.state.resultsArray[i].name}</p>
+                <span>{this.state.resultsArray[i].time} </span>
+                <a href={this.state.resultsArray[i].url}>{this.state.resultsArray[i].name}</a>
             <input checked={this.state.eliminated[i]} onChange={this.handleEliminate} type='checkbox' value={i} />
         </li>
           <hr></hr>
@@ -848,9 +848,6 @@ function processAPIDataForGA(events_in, eventFilterFlags_in, savedEvents_in, sav
     ];;
   }
 }
-
-
-
 
 Userinput.propTypes = {}
 
