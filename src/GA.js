@@ -808,6 +808,8 @@ function mutate(itinerary_in, numItemsArray_in) {
 }
 
 function convertMilTime() {
+    var time = "16:30:00"; // your input
+
     time = time.split(':'); // convert to array
 
     // fetch
