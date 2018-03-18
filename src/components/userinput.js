@@ -11,7 +11,7 @@ import '../maps.css';
 
 import 'react-datepicker/dist/react-datepicker.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
-
+import misc from '../miscfuncs/misc.js'
 
 
 class Userinput extends Component {
@@ -230,7 +230,9 @@ class Userinput extends Component {
                           dataForGA[5].Dinner[optimItinerary.bestItineraryIndices[5]], //Dinner
                           dataForGA[6].Event4[optimItinerary.bestItineraryIndices[6]] ];//Event 4
 
-                    console.log(resultsArrayOutput);
+                        resultsArrayOutput = convertTimeToAMPM(resultsArrayOutput);
+                        console.log(resultsArrayOutput);
+
                         // Output data to map
                         this.handleData(optimItinerary.bestLocations, optimItinerary.bestUrls, mapCenter);
 
@@ -281,7 +283,7 @@ class Userinput extends Component {
 
                     }
                     // No need to do the API calls from yelp, meetup, etc because inputs (date and location)
-                    // have not changed. The
+                    // have not changed. 
                     else {
                       console.log("No need to do API calls!!!")
                       if (indexDBcompat) {
@@ -314,6 +316,9 @@ class Userinput extends Component {
                           dataForGA[4].Event3[optimItinerary.bestItineraryIndices[4]],//Event 3
                           dataForGA[5].Dinner[optimItinerary.bestItineraryIndices[5]], //Dinner
                           dataForGA[6].Event4[optimItinerary.bestItineraryIndices[6]] ];//Event 4
+
+                          resultsArrayOutput = convertTimeToAMPM(resultsArrayOutput);
+                          console.log(resultsArrayOutput);
 
                           if (optimItinerary.bestItineraryIndices[0] === -1) { // No itinerary was found/ error occurred
                             // reset stuff
@@ -849,7 +854,17 @@ function processAPIDataForGA(events_in, eventFilterFlags_in, savedEvents_in, sav
   }
 }
 
-
+function convertTimeToAMPM(resultsArray_in) {
+  var resultsArray_out = resultsArray_in.slice();
+  var time;
+  for (var i = 0; i < resultsArray_in.length; i++) {
+    time = misc.convertMilTime(resultsArray_out[i].time);
+    if (time != -1) {
+      resultsArray_out[i].time = misc.convertMilTime(resultsArray_out[i].time);
+    }
+  }
+  return resultsArray_out;
+}
 
 
 Userinput.propTypes = {}
