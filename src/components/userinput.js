@@ -148,7 +148,7 @@ class Userinput extends Component {
     var indexDBcompat = window.indexedDB;
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
   // myStorage.clear();
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////    
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     // Check if state startDate is defined
     if (this.state.startDate) {
 
@@ -476,8 +476,9 @@ class Userinput extends Component {
               </ul>
             </div>
           </div>
-
-          <input className="btn btn-danger btn-md go-btn" type="submit" value={this.state.expanded == true ? 'GO!' : 'Find Again'} />
+          <div className="search-btn">
+              <input className="btn btn-md go-btn" type="submit" value={this.state.expanded == true ? 'GO!' : 'Find Again'} />
+          </div>
           <div className="results">
             <p>
               <a href="javascript:void(0)" onClick={this.handleExpand}> {this.state.expanded == true ? '' : 'Change Search'}
@@ -490,7 +491,9 @@ class Userinput extends Component {
                 <div class="col-md-6">
 
                     <table >
-                        {indents}
+                        <tbody>
+                            {indents}
+                        </tbody>
                     </table>
 
                     <div class="totalCost">
