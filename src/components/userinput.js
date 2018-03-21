@@ -20,8 +20,8 @@ class Userinput extends Component {
 
     this.state = {
       term: '',
-      budgetmax: 600,
-      budgetmin: 0,
+      budgetmax: 150,
+      budgetmin: 90,
       location: 'San Francisco, CA',
       resultsArray: [],
       startDate: moment(),
@@ -35,6 +35,7 @@ class Userinput extends Component {
       options: false,
       itinLocations: [],
       itinUrls: [],
+      itinTimes: [], // time string in AM/PM format for display
       center: {},
     };
     this.apiService = new ApiService();
@@ -47,7 +48,6 @@ class Userinput extends Component {
     this.handleExpand = this.handleExpand.bind(this);
     this.handleMoreOptions = this.handleMoreOptions.bind(this);
     this.handleData = this.handleData.bind(this);
-
   }
 
   handleChange(e) {
@@ -131,11 +131,11 @@ class Userinput extends Component {
   }
 
   handleData(locations, urls, center) {
-      this.setState({
-          itinLocations: locations,
-          itinUrls: urls,
-          center: center
-      })
+    this.setState({
+      itinLocations: locations,
+      itinUrls: urls,
+      center: center
+    })
   }
 
   handleSubmit(e) {
@@ -146,9 +146,24 @@ class Userinput extends Component {
     var myStorage = window.localStorage;
     var doAPICallsFlag = true;
     var indexDBcompat = window.indexedDB;
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-  // myStorage.clear();
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+    const EMPTY_ITINERARY = {
+      name: "No itinerary found. Try changing the inputs.",
+      url: "",
+      rating: 0,
+      time: "",
+      location: {},
+      cost: 0,
+    }
+    const EMPTY_ITINERARY_NONAME = {
+      name: "",
+      url: "",
+      rating: 0,
+      time: "",
+      location: {},
+      cost: 0,
+    }
+
     // Check if state startDate is defined
     if (this.state.startDate) {
 
@@ -223,47 +238,80 @@ class Userinput extends Component {
                         // Do optimization to find locally "best" itinerary
                         var optimItinerary = genAlgo.doGA(dataForGA, this.state.budgetmax, this.state.budgetmin, eliminatedEvents);
 
-                        // Construct output for display (aray of objects in correct itinerary order)
+                        // Construct output for display (array of objects in correct itinerary order)
                         var resultsArrayOutput = [dataForGA[0].Event1[optimItinerary.bestItineraryIndices[0]], //Event 1
-                          dataForGA[1].Breakfast[optimItinerary.bestItineraryIndices[1]], //Breakfast
-                          dataForGA[2].Event2[optimItinerary.bestItineraryIndices[2]],//Event 2
-                          dataForGA[3].Lunch[optimItinerary.bestItineraryIndices[3]], //Lunch
-                          dataForGA[4].Event3[optimItinerary.bestItineraryIndices[4]],//Event 3
-                          dataForGA[5].Dinner[optimItinerary.bestItineraryIndices[5]], //Dinner
-                          dataForGA[6].Event4[optimItinerary.bestItineraryIndices[6]] ];//Event 4
+                        dataForGA[1].Breakfast[optimItinerary.bestItineraryIndices[1]], //Breakfast
+                        dataForGA[2].Event2[optimItinerary.bestItineraryIndices[2]],//Event 2
+                        dataForGA[3].Lunch[optimItinerary.bestItineraryIndices[3]], //Lunch
+                        dataForGA[4].Event3[optimItinerary.bestItineraryIndices[4]],//Event 3
+                        dataForGA[5].Dinner[optimItinerary.bestItineraryIndices[5]], //Dinner
+                        dataForGA[6].Event4[optimItinerary.bestItineraryIndices[6]]];//Event 4
 
-                        // Output data to map
-                        this.handleData(optimItinerary.bestLocations, optimItinerary.bestUrls, mapCenter);
+                        if (optimItinerary.bestItineraryIndices[0] === -1) { // No itinerary was found/ error occurred
 
-                        // Set the state in this component and re-render
-                        this.setState({
-                          resultsArray: resultsArrayOutput,
-                          savedEvents: savedEvents,
-                          checked: [0, 0, 0, 0, 0, 0, 0], //reset the checkboxes to being unchecked
-                          eliminated: [0, 0, 0, 0, 0, 0, 0], //reset the checkboxes for the eliminated slots
-                          eliminatedEvents: eliminatedEvents,
-                          totalCost: optimItinerary.totalCost,
-                        });
+                          // reset stuff
+                          resultsArrayOutput[0] = EMPTY_ITINERARY;
+                          resultsArrayOutput[1] = EMPTY_ITINERARY_NONAME;
+                          resultsArrayOutput[2] = EMPTY_ITINERARY_NONAME;
+                          resultsArrayOutput[3] = EMPTY_ITINERARY_NONAME;
+                          resultsArrayOutput[4] = EMPTY_ITINERARY_NONAME;
+                          resultsArrayOutput[5] = EMPTY_ITINERARY_NONAME;
+                          resultsArrayOutput[6] = EMPTY_ITINERARY_NONAME;
 
-                        this.setState(prevState => ({
-                          expanded: !prevState.expanded
-                        }));
+                          this.setState({
+                            resultsArray: resultsArrayOutput,
+                            checked: [0, 0, 0, 0, 0, 0, 0], //reset the checkboxes to being unchecked
+                            eliminated: [0, 0, 0, 0, 0, 0, 0], //reset the checkboxes for the eliminated slots
+                            totalCost: optimItinerary.totalCost,
+                            savedEvents: [],
+                            eliminatedEvents: [],
+                            itinTimes: [],
+                            totalCost: 0,
+                          });
+                        }
+                        else { // GA produced an optimal itinerary. Display results
+                          // create array for the time to be displayed for each itinerary item
+                          var timesOutput = [misc.convertMilTime(resultsArrayOutput[0].time),
+                          misc.convertMilTime(resultsArrayOutput[1].time),
+                          misc.convertMilTime(resultsArrayOutput[2].time),
+                          misc.convertMilTime(resultsArrayOutput[3].time),
+                          misc.convertMilTime(resultsArrayOutput[4].time),
+                          misc.convertMilTime(resultsArrayOutput[5].time),
+                          misc.convertMilTime(resultsArrayOutput[6].time)];
 
-                        // Save the user saved events into persistent memory client side
-                        var prevBestItineraryObjs = JSON.stringify({
-                          Event1: dataForGA[0].Event1[optimItinerary.bestItineraryIndices[0]],
-                          Breakfast: dataForGA[1].Breakfast[optimItinerary.bestItineraryIndices[1]],
-                          Event2: dataForGA[2].Event2[optimItinerary.bestItineraryIndices[2]],
-                          Lunch: dataForGA[3].Lunch[optimItinerary.bestItineraryIndices[3]],
-                          Event3: dataForGA[4].Event3[optimItinerary.bestItineraryIndices[4]],
-                          Dinner: dataForGA[5].Dinner[optimItinerary.bestItineraryIndices[5]],
-                          Event4: dataForGA[6].Event4[optimItinerary.bestItineraryIndices[6]],
-                        });
+                          // Output data to map
+                          this.handleData(optimItinerary.bestLocations, optimItinerary.bestUrls, mapCenter);
 
-                        var prevBestItineraryStr = JSON.stringify(optimItinerary.bestItineraryIndices);
-                        myStorage.setItem("prevBestItinerarySavedIndices", prevBestItineraryStr);
-                        myStorage.setItem("prevBestItinerarySavedObjects", prevBestItineraryObjs);
+                          // Set the state in this component and re-render
+                          this.setState({
+                            resultsArray: resultsArrayOutput,
+                            itinTimes: timesOutput,
+                            savedEvents: savedEvents,
+                            checked: [0, 0, 0, 0, 0, 0, 0], //reset the checkboxes to being unchecked
+                            eliminated: [0, 0, 0, 0, 0, 0, 0], //reset the checkboxes for the eliminated slots
+                            eliminatedEvents: eliminatedEvents,
+                            totalCost: optimItinerary.totalCost,
+                          });
 
+                          this.setState(prevState => ({
+                            expanded: !prevState.expanded
+                          }));
+
+                          // Save the user saved events into persistent memory client side
+                          var prevBestItineraryObjs = JSON.stringify({
+                            Event1: dataForGA[0].Event1[optimItinerary.bestItineraryIndices[0]],
+                            Breakfast: dataForGA[1].Breakfast[optimItinerary.bestItineraryIndices[1]],
+                            Event2: dataForGA[2].Event2[optimItinerary.bestItineraryIndices[2]],
+                            Lunch: dataForGA[3].Lunch[optimItinerary.bestItineraryIndices[3]],
+                            Event3: dataForGA[4].Event3[optimItinerary.bestItineraryIndices[4]],
+                            Dinner: dataForGA[5].Dinner[optimItinerary.bestItineraryIndices[5]],
+                            Event4: dataForGA[6].Event4[optimItinerary.bestItineraryIndices[6]],
+                          });
+
+                          var prevBestItineraryStr = JSON.stringify(optimItinerary.bestItineraryIndices);
+                          myStorage.setItem("prevBestItinerarySavedIndices", prevBestItineraryStr);
+                          myStorage.setItem("prevBestItinerarySavedObjects", prevBestItineraryObjs);
+                        }
                         // Put the data returned from API calls (yelp, meetup, etc) into the client's browser
                         // for persistent storage
                         if (indexDBcompat) {
@@ -314,22 +362,31 @@ class Userinput extends Component {
                           dataForGA[3].Lunch[optimItinerary.bestItineraryIndices[3]], //Lunch
                           dataForGA[4].Event3[optimItinerary.bestItineraryIndices[4]],//Event 3
                           dataForGA[5].Dinner[optimItinerary.bestItineraryIndices[5]], //Dinner
-                          dataForGA[6].Event4[optimItinerary.bestItineraryIndices[6]] ];//Event 4
-
+                          dataForGA[6].Event4[optimItinerary.bestItineraryIndices[6]]];//Event 4
 
                           if (optimItinerary.bestItineraryIndices[0] === -1) { // No itinerary was found/ error occurred
+
                             // reset stuff
+                            resultsArrayOutput[0] = EMPTY_ITINERARY;
+                            resultsArrayOutput[1] = EMPTY_ITINERARY_NONAME;
+                            resultsArrayOutput[2] = EMPTY_ITINERARY_NONAME;
+                            resultsArrayOutput[3] = EMPTY_ITINERARY_NONAME;
+                            resultsArrayOutput[4] = EMPTY_ITINERARY_NONAME;
+                            resultsArrayOutput[5] = EMPTY_ITINERARY_NONAME;
+                            resultsArrayOutput[6] = EMPTY_ITINERARY_NONAME;
+
                             this.setState({
-                              resultsArray: [],
+                              resultsArray: resultsArrayOutput,
                               checked: [0, 0, 0, 0, 0, 0, 0], //reset the checkboxes to being unchecked
                               eliminated: [0, 0, 0, 0, 0, 0, 0], //reset the checkboxes for the eliminated slots
                               totalCost: optimItinerary.totalCost,
                               savedEvents: [],
                               eliminatedEvents: [],
+                              itinTimes: [],
                               totalCost: 0,
                             });
                           }
-                          else { // An itinerary was found and presumably no errors occured
+                          else { // GA produced an optimal itinerary. Display results
                             // Save the user saved events into persistent memory client side
                             var prevBestItineraryObjs = JSON.stringify({
                               Event1: dataForGA[0].Event1[optimItinerary.bestItineraryIndices[0]],
@@ -340,6 +397,15 @@ class Userinput extends Component {
                               Dinner: dataForGA[5].Dinner[optimItinerary.bestItineraryIndices[5]],
                               Event4: dataForGA[6].Event4[optimItinerary.bestItineraryIndices[6]],
                             });
+
+                            // create array for the time to be displayed for each itinerary item
+                            var timesOutput = [misc.convertMilTime(resultsArrayOutput[0].time),
+                            misc.convertMilTime(resultsArrayOutput[1].time),
+                            misc.convertMilTime(resultsArrayOutput[2].time),
+                            misc.convertMilTime(resultsArrayOutput[3].time),
+                            misc.convertMilTime(resultsArrayOutput[4].time),
+                            misc.convertMilTime(resultsArrayOutput[5].time),
+                            misc.convertMilTime(resultsArrayOutput[6].time)];
 
                             var prevBestItineraryStr = JSON.stringify(optimItinerary.bestItineraryIndices);
                             myStorage.setItem("prevBestItinerarySavedIndices", prevBestItineraryStr);
@@ -352,6 +418,7 @@ class Userinput extends Component {
                             // Set the state in this component and re-render
                             this.setState({
                               resultsArray: resultsArrayOutput,
+                              itinTimes: timesOutput,
                               totalCost: optimItinerary.totalCost,
                             });
                           }
@@ -396,31 +463,31 @@ class Userinput extends Component {
     var indents = [];
     // Only allow check boxes to show up if data can be saved client side
     if (window.indexedDB) {
-        for (var i = 0; i < ITINERARY_LENGTH; i++) {
-            indents.push(
-                <tr className="itinContainer">
-                    <td><input checked={this.state.checked[i]} onChange={this.handleCheckbox} type='checkbox' value={i} /></td>
-                    <td><strong>{this.state.resultsArray[i].time ? this.state.resultsArray[i].time : ''}</strong></td>
-                    <td><a href={this.state.resultsArray[i].url}>{this.state.resultsArray[i].name} </a></td>
-                    <td className="text-success"><strong>${this.state.resultsArray[i].cost}</strong>  </td>
-                    <td><input checked={this.state.eliminated[i]} onChange={this.handleEliminate} type='checkbox' value={i} /></td>
-                    <hr></hr>
-                </tr>
-            );
-        }
+      for (var i = 0; i < ITINERARY_LENGTH; i++) {
+        indents.push(
+          <tr className="itinContainer">
+            <td><input checked={this.state.checked[i]} onChange={this.handleCheckbox} type='checkbox' value={i} /></td>
+            <td><strong>{this.state.itinTimes[i] ? this.state.itinTimes[i] : ''}</strong></td>
+            <td><a href={this.state.resultsArray[i].url}>{this.state.resultsArray[i].name} </a></td>
+            <td className="text-success"><strong>${this.state.resultsArray[i].cost}</strong>  </td>
+            <td><input checked={this.state.eliminated[i]} onChange={this.handleEliminate} type='checkbox' value={i} /></td>
+            <hr></hr>
+          </tr>
+        );
+      }
     }
     else {
       for (var i = 0; i < ITINERARY_LENGTH; i++) {
-          indents.push(
-              <tr className="itinContainer">
-                  <td><input checked={this.state.checked[i]} onChange={this.handleCheckbox} type='checkbox' value={i} /></td>
-                  <td><strong>{this.state.resultsArray[i].time ? this.state.resultsArray[i].time : ''}</strong></td>
-                  <td><a href={this.state.resultsArray[i].url}>{this.state.resultsArray[i].name} </a></td>
-                  <td className="text-success"><strong>${this.state.resultsArray[i].cost}</strong>  </td>
-                  <td><input checked={this.state.eliminated[i]} onChange={this.handleEliminate} type='checkbox' value={i} /></td>
-                  <hr></hr>
-              </tr>
-          );
+        indents.push(
+          <tr className="itinContainer">
+            <td><input checked={this.state.checked[i]} onChange={this.handleCheckbox} type='checkbox' value={i} /></td>
+            <td><strong>{this.state.itinTimes[i] ? this.state.itinTimes[i] : ''}</strong></td>
+            <td><a href={this.state.resultsArray[i].url}>{this.state.resultsArray[i].name} </a></td>
+            <td className="text-success"><strong>${this.state.resultsArray[i].cost}</strong>  </td>
+            <td><input checked={this.state.eliminated[i]} onChange={this.handleEliminate} type='checkbox' value={i} /></td>
+            <hr></hr>
+          </tr>
+        );
       }
     }
 
@@ -430,7 +497,7 @@ class Userinput extends Component {
     var options = [];
     const NUM_EVENT_APIS = 4;
     var filters = [];
-    var filterNames = ["Meetup", "Eventbrite", "Seatgeek","Local Parks"];
+    var filterNames = ["Meetup", "Eventbrite", "Seatgeek", "Local Parks"];
     for (var i = 0; i < NUM_EVENT_APIS; i++) {
       options.push(<li>
         <input checked={this.state.eventFilterFlags[i]} onChange={this.handleFilter} type='checkbox' value={i} />{filterNames[i]}
@@ -487,8 +554,8 @@ class Userinput extends Component {
           </div>
         </form>
         <div className="container-fluid">
-            <div className="row">
-                <div class="col-md-6">
+          <div className="row">
+            <div class="col-md-6">
 
                     <table >
                         <tbody>
@@ -496,14 +563,14 @@ class Userinput extends Component {
                         </tbody>
                     </table>
 
-                    <div class="totalCost">
-                        {total}
-                    </div>
-                </div>
-                <div class="mapsfix col-md-6">
-                    <GoogleApiWrapper locations={this.state.itinLocations} urls={this.state.itinUrls} center={this.state.center}/>
-                </div>
+              <div class="totalCost">
+                {total}
+              </div>
             </div>
+            <div class="mapsfix col-md-6">
+              <GoogleApiWrapper locations={this.state.itinLocations} urls={this.state.itinUrls} center={this.state.center} />
+            </div>
+          </div>
         </div>
       </div>
 
@@ -530,7 +597,7 @@ function isDate(d) {
   }
 }
 
-// Returns true if locally stored data is "stale" or at a different location therefore new API calls
+// Returns true if locally stored data is "stale" or user input a different location therefore new API calls
 // need to be made
 function determineAPICallBool(myStorage_in, date_in, today_in, latLon_in, indexDBcompat_in) {
   if (myStorage_in) { //} && indexDBcompat_in) {
