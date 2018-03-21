@@ -29,7 +29,7 @@ module.exports = {
             timeValue += (hours >= 12) ? " P.M." : " A.M.";  // get AM/PM
             return timeValue;
         } else {
-            return -1;
+            return "";
         }
     }
 }
