@@ -250,7 +250,7 @@ class Userinput extends Component {
                         dataForGA[6].Event4[optimItinerary.bestItineraryIndices[6]]];//Event 4
 
                         if (optimItinerary.bestItineraryIndices[0] === -1) { // No itinerary was found/ error occurred
-                          
+
                           // reset stuff
                           resultsArrayOutput[0] = EMPTY_ITINERARY;
                           resultsArrayOutput[1] = EMPTY_ITINERARY_NONAME;
@@ -367,7 +367,7 @@ class Userinput extends Component {
                           dataForGA[6].Event4[optimItinerary.bestItineraryIndices[6]]];//Event 4
 
                           if (optimItinerary.bestItineraryIndices[0] === -1) { // No itinerary was found/ error occurred
-                            
+
                             // reset stuff
                             resultsArrayOutput[0] = EMPTY_ITINERARY;
                             resultsArrayOutput[1] = EMPTY_ITINERARY_NONAME;
@@ -548,8 +548,9 @@ class Userinput extends Component {
               </ul>
             </div>
           </div>
-
-          <input className="btn btn-danger btn-md go-btn" type="submit" value={this.state.expanded == true ? 'GO!' : 'Find Again'} />
+          <div className="search-btn">
+              <input className="btn btn-md go-btn" type="submit" value={this.state.expanded == true ? 'GO!' : 'Find Again'} />
+          </div>
           <div className="results">
             <p>
               <a href="javascript:void(0)" onClick={this.handleExpand}> {this.state.expanded == true ? '' : 'Change Search'}
@@ -561,9 +562,11 @@ class Userinput extends Component {
           <div className="row">
             <div class="col-md-6">
 
-              <table >
-                {indents}
-              </table>
+                    <table >
+                        <tbody>
+                            {indents}
+                        </tbody>
+                    </table>
 
               <div class="totalCost">
                 {total}
