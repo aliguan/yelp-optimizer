@@ -180,7 +180,7 @@ class Userinput extends Component {
         geocoder.geocode(this.state.location, function (err, data_latlon) {
           // Check that there is data and results before constructing location lat long string
           if (data_latlon) {
-            console.log(data_latlon.results)
+            //console.log(data_latlon.results)
             if (data_latlon.results && data_latlon.results.length>0) {
               
               // Construct lat/long string from geocoder from user input
