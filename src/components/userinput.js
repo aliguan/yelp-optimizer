@@ -180,7 +180,9 @@ class Userinput extends Component {
         geocoder.geocode(this.state.location, function (err, data_latlon) {
           // Check that there is data and results before constructing location lat long string
           if (data_latlon) {
-            if (data_latlon.results) {
+            console.log(data_latlon.results)
+            if (data_latlon.results && data_latlon.results.length>0) {
+              
               // Construct lat/long string from geocoder from user input
               var lat = data_latlon.results[0].geometry.location.lat;
               var lon = data_latlon.results[0].geometry.location.lng;
@@ -431,7 +433,10 @@ class Userinput extends Component {
                 }
               }.bind(this))
 
-            }
+            } 
+            else {
+              console.log("invalid location input!")
+            } // end if (data_latlon.results)
           }
         }.bind(this))
 
