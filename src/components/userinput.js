@@ -7,6 +7,7 @@ import genAlgo from '../GA.js'
 import idb_keyval from 'idb-keyval'
 import globalStyles from '../App.css'
 import GoogleApiWrapper from './googlemaps.js';
+import Loader from './reactloading.js'
 import '../maps.css';
 
 import 'react-datepicker/dist/react-datepicker.css';
@@ -182,7 +183,7 @@ class Userinput extends Component {
           if (data_latlon) {
             //console.log(data_latlon.results)
             if (data_latlon.results && data_latlon.results.length>0) {
-              
+
               // Construct lat/long string from geocoder from user input
               var lat = data_latlon.results[0].geometry.location.lat;
               var lon = data_latlon.results[0].geometry.location.lng;
@@ -433,7 +434,7 @@ class Userinput extends Component {
                 }
               }.bind(this))
 
-            } 
+            }
             else {
               console.log("invalid location input!")
             } // end if (data_latlon.results)
@@ -476,7 +477,6 @@ class Userinput extends Component {
             <td><a href={this.state.resultsArray[i].url}>{this.state.resultsArray[i].name} </a></td>
             <td className="text-success"><strong>${this.state.resultsArray[i].cost}</strong>  </td>
             <td><input checked={this.state.eliminated[i]} onChange={this.handleEliminate} type='checkbox' value={i} /></td>
-            <hr></hr>
           </tr>
         );
       }
@@ -490,7 +490,6 @@ class Userinput extends Component {
             <td><a href={this.state.resultsArray[i].url}>{this.state.resultsArray[i].name} </a></td>
             <td className="text-success"><strong>${this.state.resultsArray[i].cost}</strong>  </td>
             <td><input checked={this.state.eliminated[i]} onChange={this.handleEliminate} type='checkbox' value={i} /></td>
-            <hr></hr>
           </tr>
         );
       }
@@ -512,6 +511,10 @@ class Userinput extends Component {
 
     return (
       <div className="Userinput">
+          <div className="loader">
+            <Loader type="spin" color="#117bf3" height="100px" width="100px"></Loader>
+          </div>
+
         <form className="form-card" onSubmit={this.handleSubmit}>
           <h4 className="form-header">Plan Your Trip</h4>
           <div className={formStyles.join(' ')}>
@@ -562,15 +565,17 @@ class Userinput extends Component {
           <div className="row">
             <div class="col-md-6">
 
-                    <table >
-                        <tbody>
-                            {indents}
-                        </tbody>
-                    </table>
+                <table>
+                    <tbody>
+                        {indents}
+                    </tbody>
+                </table>
 
               <div class="totalCost">
                 {total}
               </div>
+
+
             </div>
             <div class="mapsfix col-md-6">
               <GoogleApiWrapper locations={this.state.itinLocations} urls={this.state.itinUrls} center={this.state.center} />
@@ -578,6 +583,7 @@ class Userinput extends Component {
           </div>
         </div>
       </div>
+
 
     )
   }

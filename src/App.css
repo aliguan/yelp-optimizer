@@ -171,6 +171,22 @@ table {
 input[name="location"] {
     padding-left: 46px;
 }
+
+.loader {
+    position: absolute;
+    width: 100%;
+    top: 0;
+    left: 0;
+    height: 100vh;
+    background-color: rgba(255,255,255, 0.55);
+    z-index: 9999;
+}
+
+.loader div:first-child {
+    position: absolute;
+    top: calc(47% - 50px);
+    left: calc(51% - 50px);
+}
 @keyframes App-logo-spin {
   from { transform: rotate(0deg); }
   to { transform: rotate(360deg); }
