@@ -181,8 +181,8 @@ class Userinput extends Component {
           // Check that there is data and results before constructing location lat long string
           if (data_latlon) {
             //console.log(data_latlon.results)
-            if (data_latlon.results && data_latlon.results.length>0) {
-              
+            if (data_latlon.results && data_latlon.results.length > 0) {
+
               // Construct lat/long string from geocoder from user input
               var lat = data_latlon.results[0].geometry.location.lat;
               var lon = data_latlon.results[0].geometry.location.lng;
@@ -433,7 +433,7 @@ class Userinput extends Component {
                 }
               }.bind(this))
 
-            } 
+            }
             else {
               console.log("invalid location input!")
             } // end if (data_latlon.results)
@@ -515,24 +515,24 @@ class Userinput extends Component {
         <form className="form-card" onSubmit={this.handleSubmit}>
           <h4 className="form-header">Plan Your Trip</h4>
           <div className={formStyles.join(' ')}>
-              <div className="row">
-                  <div className="col-md-5 form-group mb-2">
-                    <span class="plane-icon fas fa-plane"></span>
-                    <input required id="location" className="textInput" type="text" name="location" value={location} onChange={this.handleChange} autocomplete="address-level2" placeholder="Where are you going?" />
-                  </div>
-
-                  <div className="col-md-3 form-group mb-2 datePickerWrapper">
-                    <label htmlFor="datePicker"></label>
-                    <DatePicker required id="datePicker" className="textInput" selected={this.state.startDate} onChange={this.handleDateChange} />
-                  </div>
-              {/*<input type="text" name="term" style={{ width: 90 }} value={term} onChange={this.handleChange} />*/}
-                <div className="col-md-2 form-group mb-2">
-                    <input required className="textInput" type="number" min="0" name="budgetmin" value={budgetmin} onChange={this.handleChange} placeholder="$ Min" />
-                </div>
-                <div className="col-md-2 form-group mb-2">
-                    <input required className="textInput" min="0" type="number" name="budgetmax" value={budgetmax} onChange={this.handleChange} placeholder="$ Max" />
-                </div>
+            <div className="row">
+              <div className="col-md-5 form-group mb-2">
+                <span class="plane-icon fas fa-plane"></span>
+                <input required id="location" className="textInput" type="text" name="location" value={location} onChange={this.handleChange} autocomplete="address-level2" placeholder="Where are you going?" />
               </div>
+
+              <div className="col-md-3 form-group mb-2 datePickerWrapper">
+                <label htmlFor="datePicker"></label>
+                <DatePicker required id="datePicker" className="textInput" selected={this.state.startDate} onChange={this.handleDateChange} />
+              </div>
+              {/*<input type="text" name="term" style={{ width: 90 }} value={term} onChange={this.handleChange} />*/}
+              <div className="col-md-2 form-group mb-2">
+                <input required className="textInput" type="number" min="0" name="budgetmin" value={budgetmin} onChange={this.handleChange} placeholder="$ Min" />
+              </div>
+              <div className="col-md-2 form-group mb-2">
+                <input required className="textInput" min="0" type="number" name="budgetmax" value={budgetmax} onChange={this.handleChange} placeholder="$ Max" />
+              </div>
+            </div>
 
 
 
@@ -549,7 +549,7 @@ class Userinput extends Component {
             </div>
           </div>
           <div className="search-btn">
-              <input className="btn btn-md go-btn" type="submit" value={this.state.expanded == true ? 'GO!' : 'Find Again'} />
+            <input className="btn btn-md go-btn" type="submit" value={this.state.expanded == true ? 'GO!' : 'Find Again'} />
           </div>
           <div className="results">
             <p>
@@ -562,11 +562,11 @@ class Userinput extends Component {
           <div className="row">
             <div class="col-md-6">
 
-                    <table >
-                        <tbody>
-                            {indents}
-                        </tbody>
-                    </table>
+              <table >
+                <tbody>
+                  {indents}
+                </tbody>
+              </table>
 
               <div class="totalCost">
                 {total}
@@ -706,94 +706,93 @@ function xHoursPassed(currentDateTimeMoment, locallyStoredDateTimeStr, elapsedHo
 
 
 function processAPIDataForGA(events_in, eventFilterFlags_in, savedEvents_in, savedEventsObjs_in) {
-
-  // Define whether or not user choose to save an event or restaurant to eat at
-  // savedEvents_in is the indices of the saved events [0-6]
-  // savedEventsObj_in is that actual data of the event/restaurant (name, url, cost, etc)
-  var savedUserInputs = false;
-  if (savedEvents_in.length > 0 && savedEventsObjs_in) {
-    savedUserInputs = true;
-  }
-
-  // Assigning to some variables
-  var meetupItemsGlobal = events_in.meetupItemsGlobal;
-  var yelpEventsGlobal = events_in.yelpEventsGlobal;
-  var eventbriteGlobal = events_in.eventbriteGlobal;
-  var seatgeekItemsGlobal = events_in.seatgeekItemsGlobal;
-  var googlePlacesGlobal = events_in.googlePlacesGlobal;
-  var yelpBreakfastItemsGlobal = events_in.yelpBreakfastItemsGlobal;
-  var yelpLunchItemsGlobal = events_in.yelpLunchItemsGlobal;
-  var yelpDinnerItemsGlobal = events_in.yelpDinnerItemsGlobal;
-
-  // Determine how many data points there are
-  var numMeetupEvents = meetupItemsGlobal.Event1.length +
-    meetupItemsGlobal.Event2.length +
-    meetupItemsGlobal.Event3.length +
-    meetupItemsGlobal.Event4.length;
-
-  var numYelpEvents = yelpEventsGlobal.Event1.length +
-    yelpEventsGlobal.Event2.length +
-    yelpEventsGlobal.Event3.length +
-    yelpEventsGlobal.Event4.length;
-
-  var numEventbriteEvents = eventbriteGlobal.Event1.length +
-    eventbriteGlobal.Event2.length +
-    eventbriteGlobal.Event3.length +
-    eventbriteGlobal.Event4.length;
-
-  var numSeatgeekEvents = seatgeekItemsGlobal.Event1.length +
-    seatgeekItemsGlobal.Event2.length +
-    seatgeekItemsGlobal.Event3.length +
-    seatgeekItemsGlobal.Event4.length;
-
-  var numGooglePlaces = googlePlacesGlobal.Event1.length +
-    googlePlacesGlobal.Event2.length +
-    googlePlacesGlobal.Event3.length +
-    googlePlacesGlobal.Event4.length;
-
-  console.log("num meetup events: " + numMeetupEvents);
-  console.log("num yelp events: " + numYelpEvents);
-  console.log("num eb events: " + numEventbriteEvents);
-  console.log("num sg events: " + numSeatgeekEvents);
-  console.log("num goog places: " + numGooglePlaces);
-
-  // Flags to include certain API data in the GA. Currently yelpEvents is hard-coded to false and google
-  // places is to true and the rest is selected by the user (default for be true)
-  var includeMeetupEvents = eventFilterFlags_in[0];
-  var includeYelpEvents = false;
-  var includeEventbriteEvents = eventFilterFlags_in[1];
-  var includeSeatgeekEvents = eventFilterFlags_in[2];
-  var includeGooglePlaces = eventFilterFlags_in[3];
-
-  // Constants. These are filler itinerary items
-  const NONE_ITEM = {
-    name: "None/Free Itinerary Slot",
-    cost: 0,
-    rating: 4.4,
-    time: "9999",
-    location: {},
-  }
-  const NONE_ITEM_EVENT = {
-    name: "None/Free Itinerary Slot",
-    cost: 0,
-    rating: 10.5,
-    time: "9999",
-    location: {},
-  }
-
-  // Initialize array that will be returned and formatted for the GA
-  var itineraries = [ //array of objects with one key per object. the key holds another array of objects
-    { Event1: [] }, // 0
-    { Breakfast: [] }, //1
-    { Event2: [] }, //2
-    { Lunch: [] }, //3
-    { Event3: [] }, //4
-    { Dinner: [] }, //5
-    { Event4: [] }, //6
-  ];
-
-  // Begin formatting and preprocess data
   try {
+    // Define whether or not user choose to save an event or restaurant to eat at
+    // savedEvents_in is the indices of the saved events [0-6]
+    // savedEventsObj_in is that actual data of the event/restaurant (name, url, cost, etc)
+    var savedUserInputs = false;
+    if (savedEvents_in.length > 0 && savedEventsObjs_in) {
+      savedUserInputs = true;
+    }
+
+    // Assigning to some variables
+    var meetupItemsGlobal = events_in.meetupItemsGlobal;
+    var yelpEventsGlobal = events_in.yelpEventsGlobal;
+    var eventbriteGlobal = events_in.eventbriteGlobal;
+    var seatgeekItemsGlobal = events_in.seatgeekItemsGlobal;
+    var googlePlacesGlobal = events_in.googlePlacesGlobal;
+    var yelpBreakfastItemsGlobal = events_in.yelpBreakfastItemsGlobal;
+    var yelpLunchItemsGlobal = events_in.yelpLunchItemsGlobal;
+    var yelpDinnerItemsGlobal = events_in.yelpDinnerItemsGlobal;
+
+    // Determine how many data points there are
+    var numMeetupEvents = meetupItemsGlobal.Event1.length +
+      meetupItemsGlobal.Event2.length +
+      meetupItemsGlobal.Event3.length +
+      meetupItemsGlobal.Event4.length;
+
+    var numYelpEvents = yelpEventsGlobal.Event1.length +
+      yelpEventsGlobal.Event2.length +
+      yelpEventsGlobal.Event3.length +
+      yelpEventsGlobal.Event4.length;
+
+    var numEventbriteEvents = eventbriteGlobal.Event1.length +
+      eventbriteGlobal.Event2.length +
+      eventbriteGlobal.Event3.length +
+      eventbriteGlobal.Event4.length;
+
+    var numSeatgeekEvents = seatgeekItemsGlobal.Event1.length +
+      seatgeekItemsGlobal.Event2.length +
+      seatgeekItemsGlobal.Event3.length +
+      seatgeekItemsGlobal.Event4.length;
+
+    var numGooglePlaces = googlePlacesGlobal.Event1.length +
+      googlePlacesGlobal.Event2.length +
+      googlePlacesGlobal.Event3.length +
+      googlePlacesGlobal.Event4.length;
+
+    console.log("num meetup events: " + numMeetupEvents);
+    console.log("num yelp events: " + numYelpEvents);
+    console.log("num eb events: " + numEventbriteEvents);
+    console.log("num sg events: " + numSeatgeekEvents);
+    console.log("num goog places: " + numGooglePlaces);
+
+    // Flags to include certain API data in the GA. Currently yelpEvents is hard-coded to false and google
+    // places is to true and the rest is selected by the user (default for be true)
+    var includeMeetupEvents = eventFilterFlags_in[0];
+    var includeYelpEvents = false;
+    var includeEventbriteEvents = eventFilterFlags_in[1];
+    var includeSeatgeekEvents = eventFilterFlags_in[2];
+    var includeGooglePlaces = eventFilterFlags_in[3];
+
+    // Constants. These are filler itinerary items
+    const NONE_ITEM = {
+      name: "None/Free Itinerary Slot",
+      cost: 0,
+      rating: 4.4,
+      time: "9999",
+      location: {},
+    }
+    const NONE_ITEM_EVENT = {
+      name: "None/Free Itinerary Slot",
+      cost: 0,
+      rating: 10.5,
+      time: "9999",
+      location: {},
+    }
+
+    // Initialize array that will be returned and formatted for the GA
+    var itineraries = [ //array of objects with one key per object. the key holds another array of objects
+      { Event1: [] }, // 0
+      { Breakfast: [] }, //1
+      { Event2: [] }, //2
+      { Lunch: [] }, //3
+      { Event3: [] }, //4
+      { Dinner: [] }, //5
+      { Event4: [] }, //6
+    ];
+
+    // Begin formatting and preprocess data
     itineraries[1].Breakfast = yelpBreakfastItemsGlobal.slice();
 
     itineraries[3].Lunch = yelpLunchItemsGlobal.slice();

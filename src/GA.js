@@ -16,6 +16,7 @@ module.exports = {
 
     var itinerarySize = 7;                          // number of things to do in the day
     var bestItinerary = new Array(itinerarySize);
+    var iBestItinerary= new Array(itinerarySize);
 
     // Format data
     var parsedDataAll = this.preProcessData(allData);
@@ -27,7 +28,19 @@ module.exports = {
       bestItinerary[4] = '';
       bestItinerary[5] = '';
       bestItinerary[6] = '';
-      return bestItinerary;
+
+      iBestItinerary[0] = -1;
+      iBestItinerary[1] = -1;
+      iBestItinerary[2] = -1;
+      iBestItinerary[3] = -1;
+      iBestItinerary[4] = -1;
+      iBestItinerary[5] = -1;
+      iBestItinerary[6] = -1;
+      
+      return {
+        bestItinerary: bestItinerary,
+        bestItineraryIndices: iBestItinerary,
+      };
     }
 
     // Initialize constants for GA
@@ -53,8 +66,7 @@ module.exports = {
     var allItineraryRatings = new Array(popSize);
     var allItineraryRatingsSum = 0;
 
-    var crossedItineraryArray;
-    var iBestItinerary;
+    var crossedItineraryArray;    
     var bestItineraryObj;
     var bestRating;
     var bestCost;
