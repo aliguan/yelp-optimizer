@@ -33,7 +33,7 @@
     font-size: 18px;
     padding: 0.75rem 1rem;
     outline: none;
-    line-height: 2;
+    line-height: 1.1;
     color: white!important;
     -webkit-font-smoothing: antialiased;
     font-weight: bold;
@@ -53,30 +53,31 @@
 
 .form-card {
     padding: 20px;
-    /* background: #007bff; */
-    background: #396afc;  /* fallback for old browsers */
-    background: -webkit-linear-gradient(to bottom, #2948ff, #396afc);  /* Chrome 10-25, Safari 5.1-6 */
-    background: linear-gradient(to bottom, #2948ff, #396afc); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
     text-align: left;
     box-shadow: 0px 2px 5px rgba(0,0,0,0.15);
 }
 
 .form-header {
-    background: url('https://cdn.stocksnap.io/img-thumbs/960w/J2AYKBIXA4.jpg');
-    background-size: cover;
+    background: url('./banner.jpg');
+    background-position: 0px -250px;
+    background-size:100%;
     background-color: white;
     text-align: center;
     font-weight: 700;
     font-size: 1.8rem;
     padding: 20px 0 20px 0;
-    margin: -20px -20px 5px;
+    margin: -15px -15px 5px;
     color: black;
+    height: 45vh;
+    position: relative;
 }
 
 .form-body {
-    padding-top: 20px;
-    width: 80%;
-    margin: auto;
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    background-color: rgba(0,0,0,0.6);
 }
 
 .events-half {
@@ -166,6 +167,12 @@ table {
     top: 20px;
     left: 27px;
     font-size: 22px;
+}
+
+.inputsRow {
+    width: 90%;
+    margin: auto!important;
+
 }
 
 input[name="location"] {

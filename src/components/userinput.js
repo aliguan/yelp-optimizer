@@ -511,73 +511,48 @@ class Userinput extends Component {
 
     return (
       <div className="Userinput">
-          <div className="loader">
-            <Loader type="spin" color="#117bf3" height="100px" width="100px"></Loader>
-          </div>
+        <div className="form-header">
+            <form className="form-card" onSubmit={this.handleSubmit}>
+              <div className={formStyles.join(' ')}>
+                <div className="row inputsRow">
+                        <div className="col-md-5 form-group mb-2">
+                          <span className="plane-icon fas fa-plane"></span>
+                          <input required id="location" className="textInput" type="text" name="location" value={location} onChange={this.handleChange} autoComplete="address-level2" placeholder="Where are you going?" />
+                        </div>
 
-        <form className="form-card" onSubmit={this.handleSubmit}>
-          <h4 className="form-header">Plan Your Trip</h4>
-          <div className={formStyles.join(' ')}>
-            <div className="row">
-              <div className="col-md-5 form-group mb-2">
-                <span class="plane-icon fas fa-plane"></span>
-                <input required id="location" className="textInput" type="text" name="location" value={location} onChange={this.handleChange} autocomplete="address-level2" placeholder="Where are you going?" />
-              </div>
+                        <div className="col-md-3 form-group mb-2 datePickerWrapper">
+                          <label htmlFor="datePicker"></label>
+                          <DatePicker required id="datePicker" className="textInput" selected={this.state.startDate} onChange={this.handleDateChange} />
+                        </div>
+                        {/*<input type="text" name="term" style={{ width: 90 }} value={term} onChange={this.handleChange} />*/}
+                        <div className="col-md-2 form-group mb-2">
+                          <input required className="textInput" type="number" min="0" name="budgetmin" value={budgetmin} onChange={this.handleChange} placeholder="$ Min" />
+                        </div>
+                        <div className="col-md-2 form-group mb-2">
+                          <input required className="textInput" min="0" type="number" name="budgetmax" value={budgetmax} onChange={this.handleChange} placeholder="$ Max" />
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
 
-              <div className="col-md-3 form-group mb-2 datePickerWrapper">
-                <label htmlFor="datePicker"></label>
-                <DatePicker required id="datePicker" className="textInput" selected={this.state.startDate} onChange={this.handleDateChange} />
-              </div>
-              {/*<input type="text" name="term" style={{ width: 90 }} value={term} onChange={this.handleChange} />*/}
-              <div className="col-md-2 form-group mb-2">
-                <input required className="textInput" type="number" min="0" name="budgetmin" value={budgetmin} onChange={this.handleChange} placeholder="$ Min" />
-              </div>
-              <div className="col-md-2 form-group mb-2">
-                <input required className="textInput" min="0" type="number" name="budgetmax" value={budgetmax} onChange={this.handleChange} placeholder="$ Max" />
-              </div>
-            </div>
-
-
-
-            <div className="results">
-              <a href="javascript:void(0)" onClick={this.handleMoreOptions}> {this.state.options == false ? 'More Options' : 'Less Options'} <i className="fas fa-sort-down"></i></a>
-            </div>
-
-            <div className={optionStyles.join(' ')}>
-
-              <h5>Include results from: </h5>
-              <ul className="options">
-                {options}
-              </ul>
-            </div>
-          </div>
-          <div className="search-btn">
-            <input className="btn btn-md go-btn" type="submit" value={this.state.expanded == true ? 'GO!' : 'Find Again'} />
-          </div>
-          <div className="results">
-            <p>
-              <a href="javascript:void(0)" onClick={this.handleExpand}> {this.state.expanded == true ? '' : 'Change Search'}
-              </a>
-            </p>
-          </div>
-        </form>
-        <div className="container-fluid">
+        <div className="">
           <div className="row">
-            <div class="col-md-6">
+            <div className="col-md-6">
 
-              <table >
+              <table>
                 <tbody>
                   {indents}
                 </tbody>
               </table>
 
-              <div class="totalCost">
+              <div className="totalCost">
                 {total}
               </div>
 
 
             </div>
-            <div class="mapsfix col-md-6">
+            <div className="mapsfix col-md-6">
               <GoogleApiWrapper locations={this.state.itinLocations} urls={this.state.itinUrls} center={this.state.center} />
             </div>
           </div>
