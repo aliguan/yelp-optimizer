@@ -533,27 +533,30 @@ class Userinput extends Component {
                         <div className="col-md-2 search-btn">
                             <input className="btn btn-sm btn-success" type="submit" value={this.state.expanded == true ? 'GO!' : 'Find Again'} />
                         </div>
-                        <div className="row results">
-                          <a href="javascript:void(0)" onClick={this.handleMoreOptions}> {this.state.options == false ? 'More Options' : 'Less Options'} <i className="fas fa-sort-down"></i></a>
-                        </div>
-
-                        <div className={optionStyles.join(' ')}>
-
-                          <h5>Include results from: </h5>
-                          <ul className="options">
-                            {options}
-                          </ul>
-                      </div>
-
-                        <div className="results">
-                        <p>
-                          <a href="javascript:void(0)" onClick={this.handleExpand}> {this.state.expanded == true ? '' : 'Change Search'}
-                          </a>
-                        </p>
+                        <div className="row options">
+                            <div className="results">
+                              <a href="javascript:void(0)" onClick={this.handleMoreOptions}> {this.state.options == false ? 'More Options' : 'Less Options'} <i className="fas fa-sort-down"></i></a>
+                            </div>
                         </div>
                     </div>
                 </div>
+
+                <div className={optionStyles.join(' ')}>
+
+                  <h5>Include results from: </h5>
+                  <ul className="options">
+                    {options}
+                  </ul>
+              </div>
+
+                <div className="results">
+                <p>
+                  <a href="javascript:void(0)" onClick={this.handleExpand}> {this.state.expanded == true ? '' : 'Change Search'}
+                  </a>
+                </p>
+                </div>
             </form>
+
         </div>
 
         <div className="">
