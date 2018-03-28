@@ -27,28 +27,26 @@
 }
 
 .textInput {
-    background-color: rgba(255, 255, 255, 0.3);
+    background-color: white;
+    border: 1px solid rgb(223, 223, 223);
     transition: .2s;
     margin: 0;
-    font-size: 18px;
-    padding: 0.75rem 1rem;
+    font-size: 16px;
+    padding: 0.4rem 1rem;
     outline: none;
-    line-height: 1.1;
-    color: white!important;
+    line-height: 0.8;
     -webkit-font-smoothing: antialiased;
-    font-weight: bold;
-    border: none;
     width: 100%;
-}
-
-.textInput::placeholder {
-    color: white;
-    font-weight: bold
+    border-radius: 2px;
 }
 
 .submitButton {
     background-color: #5fcf80;
     border: solid 2px #5fcf80;
+}
+
+.datePickerWrapper {
+    text-align: center;
 }
 
 .form-card {
@@ -64,7 +62,7 @@
     background-color: white;
     text-align: center;
     font-weight: 700;
-    font-size: 1.8rem;
+    font-size: 1rem;
     padding: 20px 0 20px 0;
     margin: -15px -15px 5px;
     color: black;
@@ -77,6 +75,7 @@
     bottom: 0;
     left: 0;
     width: 100%;
+    padding: 1em;
     background-color: rgba(0,0,0,0.6);
 }
 
@@ -96,13 +95,13 @@
 }
 
 .search-btn {
-    width: 100%;
     text-align: center;
-    padding-top: 20px;
+    margin-top: 2px;
 }
 
 .search-btn input {
-    width: 25%;
+    width: 100%;
+    padding: 0.4rem 1rem;
 }
 
 .results {
@@ -137,9 +136,6 @@
     display: inline-block;
     width: calc(100%/3);
 }
-.datePickerWrapper {
-    margin-top: -24px;
-}
 
 .itinContainer {
     font-size: 1.2rem;
@@ -163,14 +159,15 @@ table {
 
 .plane-icon {
     position: absolute;
-    color: white;
-    top: 20px;
+    top: 16px;
     left: 27px;
     font-size: 22px;
+    padding-right: 2px;
+    margin-right: 3px;
 }
 
 .inputsRow {
-    width: 90%;
+    padding: 0.25em 1em;
     margin: auto!important;
 
 }
