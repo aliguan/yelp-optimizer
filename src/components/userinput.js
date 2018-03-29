@@ -12,6 +12,7 @@ import '../maps.css';
 
 import 'react-datepicker/dist/react-datepicker.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
+import 'bootstrap/dist/js/bootstrap.min.js';
 import misc from '../miscfuncs/misc.js'
 
 
@@ -447,21 +448,21 @@ class Userinput extends Component {
 
   render() {
     var formStyles = ['form-body'];
-    var optionStyles = ['more-options'];
+    var optionStyles = ['more-options', 'form-body'];
 
-    if (this.state.resultsArray.length > 0 || this.state.expanded == false) {
-      formStyles.push('hidden');
-    }
-
-    if (this.state.resultsArray.length > 0 && this.state.expanded == true) {
-      formStyles = ['form-body'];
-    }
-
-    if (this.state.options == false) {
-      optionStyles.push('hidden');
-    } else {
-      optionStyles = ['more-options'];
-    }
+    // if (this.state.resultsArray.length > 0 || this.state.expanded == false) {
+    //   formStyles.push('hidden');
+    // }
+    //
+    // if (this.state.resultsArray.length > 0 && this.state.expanded == true) {
+    //   formStyles = ['form-body'];
+    // }
+    //
+    // if (this.state.options == false) {
+    //   optionStyles.push('hidden');
+    // } else {
+    //   optionStyles = ['more-options'];
+    // }
 
 
     var ITINERARY_LENGTH = this.state.resultsArray.length;
@@ -512,57 +513,53 @@ class Userinput extends Component {
     return (
       <div className="Userinput">
         <div className="form-header">
-            <form className="form-card" onSubmit={this.handleSubmit}>
-              <div className={formStyles.join(' ')}>
-                <div className="row inputsRow">
-                        <div className="col-md-4 form-group mb-2">
-                          <span className="plane-icon fas fa-plane"></span>
-                          <input required id="location" className="textInput" type="text" name="location" value={location} onChange={this.handleChange} autoComplete="address-level2" placeholder="Where are you going?" />
-                        </div>
 
-                        <div className="col-md-2 form-group mb-2 datePickerWrapper">
-                          <DatePicker required id="datePicker" className="textInput" selected={this.state.startDate} onChange={this.handleDateChange} />
-                        </div>
-                        {/*<input type="text" name="term" style={{ width: 90 }} value={term} onChange={this.handleChange} />*/}
-                        <div className="col-md-2 form-group mb-2">
-                          <input required className="textInput" type="number" min="0" name="budgetmin" value={budgetmin} onChange={this.handleChange} placeholder="$ Min" />
-                        </div>
-                        <div className="col-md-2 form-group mb-2">
-                          <input required className="textInput" min="0" type="number" name="budgetmax" value={budgetmax} onChange={this.handleChange} placeholder="$ Max" />
-                        </div>
-                        <div className="col-md-2 search-btn">
-                            <input className="btn btn-sm btn-success" type="submit" value={this.state.expanded == true ? 'GO!' : 'Find Again'} />
-                        </div>
-                        <div className="row options">
-                            <div className="results">
-                              <a href="javascript:void(0)" onClick={this.handleMoreOptions}> {this.state.options == false ? 'More Options' : 'Less Options'} <i className="fas fa-sort-down"></i></a>
-                            </div>
-                        </div>
-                    </div>
+                <nav>
+                  <div className="nav nav-tabs" id="nav-tab" role="tablist">
+                    <a className="nav-item nav-link active" id="nav-plan-tab" data-toggle="tab" href="#nav-plan" role="tab" aria-controls="nav-plan" aria-selected="true"><i className="plane-icon fas fa-plane"></i>Plan Your Trip</a>
+                    <a className="nav-item nav-link" id="nav-options-tab" data-toggle="tab" href="#nav-options" role="tab" aria-controls="nav-options" aria-selected="false">More Options</a>
+                  </div>
+                </nav>
+                <div className="tab-content" id="nav-tabContent">
+                  <div className="tab-pane fade show active" id="nav-plan" role="tabpanel" aria-labelledby="nav-plan-tab">
+                      <form className="form-card" onSubmit={this.handleSubmit}>
+                        <div className={formStyles.join(' ')}>
+                          <div className="row inputsRow">
+                                  <div className="col-md-4 form-group mb-2">
+                                    <input required id="location" className="textInput" type="text" name="location" value={location} onChange={this.handleChange} autoComplete="address-level2" placeholder="Where are you going?" />
+                                  </div>
+
+                                  <div className="col-md-2 form-group mb-2 datePickerWrapper">
+                                    <DatePicker required id="datePicker" className="textInput" selected={this.state.startDate} onChange={this.handleDateChange} />
+                                  </div>
+                                  {/*<input type="text" name="term" style={{ width: 90 }} value={term} onChange={this.handleChange} />*/}
+                                  <div className="col-md-2 form-group mb-2">
+                                    <input required className="textInput" type="number" min="0" name="budgetmin" value={budgetmin} onChange={this.handleChange} placeholder="$ Min" />
+                                  </div>
+                                  <div className="col-md-2 form-group mb-2">
+                                    <input required className="textInput" min="0" type="number" name="budgetmax" value={budgetmax} onChange={this.handleChange} placeholder="$ Max" />
+                                  </div>
+                                  <div className="col-md-2 search-btn">
+                                      <input className="btn btn-sm go-btn" type="submit" value={this.state.expanded == true ? 'GO!' : 'Find Again'} />
+                                  </div>
+                              </div>
+                          </div>
+                      </form>
+                  </div>
+                  <div className="tab-pane fade" id="nav-options" role="tabpanel" aria-labelledby="nav-options-tab">
+                      <div className={optionStyles.join(' ')}>
+                          <h5>Include results from: </h5>
+                          <ul className="options">
+                              {options}
+                          </ul>
+                      </div>
+                  </div>
                 </div>
 
-                <div className={optionStyles.join(' ')}>
-
-                  <h5>Include results from: </h5>
-                  <ul className="options">
-                    {options}
-                  </ul>
-              </div>
-
-                <div className="results">
-                <p>
-                  <a href="javascript:void(0)" onClick={this.handleExpand}> {this.state.expanded == true ? '' : 'Change Search'}
-                  </a>
-                </p>
-                </div>
-            </form>
 
         </div>
-
-        <div className="">
-          <div className="row">
+          <div className="row eventsCont">
             <div className="col-md-6">
-
               <table>
                 <tbody>
                   {indents}
@@ -580,7 +577,7 @@ class Userinput extends Component {
             </div>
           </div>
         </div>
-      </div>
+
 
 
     )
