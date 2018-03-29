@@ -14,7 +14,7 @@ export class MapContainer extends Component {
         if(this.props.locations.length > 0) {
             for(var i = 0; i < this.props.locations.length; i++) {
                 markers.push(<Marker onClick={this.onMarkerClick}
-                   name={'Current location'}
+                   name='current location'
                    position={this.props.locations[i]}/>)
 
             }

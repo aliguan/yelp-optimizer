@@ -573,7 +573,7 @@ class Userinput extends Component {
 
             </div>
             <div className="mapsfix col-md-6">
-              <GoogleApiWrapper locations={this.state.itinLocations} urls={this.state.itinUrls} center={this.state.center} />
+              <GoogleApiWrapper results={this.state.resultsArray} locations={this.state.itinLocations} urls={this.state.itinUrls} center={this.state.center} />
             </div>
           </div>
         </div>
