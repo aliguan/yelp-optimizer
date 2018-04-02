@@ -6,17 +6,58 @@ import React, { Component } from 'react';
 export class MapContainer extends Component {
     constructor(props) {
         super(props);
+        this.state = {
+            showingInfoWindow: false,
+            activeMarker: {},
+            selectedPlace: {},
+        }
+
+      // binding this to event-handler functions
+      this.onMarkerClick = this.onMarkerClick.bind(this);
+      this.onMapClicked = this.onMapClicked.bind(this);
     }
+
+    onMarkerClick(props, marker, e) {
+        this.setState({
+            selectedPlace: props,
+            activeMarker: marker,
+            showingInfoWindow: true
+        });
+    }
+
+    onMapClicked(props) {
+        if (this.state.showingInfoWindow) {
+            this.setState({
+                showingInfoWindow: false,
+                activeMarker: null
+            });
+        }
+    }
+
 
 
     render() {
         var markers = [];
-        if(this.props.locations.length > 0) {
-            for(var i = 0; i < this.props.locations.length; i++) {
-                markers.push(<Marker onClick={this.onMarkerClick}
-                   name='current location'
-                   position={this.props.locations[i]}/>)
-
+        if(this.props.results.length > 0) {
+            for(var i = 0; i < this.props.results.length; i++) {
+                var key = 'marker' + i;
+                var info_key = 'info' + i;
+                markers.push(
+                    <Marker key={key} onClick={this.onMarkerClick}
+                        name={this.props.results[i].name}
+                        position={this.props.results[i].location}
+                    />
+                );
+                markers.push(
+                    <InfoWindow key={info_key}
+                        onClose={this.windowHasClosed}
+                        marker={this.state.activeMarker}
+                        visible={this.state.showingInfoWindow}>
+                        <div>
+                         <h6>{this.state.selectedPlace.name}</h6>
+                       </div>
+                   </InfoWindow>
+                )
             }
 
         }

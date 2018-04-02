@@ -10,6 +10,12 @@ import GoogleApiWrapper from './googlemaps.js';
 import Loader from './reactloading.js'
 import '../maps.css';
 
+import yelp_logo from '../images/yelp_burst.png';
+import google_logo from '../images/google_places.png';
+import meetup_logo from '../images/meetup_logo.png';
+import eventbrite_logo from '../images/eventbrite_logo.png';
+import seatgeek_logo from '../images/seatgeek_logo.png';
+
 import 'react-datepicker/dist/react-datepicker.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap/dist/js/bootstrap.min.js';
@@ -35,10 +41,9 @@ class Userinput extends Component {
       totalCost: 0,
       expanded: true,
       options: false,
-      itinLocations: [],
-      itinUrls: [],
       itinTimes: [], // time string in AM/PM format for display
       center: {},
+      loading: false
     };
     this.apiService = new ApiService();
     this.handleChange = this.handleChange.bind(this);
@@ -144,7 +149,9 @@ class Userinput extends Component {
     e.preventDefault();
 
     console.clear();
-
+    this.setState({
+        loading: true
+    });
     var myStorage = window.localStorage;
     var doAPICallsFlag = true;
     var indexDBcompat = window.indexedDB;
@@ -271,6 +278,7 @@ class Userinput extends Component {
                             eliminatedEvents: [],
                             itinTimes: [],
                             totalCost: 0,
+                            loading: false
                           });
                         }
                         else { // GA produced an optimal itinerary. Display results
@@ -295,6 +303,7 @@ class Userinput extends Component {
                             eliminated: [0, 0, 0, 0, 0, 0, 0], //reset the checkboxes for the eliminated slots
                             eliminatedEvents: eliminatedEvents,
                             totalCost: optimItinerary.totalCost,
+                            loading: false
                           });
 
                           this.setState(prevState => ({
@@ -388,6 +397,7 @@ class Userinput extends Component {
                               eliminatedEvents: [],
                               itinTimes: [],
                               totalCost: 0,
+                              loading: false
                             });
                           }
                           else { // GA produced an optimal itinerary. Display results
@@ -424,6 +434,7 @@ class Userinput extends Component {
                               resultsArray: resultsArrayOutput,
                               itinTimes: timesOutput,
                               totalCost: optimItinerary.totalCost,
+                              loading: false
                             });
                           }
 
@@ -464,18 +475,26 @@ class Userinput extends Component {
     //   optionStyles = ['more-options'];
     // }
 
-
+    var origins = {
+         yelp: yelp_logo,
+         places: google_logo,
+         meetup: meetup_logo,
+         eventbrite: eventbrite_logo,
+         seatgeek: seatgeek_logo
+    }
     var ITINERARY_LENGTH = this.state.resultsArray.length;
     const { term, budgetmax, budgetmin, location } = this.state;
     var indents = [];
     // Only allow check boxes to show up if data can be saved client side
     if (window.indexedDB) {
       for (var i = 0; i < ITINERARY_LENGTH; i++) {
+        var origin = this.state.resultsArray[i].origin;
+
         indents.push(
           <tr className="itinContainer">
             <td><input checked={this.state.checked[i]} onChange={this.handleCheckbox} type='checkbox' value={i} /></td>
             <td><strong>{this.state.itinTimes[i] ? this.state.itinTimes[i] : ''}</strong></td>
-            <td><a href={this.state.resultsArray[i].url}>{this.state.resultsArray[i].name} </a></td>
+            <td><a href={this.state.resultsArray[i].url} target='_blank'><img className="origin-logo" src={origins[origin]}/>{this.state.resultsArray[i].name} </a></td>
             <td className="text-success"><strong>${this.state.resultsArray[i].cost}</strong>  </td>
             <td><input checked={this.state.eliminated[i]} onChange={this.handleEliminate} type='checkbox' value={i} /></td>
           </tr>
@@ -488,7 +507,7 @@ class Userinput extends Component {
           <tr className="itinContainer">
             <td><input checked={this.state.checked[i]} onChange={this.handleCheckbox} type='checkbox' value={i} /></td>
             <td><strong>{this.state.itinTimes[i] ? this.state.itinTimes[i] : ''}</strong></td>
-            <td><a href={this.state.resultsArray[i].url}>{this.state.resultsArray[i].name} </a></td>
+            <td><a href={this.state.resultsArray[i].url} target='_blank'><img src={origins.origin}/>{this.state.resultsArray[i].name} </a></td>
             <td className="text-success"><strong>${this.state.resultsArray[i].cost}</strong>  </td>
             <td><input checked={this.state.eliminated[i]} onChange={this.handleEliminate} type='checkbox' value={i} /></td>
           </tr>
@@ -516,7 +535,7 @@ class Userinput extends Component {
 
                 <nav>
                   <div className="nav nav-tabs" id="nav-tab" role="tablist">
-                    <a className="nav-item nav-link active" id="nav-plan-tab" data-toggle="tab" href="#nav-plan" role="tab" aria-controls="nav-plan" aria-selected="true"><i className="plane-icon fas fa-plane"></i>Plan Your Trip</a>
+                    <a className="nav-item nav-link active" id="nav-plan-tab" data-toggle="tab" href="#nav-plan" role="tab" aria-controls="nav-plan" aria-selected="true"><i className="plane-icon fas fa-map-marker-alt"></i>Plan Your Trip</a>
                     <a className="nav-item nav-link" id="nav-options-tab" data-toggle="tab" href="#nav-options" role="tab" aria-controls="nav-options" aria-selected="false">More Options</a>
                   </div>
                 </nav>
@@ -560,20 +579,23 @@ class Userinput extends Component {
         </div>
           <div className="row eventsCont">
             <div className="col-md-6">
+            {this.state.loading == true ? <div className="loader"><Loader type="spinningBubbles" color="black"></Loader><h5>Searching...</h5></div> :
               <table>
                 <tbody>
                   {indents}
                 </tbody>
-              </table>
+
 
               <div className="totalCost">
                 {total}
               </div>
+            </table>}
+
 
 
             </div>
             <div className="mapsfix col-md-6">
-              <GoogleApiWrapper results={this.state.resultsArray} locations={this.state.itinLocations} urls={this.state.itinUrls} center={this.state.center} />
+              <GoogleApiWrapper results={this.state.resultsArray} center={this.state.center} />
             </div>
           </div>
         </div>
