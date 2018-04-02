@@ -42,6 +42,7 @@ class Userinput extends Component {
       expanded: true,
       options: false,
       itinTimes: [], // time string in AM/PM format for display
+      userAddedEvents: [],
       center: {},
       loading: false
     };
@@ -55,6 +56,8 @@ class Userinput extends Component {
     this.handleExpand = this.handleExpand.bind(this);
     this.handleMoreOptions = this.handleMoreOptions.bind(this);
     this.handleData = this.handleData.bind(this);
+    this.handleAddUserEvent = this.handleAddUserEvent.bind(this);
+    this.handleClearUserEvents = this.handleClearUserEvents.bind(this);
   }
 
   handleChange(e) {
@@ -145,6 +148,65 @@ class Userinput extends Component {
     })
   }
 
+  handleAddUserEvent(e) {
+
+    const EVENT1_TIME = "0900";
+    const EVENT2_TIME = "1200";
+    const EVENT3_TIME = "1800";
+    const EVENT4_TIME = "2400";
+    const USERADDED_EVENT_RATING = 1000.0; // arbitrarily high
+    var itinSlot = parseInt(this.refs.userItinSlot.value);
+    var cost = 0.0;
+    cost = parseFloat(this.refs.userEventCost.value);
+    var time = EVENT4_TIME;
+    if (itinSlot == 1) {
+      time = EVENT1_TIME; // event 1
+    }
+    else if (itinSlot == 2) {
+      time = ""; // breakfast
+    }
+    else if (itinSlot == 3) {
+      time = EVENT2_TIME; // event 2
+    }
+    else if (itinSlot == 4) {
+      time = ""; // lunch
+    }
+    else if (itinSlot == 5) {
+      time = EVENT3_TIME; // event 3
+    }
+    else if (itinSlot == 6) {
+      time = ""; // dinner
+    }
+    else if (itinSlot == 7) {
+      time = EVENT4_TIME; // event 4
+    }
+    var userAddedEventObj = {
+      name: this.refs.userEventName.value,
+      url: "",
+      rating: USERADDED_EVENT_RATING,
+      time: time,
+      location: {},
+      cost: cost,
+      slot: itinSlot,
+    }
+
+    this.state.userAddedEvents.push(userAddedEventObj);
+    let userAddedEventsArray = this.state.userAddedEvents.slice();
+    this.setState({
+      userAddedEvents: userAddedEventsArray,
+    })
+
+    console.log("User Added: " + userAddedEventObj.name)
+
+  }
+
+  handleClearUserEvents(e) {
+    this.setState({
+      userAddedEvents: [],
+    })
+    console.log("All user added events cleared.")
+  }
+
   handleSubmit(e) {
     e.preventDefault();
 
@@ -187,9 +249,8 @@ class Userinput extends Component {
 
         // Geocoding to convert user location input into lat/lon
         geocoder.geocode(this.state.location, function (err, data_latlon) {
-          // Check that there is data and results before constructing location lat long string
+
           if (data_latlon) {
-            //console.log(data_latlon.results)
             if (data_latlon.results && data_latlon.results.length > 0) {
 
               // Construct lat/long string from geocoder from user input
@@ -222,6 +283,7 @@ class Userinput extends Component {
                       }
                     }
 
+
                     // Determine whether or not API calls need to be made
                     doAPICallsFlag = determineAPICallBool(myStorage, this.state.startDate, today, locationLatLong, indexDBcompat);
 
@@ -244,7 +306,11 @@ class Userinput extends Component {
                         var bestItineraryObjsParsed = [];
 
                         // Preprocess data for genetic algo
-                        var dataForGA = processAPIDataForGA(data.data, this.state.eventFilterFlags, savedEvents, bestItineraryObjsParsed);
+                        var dataForGA = processAPIDataForGA(data.data,
+                          this.state.eventFilterFlags,
+                          savedEvents,
+                          bestItineraryObjsParsed,
+                          this.state.userAddedEvents);
 
                         // Do optimization to find locally "best" itinerary
                         var optimItinerary = genAlgo.doGA(dataForGA, this.state.budgetmax, this.state.budgetmin, eliminatedEvents);
@@ -363,7 +429,11 @@ class Userinput extends Component {
                           var eliminatedEvents = this.state.eliminatedEvents.map(Number);
 
                           // Preprocess data for genetic algo
-                          var dataForGA = processAPIDataForGA(val, this.state.eventFilterFlags, savedEvents, bestItineraryObjsParsed);
+                          var dataForGA = processAPIDataForGA(val,
+                            this.state.eventFilterFlags,
+                            savedEvents,
+                            bestItineraryObjsParsed,
+                            this.state.userAddedEvents);
 
                           // Do optimization to find locally "best" itinerary
                           var optimItinerary = genAlgo.doGA(dataForGA, this.state.budgetmax, this.state.budgetmin, eliminatedEvents);
@@ -425,8 +495,6 @@ class Userinput extends Component {
                             myStorage.setItem("prevBestItinerarySavedIndices", prevBestItineraryStr);
                             myStorage.setItem("prevBestItinerarySavedObjects", prevBestItineraryObjs);
 
-                            console.log("optimItinerary.bestlocations:")
-                            console.log(optimItinerary.bestLocations)
                             this.handleData(optimItinerary.bestLocations, optimItinerary.bestUrls, mapCenter);
 
                             // Set the state in this component and re-render
@@ -442,17 +510,17 @@ class Userinput extends Component {
                         );
                       }
                     }
-                  }
-                }
+                   }
+                 }
               }.bind(this))
 
             }
             else {
+              console.log(data_latlon)
               console.log("invalid location input!")
             } // end if (data_latlon.results)
           }
         }.bind(this))
-
       }
     }
   }
@@ -532,10 +600,10 @@ class Userinput extends Component {
     return (
       <div className="Userinput">
         <div className="form-header">
-
                 <nav>
                   <div className="nav nav-tabs" id="nav-tab" role="tablist">
                     <a className="nav-item nav-link active" id="nav-plan-tab" data-toggle="tab" href="#nav-plan" role="tab" aria-controls="nav-plan" aria-selected="true"><i className="plane-icon fas fa-map-marker-alt"></i>Plan Your Trip</a>
+                    <a className="nav-item nav-link" id="nav-add-tab" data-toggle="tab" href="#nav-add" role="tab" aria-controls="nav-add" aria-selected="false">Add Event</a>
                     <a className="nav-item nav-link" id="nav-options-tab" data-toggle="tab" href="#nav-options" role="tab" aria-controls="nav-options" aria-selected="false">More Options</a>
                   </div>
                 </nav>
@@ -565,6 +633,46 @@ class Userinput extends Component {
                           </div>
                       </form>
                   </div>
+                  <div className="tab-pane fade" id="nav-add" role="tabpanel" aria-labelledby="nav-add-tab">
+                      <div className={optionStyles.join(' ')}>
+                          <h5>Add Your Own Event:</h5>
+
+                          {/* User added event slot  */}
+                          <div class="form-group">
+                            <label for="slots">Slot:</label>
+                            <select class="form-control" id="slots" ref="userItinSlot">
+                              <option>1</option>
+                              <option>2</option>
+                              <option>3</option>
+                              <option>4</option>
+                              <option>5</option>
+                              <option>6</option>
+                              <option>7</option>
+                            </select>
+                          </div>
+
+                          {/* User added event name */}
+                          <div class="form-group">
+                            <label for="eventName">Event Name:</label>
+                            <input type="text" class="form-control" id="eventName" placeholder="Event Name" ref="userEventName"/>
+                          </div>
+
+                          {/* User added event cost */}
+                          <div class="form-group">
+                            <label for="cost">Cost:</label>
+                            <input type="number" class="form-control" id="cost" placeholder="$" min="0" ref="userEventCost"/>
+                          </div>
+
+                          {/* Add event or clear all user added events*/}
+
+                          <a href="javascript:void(0)" onClick={this.handleAddUserEvent}> Add Event
+                          </a>
+
+                          <a href="javascript:void(0)" onClick={this.handleClearUserEvents}> Clear All User Added Events
+                          </a>
+
+                      </div>
+                  </div>
                   <div className="tab-pane fade" id="nav-options" role="tabpanel" aria-labelledby="nav-options-tab">
                       <div className={optionStyles.join(' ')}>
                           <h5>Include results from: </h5>
@@ -578,7 +686,7 @@ class Userinput extends Component {
 
         </div>
           <div className="row eventsCont">
-            <div className="col-md-6">
+            <div className="col-md-6 itinerary">
             {this.state.loading == true ? <div className="loader"><Loader type="spinningBubbles" color="black"></Loader><h5>Searching...</h5></div> :
               <table>
                 <tbody>
@@ -598,10 +706,10 @@ class Userinput extends Component {
               <GoogleApiWrapper results={this.state.resultsArray} center={this.state.center} />
             </div>
           </div>
+
+
+
         </div>
-
-
-
     )
   }
 }
@@ -728,7 +836,7 @@ function xHoursPassed(currentDateTimeMoment, locallyStoredDateTimeStr, elapsedHo
 }
 
 
-function processAPIDataForGA(events_in, eventFilterFlags_in, savedEvents_in, savedEventsObjs_in) {
+function processAPIDataForGA(events_in, eventFilterFlags_in, savedEvents_in, savedEventsObjs_in, userAddedEventsObjs_in) {
   try {
     // Define whether or not user choose to save an event or restaurant to eat at
     // savedEvents_in is the indices of the saved events [0-6]
@@ -736,6 +844,11 @@ function processAPIDataForGA(events_in, eventFilterFlags_in, savedEvents_in, sav
     var savedUserInputs = false;
     if (savedEvents_in.length > 0 && savedEventsObjs_in) {
       savedUserInputs = true;
+    }
+
+    var userAddedEventsFlag = false;
+    if (userAddedEventsObjs_in.length>0 && userAddedEventsObjs_in) {
+      userAddedEventsFlag = true;
     }
 
     // Assigning to some variables
@@ -912,7 +1025,7 @@ function processAPIDataForGA(events_in, eventFilterFlags_in, savedEvents_in, sav
     itineraries[4].Event3.push(NONE_ITEM_EVENT);
     itineraries[6].Event4.push(NONE_ITEM_EVENT);
 
-    // Save certain itinerary events/items based on user input by overwriting previous assignments
+    // Save certain itinerary events/items (from API calls) based on user input by overwriting previous assignments
     console.log("saved events array:")
     console.log(savedEvents_in)
     if (savedUserInputs) {
@@ -951,6 +1064,49 @@ function processAPIDataForGA(events_in, eventFilterFlags_in, savedEvents_in, sav
           delete itineraries[6].Event4;
           itineraries[6].Event4 = [];
           itineraries[6].Event4[0] = savedEventsObjs_in.Event4;
+        }
+      }
+    }
+
+    // Save user added event by overwriting previous assignments
+    console.log("user added events array:")
+    console.log(userAddedEventsObjs_in)
+    if (userAddedEventsFlag) {
+      for (var iadded = 0; iadded < userAddedEventsObjs_in.length; iadded++) {
+        if (userAddedEventsObjs_in[iadded].slot === 1) {
+          delete itineraries[0].Event1;
+          itineraries[0].Event1 = [];
+          itineraries[0].Event1[0] = userAddedEventsObjs_in[iadded];
+        }
+        else if (userAddedEventsObjs_in[iadded].slot === 2) {
+          delete itineraries[1].Breakfast;
+          itineraries[1].Breakfast = [];
+          itineraries[1].Breakfast[0] = userAddedEventsObjs_in[iadded];
+        }
+        else if (userAddedEventsObjs_in[iadded].slot=== 3) {
+          delete itineraries[2].Event2;
+          itineraries[2].Event2 = [];
+          itineraries[2].Event2[0] = userAddedEventsObjs_in[iadded];
+        }
+        else if (userAddedEventsObjs_in[iadded].slot === 4) {
+          delete itineraries[3].Lunch;
+          itineraries[3].Lunch = [];
+          itineraries[3].Lunch[0] = userAddedEventsObjs_in[iadded];
+        }
+        else if (userAddedEventsObjs_in[iadded].slot === 5) {
+          delete itineraries[4].Event3;
+          itineraries[4].Event3 = [];
+          itineraries[4].Event3[0] = userAddedEventsObjs_in[iadded];
+        }
+        else if (userAddedEventsObjs_in[iadded].slot === 6) {
+          delete itineraries[5].Dinner;
+          itineraries[5].Dinner = [];
+          itineraries[5].Dinner[0] = userAddedEventsObjs_in[iadded];
+        }
+        else {
+          delete itineraries[6].Event4;
+          itineraries[6].Event4 = [];
+          itineraries[6].Event4[0] = userAddedEventsObjs_in[iadded];
         }
       }
     }

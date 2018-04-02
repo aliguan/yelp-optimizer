@@ -145,6 +145,7 @@
 
 .mapsfix {
     padding-right: 0px!important;
+    z-index: -1;
 }
 table {
     margin-top: 25px;
@@ -177,6 +178,10 @@ input[name="location"] {
     z-index: 9999;
 }
 
+.itinerary {
+    z-index: -1;
+}
+
 .loader div:first-child {
     position: absolute;
     top: calc(47% - 50px);
@@ -195,6 +200,7 @@ input[name="location"] {
 #nav-tabContent {
     width: 90%;
     margin: auto;
+    z-index: 9999;
 }
 
 .nav-tabs .nav-link {
