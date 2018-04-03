@@ -145,7 +145,7 @@
 
 .mapsfix {
     padding-right: 0px!important;
-    z-index: -1;
+    z-index: 1;
 }
 table {
     margin-top: 25px;
@@ -179,7 +179,7 @@ input[name="location"] {
 }
 
 .itinerary {
-    z-index: -1;
+    z-index: 1;
 }
 
 .loader div:first-child {
