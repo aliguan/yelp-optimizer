@@ -635,33 +635,34 @@ class Userinput extends Component {
                   </div>
                   <div className="tab-pane fade" id="nav-add" role="tabpanel" aria-labelledby="nav-add-tab">
                       <div className={optionStyles.join(' ')}>
-                          <h5>Add Your Own Event:</h5>
+                           <h5>Add Your Own Event:</h5>
+                          <form className="form-inline">
+                              {/* User added event slot  */}
+                              <div className="optionInputs">
+                                  <div className="optionSelect form-group">
+                                    <select className="textInput" id="slots" ref="userItinSlot">
+                                      <option>1</option>
+                                      <option>2</option>
+                                      <option>3</option>
+                                      <option>4</option>
+                                      <option>5</option>
+                                      <option>6</option>
+                                      <option>7</option>
+                                    </select>
+                                  </div>
 
-                          {/* User added event slot  */}
-                          <div class="form-group">
-                            <label for="slots">Slot:</label>
-                            <select class="form-control" id="slots" ref="userItinSlot">
-                              <option>1</option>
-                              <option>2</option>
-                              <option>3</option>
-                              <option>4</option>
-                              <option>5</option>
-                              <option>6</option>
-                              <option>7</option>
-                            </select>
-                          </div>
+                                  {/* User added event name */}
+                                  <div className="form-group">
+                                    <input type="text" className="textInput" id="eventName" placeholder="Event Name" ref="userEventName"/>
+                                  </div>
 
-                          {/* User added event name */}
-                          <div class="form-group">
-                            <label for="eventName">Event Name:</label>
-                            <input type="text" class="form-control" id="eventName" placeholder="Event Name" ref="userEventName"/>
-                          </div>
+                                  {/* User added event cost */}
+                                  <div className="form-group">
+                                    <input type="number" class="textInput" id="cost" placeholder="$ Cost" min="0" ref="userEventCost"/>
+                                  </div>
+                              </div>
 
-                          {/* User added event cost */}
-                          <div class="form-group">
-                            <label for="cost">Cost:</label>
-                            <input type="number" class="form-control" id="cost" placeholder="$" min="0" ref="userEventCost"/>
-                          </div>
+                          </form>
 
                           {/* Add event or clear all user added events*/}
 
