@@ -66,6 +66,7 @@
     color: black;
     height: 45vh;
     position: relative;
+    z-index: 9999;
 }
 
 .form-body {
@@ -145,7 +146,6 @@
 
 .mapsfix {
     padding-right: 0px!important;
-    z-index: 1;
 }
 table {
     margin-top: 25px;
@@ -179,7 +179,7 @@ input[name="location"] {
 }
 
 .itinerary {
-    z-index: 1;
+
 }
 
 .loader div:first-child {
@@ -200,7 +200,6 @@ input[name="location"] {
 #nav-tabContent {
     width: 90%;
     margin: auto;
-    z-index: 9999;
 }
 
 .nav-tabs .nav-link {
@@ -224,6 +223,28 @@ input[name="location"] {
     width: 15%;
 }
 
+.optionInputs {
+    display: inherit;
+    width: 50%;
+    margin: auto;
+}
+
+.optionInputs div {
+    margin-left: 10px;
+}
+
+.optionSelect {
+    background-color: white;
+    border: none;
+    -webkit-transition: .2s;
+    -o-transition: .2s;
+    transition: .2s;
+    margin: 0;
+    padding: 0.6em;
+    outline: none;
+    -webkit-font-smoothing: antialiased;
+    border-radius: 2px;
+}
 
 
 @keyframes App-logo-spin {
