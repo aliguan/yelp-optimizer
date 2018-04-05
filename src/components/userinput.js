@@ -660,6 +660,10 @@ class Userinput extends Component {
                                   <div className="form-group">
                                     <input type="number" class="textInput" id="cost" placeholder="$ Cost" min="0" ref="userEventCost"/>
                                   </div>
+
+                                  <div className="addIcon">
+                                      <button type="button"><i className="fas fa-plus"></i></button>
+                                  </div>
                               </div>
 
                           </form>

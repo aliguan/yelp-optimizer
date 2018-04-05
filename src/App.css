@@ -246,6 +246,14 @@ input[name="location"] {
     border-radius: 2px;
 }
 
+.addIcon {
+    font-size: 18px;
+
+    border-radius: 50%;
+    padding: 5px;
+    height: 40px;
+}
+
 
 @keyframes App-logo-spin {
   from { transform: rotate(0deg); }
