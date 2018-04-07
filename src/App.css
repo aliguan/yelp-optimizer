@@ -229,10 +229,6 @@ input[name="location"] {
     margin: auto;
 }
 
-.optionInputs div {
-    margin-left: 10px;
-}
-
 .optionSelect {
     background-color: white;
     border: none;
@@ -247,13 +243,30 @@ input[name="location"] {
 }
 
 .addIcon {
-    font-size: 18px;
+    font-size: 26px;
+    line-height: 0.5;
+    padding: 0.5em 0.32em;
 
-    border-radius: 50%;
-    padding: 5px;
-    height: 40px;
 }
 
+.addIcon button {
+    border: none;
+    cursor: pointer;
+    margin-top: 1px;
+    color: #878787;
+}
+
+.addIcon button:focus, input:focus {
+    outline: none!important;
+}
+
+.eventName {
+    padding-right: 0px!important;
+}
+
+.addEventForm {
+    margin-bottom: 1rem;
+}
 
 @keyframes App-logo-spin {
   from { transform: rotate(0deg); }

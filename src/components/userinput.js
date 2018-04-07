@@ -636,7 +636,8 @@ class Userinput extends Component {
                   <div className="tab-pane fade" id="nav-add" role="tabpanel" aria-labelledby="nav-add-tab">
                       <div className={optionStyles.join(' ')}>
                            <h5>Add Your Own Event:</h5>
-                          <form className="form-inline">
+                           <p>Include your own events and we will calculate your optimized itinerary based on events you've added!</p>
+                          <form className="form-inline addEventForm">
                               {/* User added event slot  */}
                               <div className="optionInputs">
                                   <div className="optionSelect form-group">
@@ -652,26 +653,62 @@ class Userinput extends Component {
                                   </div>
 
                                   {/* User added event name */}
-                                  <div className="form-group">
+                                  <div className="form-group col-md-5 eventName">
                                     <input type="text" className="textInput" id="eventName" placeholder="Event Name" ref="userEventName"/>
                                   </div>
 
                                   {/* User added event cost */}
-                                  <div className="form-group">
-                                    <input type="number" class="textInput" id="cost" placeholder="$ Cost" min="0" ref="userEventCost"/>
+                                  <div className="form-group col-md-5">
+                                    <input type="number" className="textInput" id="cost" placeholder="$ Cost" min="0" ref="userEventCost"/>
                                   </div>
 
-                                  <div className="addIcon">
-                                      <button type="button"><i className="fas fa-plus"></i></button>
+                                  <div className="addIcon textInput">
+                                      <button onClick={this.handleAddUserEvent} type="button">+</button>
                                   </div>
                               </div>
 
                           </form>
+                          {/* clear all user added events*/}
 
-                          {/* Add event or clear all user added events*/}
-
-                          <a href="javascript:void(0)" onClick={this.handleAddUserEvent}> Add Event
+                          <a href="javascript:void(0)" onClick={this.handleClearUserEvents}> Clear All User Added Events
                           </a>
+
+                      </div>
+                      <div className={optionStyles.join(' ')}>
+                           <h5>Add Your Own Event:</h5>
+                           <p>Include your own events and we will calculate your optimized itinerary based on events you've added!</p>
+                          <form className="form-inline addEventForm">
+                              {/* User added event slot  */}
+                              <div className="optionInputs">
+                                  <div className="optionSelect form-group">
+                                    <select className="textInput" id="slots" ref="userItinSlot">
+                                      <option>1</option>
+                                      <option>2</option>
+                                      <option>3</option>
+                                      <option>4</option>
+                                      <option>5</option>
+                                      <option>6</option>
+                                      <option>7</option>
+                                    </select>
+                                  </div>
+
+                                  {/* User added event name */}
+                                  <div className="form-group col-md-5 eventName">
+                                    <input type="text" className="textInput" id="eventName" placeholder="Event Name" ref="userEventName"/>
+                                  </div>
+
+                                  {/* User added event cost */}
+                                  <div className="form-group col-md-5">
+                                    <input type="number" className="textInput" id="cost" placeholder="$ Cost" min="0" ref="userEventCost"/>
+                                  </div>
+
+                                  <div className="addIcon textInput">
+                                      <button onClick={this.handleAddUserEvent} type="button">+</button>
+                                  </div>
+                              </div>
+
+                          </form>
+                          {/* clear all user added events*/}
 
                           <a href="javascript:void(0)" onClick={this.handleClearUserEvents}> Clear All User Added Events
                           </a>
