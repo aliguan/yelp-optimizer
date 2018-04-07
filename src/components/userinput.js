@@ -218,6 +218,13 @@ class Userinput extends Component {
     var doAPICallsFlag = true;
     var indexDBcompat = window.indexedDB;
 
+    // Determine if the API data needs to be cleared locally (every 24 hours)
+    var clearApiData = clearLocallyStoredAPIData(indexDBcompat,myStorage);
+    if (clearApiData) {
+      idb_keyval.delete('apiData');
+      console.log('Clearing API Data!!')
+    }
+
     const EMPTY_ITINERARY = {
       name: "No itinerary found. Try changing the inputs.",
       url: "",
@@ -287,8 +294,11 @@ class Userinput extends Component {
                     // Determine whether or not API calls need to be made
                     doAPICallsFlag = determineAPICallBool(myStorage, this.state.startDate, today, locationLatLong, indexDBcompat);
 
-                    if (doAPICallsFlag) {
-                      console.log("Do API calls!!!")
+                    if (doAPICallsFlag || clearApiData) {
+                      // Reset API data cached timestamp
+                      resetAPIDataTimeStampToNow(myStorage);
+
+                      console.log("Do API calls!!!")                      
                       // Do API requests and return a promise object to display results
                       var promiseObj = this.apiService.getData(this.state.term,
                         locationLatLong,
@@ -1144,6 +1154,40 @@ function convertTimeToAMPM(resultsArray_in) {
   return resultsArray_out;
 }
 
+// This function returns a flag to clear or not to clear the locally stored API data depending on if the data has been 
+// stored for 24 hours or not. This is for API terms and conditions compliance to ensure data is not cached longer 
+// than 24 hours.
+function clearLocallyStoredAPIData(indexDBcompat_in,myStorage_in) {
+  var TWENTYFOUR_HOURS = 24 * 60 * 60 * 1000; /* ms */
+  var currentTimeStamp = new Date();
+  var currentTimeStampStr = currentTimeStamp.getTime().toString(); // ms
+  var currentTimeStampMilSec = currentTimeStamp.getTime();
+
+  var clearApiData = false;
+  if (indexDBcompat_in) {
+    var lastLocalTimeStampForAPIDataDeletion = myStorage_in.getItem('timestamp');
+    // There is no timestamp key in local storage, create it and set it to the current time
+    if (lastLocalTimeStampForAPIDataDeletion === null || !lastLocalTimeStampForAPIDataDeletion) {
+      myStorage_in.setItem('timestamp', currentTimeStampStr);
+    }
+    // If there is the timestamp key in local storage, compare it to the current time and calculate
+    // if the difference is greater than 24 hours ago
+    else {
+      var prevTimeStamp = parseInt(lastLocalTimeStampForAPIDataDeletion);
+      if (currentTimeStampMilSec - prevTimeStamp >= TWENTYFOUR_HOURS) {
+        clearApiData = true;
+        myStorage_in.setItem('timestamp', currentTimeStampStr);
+      }
+    }
+  }
+  return clearApiData;
+}
+
+function resetAPIDataTimeStampToNow(myStorage_in) {
+  var currentTimeStamp = new Date();
+  var currentTimeStampStr = currentTimeStamp.getTime().toString(); // ms
+  myStorage_in.setItem('timestamp', currentTimeStampStr);
+}
 
 Userinput.propTypes = {}
 
