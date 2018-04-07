@@ -54,9 +54,8 @@
 }
 
 .form-header {
-    background: url('./images/banner.jpg');
-    background-position: 0px -250px;
-    background-size:100%;
+    background: url('./images/banner.jpg') no-repeat center center fixed;
+    background-size: cover;
     background-color: white;
     text-align: center;
     font-weight: 700;
@@ -64,7 +63,7 @@
     padding: 20px 0 20px 0;
     margin: 0 -15px;
     color: black;
-    height: 45vh;
+    min-height: 42vh;
     position: relative;
     z-index: 9999;
 }
@@ -178,10 +177,6 @@ input[name="location"] {
     z-index: 9999;
 }
 
-.itinerary {
-
-}
-
 .loader div:first-child {
     position: absolute;
     top: calc(47% - 50px);
@@ -195,11 +190,13 @@ input[name="location"] {
     width: 90%;
     text-transform: uppercase;
     margin: auto;
+    max-width: 1300px;
 }
 
 #nav-tabContent {
     width: 90%;
     margin: auto;
+    max-width: 1300px;
 }
 
 .nav-tabs .nav-link {
