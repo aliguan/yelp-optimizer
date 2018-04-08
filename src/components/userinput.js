@@ -605,7 +605,7 @@ class Userinput extends Component {
                 <nav>
                   <div className="nav nav-tabs" id="nav-tab" role="tablist">
                     <a className="nav-item nav-link active" id="nav-plan-tab" data-toggle="tab" href="#nav-plan" role="tab" aria-controls="nav-plan" aria-selected="true"><i className="plane-icon fas fa-map-marker-alt"></i>Plan Your Trip</a>
-                    <a className="nav-item nav-link" id="nav-add-tab" data-toggle="tab" href="#nav-add" role="tab" aria-controls="nav-add" aria-selected="false">Add Event</a>
+                    <a className="nav-item nav-link" id="nav-add-tab" data-toggle="tab" href="#nav-add" role="tab" aria-controls="nav-add" aria-selected="false"><i className="fas fa-list-ul"></i> Add Event</a>
                     <a className="nav-item nav-link" id="nav-options-tab" data-toggle="tab" href="#nav-options" role="tab" aria-controls="nav-options" aria-selected="false">More Options</a>
                   </div>
                 </nav>
