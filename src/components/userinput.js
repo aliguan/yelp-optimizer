@@ -155,9 +155,14 @@ class Userinput extends Component {
     const EVENT3_TIME = "1800";
     const EVENT4_TIME = "2400";
     const USERADDED_EVENT_RATING = 1000.0; // arbitrarily high
-    var itinSlot = parseInt(userItinSlot);
+    var itinSlot = 1;
+    if (userItinSlot){
+      itinSlot = parseInt(userItinSlot);
+    }
     var cost = 0.0;
-    cost = parseFloat(userEventCost);
+    if (userEventCost) {
+      cost = parseFloat(userEventCost);
+    }
     var time = EVENT4_TIME;
     if (itinSlot == 1) {
       time = EVENT1_TIME; // event 1
