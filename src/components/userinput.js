@@ -7,7 +7,9 @@ import genAlgo from '../GA.js'
 import idb_keyval from 'idb-keyval'
 import globalStyles from '../App.css'
 import GoogleApiWrapper from './googlemaps.js';
-import Loader from './reactloading.js'
+import Loader from './reactloading.js';
+import UserEvent from './userEvent.js';
+
 import '../maps.css';
 
 import yelp_logo from '../images/yelp_burst.png';
@@ -148,16 +150,16 @@ class Userinput extends Component {
     })
   }
 
-  handleAddUserEvent(e) {
+  handleAddUserEvent(userItinSlot, userEventCost, userEventName) {
 
     const EVENT1_TIME = "0900";
     const EVENT2_TIME = "1200";
     const EVENT3_TIME = "1800";
     const EVENT4_TIME = "2400";
     const USERADDED_EVENT_RATING = 1000.0; // arbitrarily high
-    var itinSlot = parseInt(this.refs.userItinSlot.value);
+    var itinSlot = parseInt(userItinSlot);
     var cost = 0.0;
-    cost = parseFloat(this.refs.userEventCost.value);
+    cost = parseFloat(userEventCost);
     var time = EVENT4_TIME;
     if (itinSlot == 1) {
       time = EVENT1_TIME; // event 1
@@ -181,7 +183,7 @@ class Userinput extends Component {
       time = EVENT4_TIME; // event 4
     }
     var userAddedEventObj = {
-      name: this.refs.userEventName.value,
+      name: userEventName,
       url: "",
       rating: USERADDED_EVENT_RATING,
       time: time,
@@ -637,77 +639,7 @@ class Userinput extends Component {
                       <div className={optionStyles.join(' ')}>
                            <h5>Add Your Own Event:</h5>
                            <p>Include your own events and we will calculate your optimized itinerary based on events you've added!</p>
-                          <form className="form-inline addEventForm">
-                              {/* User added event slot  */}
-                              <div className="optionInputs">
-                                  <div className="optionSelect form-group">
-                                    <select className="textInput" id="slots" ref="userItinSlot">
-                                      <option>1</option>
-                                      <option>2</option>
-                                      <option>3</option>
-                                      <option>4</option>
-                                      <option>5</option>
-                                      <option>6</option>
-                                      <option>7</option>
-                                    </select>
-                                  </div>
-
-                                  {/* User added event name */}
-                                  <div className="form-group col-md-5 eventName">
-                                    <input type="text" className="textInput" id="eventName" placeholder="Event Name" ref="userEventName"/>
-                                  </div>
-
-                                  {/* User added event cost */}
-                                  <div className="form-group col-md-5">
-                                    <input type="number" className="textInput" id="cost" placeholder="$ Cost" min="0" ref="userEventCost"/>
-                                  </div>
-
-                                  <div className="addIcon textInput">
-                                      <button onClick={this.handleAddUserEvent} type="button">+</button>
-                                  </div>
-                              </div>
-
-                          </form>
-                          {/* clear all user added events*/}
-
-                          <a href="javascript:void(0)" onClick={this.handleClearUserEvents}> Clear All User Added Events
-                          </a>
-
-                      </div>
-                      <div className={optionStyles.join(' ')}>
-                           <h5>Add Your Own Event:</h5>
-                           <p>Include your own events and we will calculate your optimized itinerary based on events you've added!</p>
-                          <form className="form-inline addEventForm">
-                              {/* User added event slot  */}
-                              <div className="optionInputs">
-                                  <div className="optionSelect form-group">
-                                    <select className="textInput" id="slots" ref="userItinSlot">
-                                      <option>1</option>
-                                      <option>2</option>
-                                      <option>3</option>
-                                      <option>4</option>
-                                      <option>5</option>
-                                      <option>6</option>
-                                      <option>7</option>
-                                    </select>
-                                  </div>
-
-                                  {/* User added event name */}
-                                  <div className="form-group col-md-5 eventName">
-                                    <input type="text" className="textInput" id="eventName" placeholder="Event Name" ref="userEventName"/>
-                                  </div>
-
-                                  {/* User added event cost */}
-                                  <div className="form-group col-md-5">
-                                    <input type="number" className="textInput" id="cost" placeholder="$ Cost" min="0" ref="userEventCost"/>
-                                  </div>
-
-                                  <div className="addIcon textInput">
-                                      <button onClick={this.handleAddUserEvent} type="button">+</button>
-                                  </div>
-                              </div>
-
-                          </form>
+                          <UserEvent handleAdd={this.handleAddUserEvent}/>
                           {/* clear all user added events*/}
 
                           <a href="javascript:void(0)" onClick={this.handleClearUserEvents}> Clear All User Added Events
@@ -735,13 +667,11 @@ class Userinput extends Component {
                   {indents}
                 </tbody>
 
+              </table>}
 
               <div className="totalCost">
                 {total}
               </div>
-            </table>}
-
-
 
             </div>
             <div className="mapsfix col-md-6">
