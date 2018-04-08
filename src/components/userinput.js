@@ -9,6 +9,7 @@ import globalStyles from '../App.css'
 import GoogleApiWrapper from './googlemaps.js';
 import Loader from './reactloading.js';
 import UserEvent from './userEvent.js';
+import MoreInfoButton from './moreInfoButton.js';
 
 import '../maps.css';
 
@@ -45,6 +46,7 @@ class Userinput extends Component {
       userAddedEvents: [],
       center: {},
       loading: false,
+      showMoreInfo: [false, false, false, false, false, false, false],
     };
     this.apiService = new ApiService();
     this.handleChange = this.handleChange.bind(this);
@@ -58,6 +60,7 @@ class Userinput extends Component {
     this.handleData = this.handleData.bind(this);
     this.handleAddUserEvent = this.handleAddUserEvent.bind(this);
     this.handleClearUserEvents = this.handleClearUserEvents.bind(this);
+    this.handleMoreInfo = this.handleMoreInfo.bind(this);
   }
 
   handleChange(e) {
@@ -153,7 +156,7 @@ class Userinput extends Component {
     const EVENT1_TIME = "0900";
     const EVENT2_TIME = "1200";
     const EVENT3_TIME = "1800";
-    const EVENT4_TIME = "2400";
+    const EVENT4_TIME = "2200";
     const USERADDED_EVENT_RATING = 1000.0; // arbitrarily high
     var itinSlot = 1;
     if (userItinSlot){
@@ -193,6 +196,7 @@ class Userinput extends Component {
       location: {},
       cost: cost,
       slot: itinSlot,
+      description: "",
     }
 
     this.state.userAddedEvents.push(userAddedEventObj);
@@ -212,6 +216,14 @@ class Userinput extends Component {
     console.log("All user added events cleared.")
   }
 
+  handleMoreInfo(e) {
+    var tempShowMoreInfo = (this.state.showMoreInfo).slice();
+    tempShowMoreInfo[e] = !tempShowMoreInfo[e];
+    this.setState({
+      showMoreInfo: tempShowMoreInfo,
+    }) 
+  }
+
   handleSubmit(e) {
     e.preventDefault();
 
@@ -224,7 +236,7 @@ class Userinput extends Component {
     var indexDBcompat = window.indexedDB;
 
     // Determine if the API data needs to be cleared locally (every 24 hours)
-    var clearApiData = clearLocallyStoredAPIData(indexDBcompat,myStorage);
+    var clearApiData = clearLocallyStoredAPIData(myStorage);
     if (clearApiData) {
       idb_keyval.delete('apiData');
       console.log('Clearing API Data!!')
@@ -299,7 +311,7 @@ class Userinput extends Component {
                     // Determine whether or not API calls need to be made
                     doAPICallsFlag = determineAPICallBool(myStorage, this.state.startDate, today, locationLatLong, indexDBcompat);
 
-                    if (doAPICallsFlag || clearApiData) {
+                    if (doAPICallsFlag || clearApiData || !indexDBcompat) {
                       // Reset API data cached timestamp
                       resetAPIDataTimeStampToNow(myStorage);
 
@@ -359,7 +371,8 @@ class Userinput extends Component {
                             eliminatedEvents: [],
                             itinTimes: [],
                             totalCost: 0,
-                            loading: false
+                            loading: false,
+                            showMoreInfo: [false, false, false, false, false, false, false],
                           });
                         }
                         else { // GA produced an optimal itinerary. Display results
@@ -384,7 +397,8 @@ class Userinput extends Component {
                             eliminated: [0, 0, 0, 0, 0, 0, 0], //reset the checkboxes for the eliminated slots
                             eliminatedEvents: eliminatedEvents,
                             totalCost: optimItinerary.totalCost,
-                            loading: false
+                            loading: false,
+                            showMoreInfo: [false, false, false, false, false, false, false],
                           });
 
                           this.setState(prevState => ({
@@ -482,7 +496,8 @@ class Userinput extends Component {
                               eliminatedEvents: [],
                               itinTimes: [],
                               totalCost: 0,
-                              loading: false
+                              loading: false,
+                              showMoreInfo: [false, false, false, false, false, false, false],
                             });
                           }
                           else { // GA produced an optimal itinerary. Display results
@@ -517,7 +532,8 @@ class Userinput extends Component {
                               resultsArray: resultsArrayOutput,
                               itinTimes: timesOutput,
                               totalCost: optimItinerary.totalCost,
-                              loading: false
+                              loading: false,
+                              showMoreInfo: [false, false, false, false, false, false, false],
                             });
                           }
 
@@ -543,6 +559,9 @@ class Userinput extends Component {
   render() {
     var formStyles = ['form-body'];
     var optionStyles = ['more-options', 'form-body'];
+    const ITINCONTAINER_STYLE = 'itinContainer';
+    const HIDDEN = 'hidden'; 
+    
 
     var origins = {
          yelp: yelp_logo,
@@ -554,41 +573,39 @@ class Userinput extends Component {
     var ITINERARY_LENGTH = this.state.resultsArray.length;
     const { term, budgetmax, budgetmin, location } = this.state;
     var indents = [];
-    // Only allow check boxes to show up if data can be saved client side
-    if (window.indexedDB) {
-      for (var i = 0; i < ITINERARY_LENGTH; i++) {
-        var origin = this.state.resultsArray[i].origin;
 
-        indents.push(
+    // Form the itinerary results display
+    for (var i = 0; i < ITINERARY_LENGTH; i++) {
+      var origin = this.state.resultsArray[i].origin;
+      var moreInfoStyles = [];
+      moreInfoStyles.push(ITINCONTAINER_STYLE);
+      if (!this.state.showMoreInfo[i]) {
+        moreInfoStyles.push(HIDDEN);
+      }
+
+      indents.push(
+        <tbody>
           <tr className="itinContainer">
             <td><input checked={this.state.checked[i]} onChange={this.handleCheckbox} type='checkbox' value={i} /></td>
             <td><strong>{this.state.itinTimes[i] ? this.state.itinTimes[i] : ''}</strong></td>
-            <td><img className="origin-logo" src={origins[origin]}/></td>
+            <td><img className="origin-logo" src={origins[origin]} /></td>
             <td><a href={this.state.resultsArray[i].url} target='_blank'>{this.state.resultsArray[i].name} </a></td>
             <td className="text-success"><strong>${this.state.resultsArray[i].cost}</strong>  </td>
             <td><input checked={this.state.eliminated[i]} onChange={this.handleEliminate} type='checkbox' value={i} /></td>
+            <td><MoreInfoButton value={i} onButtonClick={this.handleMoreInfo} /></td>
           </tr>
-        );
-      }
-    }
-    else {
-      for (var i = 0; i < ITINERARY_LENGTH; i++) {
-        indents.push(
-          <tr className="itinContainer">
-            <td><input checked={this.state.checked[i]} onChange={this.handleCheckbox} type='checkbox' value={i} /></td>
-            <td><strong>{this.state.itinTimes[i] ? this.state.itinTimes[i] : ''}</strong></td>
-            <td><img className="origin-logo" src={origins[origin]}/></td>
-            <td><a href={this.state.resultsArray[i].url} target='_blank'>{this.state.resultsArray[i].name} </a></td>
-            <td className="text-success"><strong>${this.state.resultsArray[i].cost}</strong>  </td>
-            <td><input checked={this.state.eliminated[i]} onChange={this.handleEliminate} type='checkbox' value={i} /></td>
+          <tr className={moreInfoStyles.join(' ')}>
+            <td colspan="7">{this.state.resultsArray[i].description}</td>
           </tr>
-        );
-      }
+        </tbody>
+      );
     }
 
+    // The Total cost display
     var total = [];
     total.push(<div><b>Total Cost: ${this.state.totalCost} </b></div>)
 
+    // More options display
     var options = [];
     const NUM_EVENT_APIS = 4;
     var filters = [];
@@ -599,6 +616,7 @@ class Userinput extends Component {
       </li>);
     }
 
+    // Add user events display
     var userevents = [<UserEvent handleAdd={this.handleAddUserEvent}/>];
     for (var i = 0; i < this.state.userAddedEvents.length; i++) {
       userevents.push(<UserEvent handleAdd={this.handleAddUserEvent}/>);
@@ -1121,14 +1139,14 @@ function convertTimeToAMPM(resultsArray_in) {
 // This function returns a flag to clear or not to clear the locally stored API data depending on if the data has been
 // stored for 24 hours or not. This is for API terms and conditions compliance to ensure data is not cached longer
 // than 24 hours.
-function clearLocallyStoredAPIData(indexDBcompat_in,myStorage_in) {
+function clearLocallyStoredAPIData(myStorage_in) {
   var TWENTYFOUR_HOURS = 24 * 60 * 60 * 1000; /* ms */
   var currentTimeStamp = new Date();
   var currentTimeStampStr = currentTimeStamp.getTime().toString(); // ms
   var currentTimeStampMilSec = currentTimeStamp.getTime();
 
   var clearApiData = false;
-  if (indexDBcompat_in) {
+  if (myStorage_in) {
     var lastLocalTimeStampForAPIDataDeletion = myStorage_in.getItem('timestamp');
     // There is no timestamp key in local storage, create it and set it to the current time
     if (lastLocalTimeStampForAPIDataDeletion === null || !lastLocalTimeStampForAPIDataDeletion) {
@@ -1158,3 +1176,4 @@ Userinput.propTypes = {}
 Userinput.defaultProps = {}
 
 export default Userinput
+ 

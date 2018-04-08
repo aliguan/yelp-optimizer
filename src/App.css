@@ -153,6 +153,7 @@
 }
 table {
     margin-top: 25px;
+    word-break: break-all;
 }
 .totalCost {
     font-size: 1.4rem;
@@ -223,7 +224,7 @@ input[name="location"] {
 
 .origin-logo {
     width: 100%;
-    max-width: 200px;
+    max-width: 100px;
 }
 
 .optionInputs {
