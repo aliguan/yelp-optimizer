@@ -15,6 +15,7 @@ export class MapContainer extends Component {
       // binding this to event-handler functions
       this.onMarkerClick = this.onMarkerClick.bind(this);
       this.onMapClicked = this.onMapClicked.bind(this);
+      this.windowHasClosed = this.windowHasClosed.bind(this);
     }
 
     onMarkerClick(props, marker, e) {
@@ -34,7 +35,12 @@ export class MapContainer extends Component {
         }
     }
 
-
+    windowHasClosed() {
+        this.setState({
+            showingInfoWindow: false,
+            activeMarker: null
+        });
+    }
 
     render() {
         var markers = [];
