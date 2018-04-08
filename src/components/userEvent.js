@@ -37,16 +37,16 @@ export class UserEvent extends Component {
                     </div>
 
                     {/* User added event name */}
-                    <div className="form-group col-md-5 eventName">
+                    <div className="form-group col-md-7 eventName">
                       <input type="text" className="textInput" id="eventName" placeholder="Event Name" ref="userEventName"/>
                     </div>
 
                     {/* User added event cost */}
-                    <div className="form-group col-md-5">
+                    <div className="form-group col-md-3">
                       <input type="number" className="textInput" id="cost" placeholder="$ Cost" min="0" ref="userEventCost"/>
                     </div>
 
-                    <div className="addIcon textInput">
+                    <div className="addIcon textInput col-md-1">
                         <button onClick={this.handleClick} type="button">+</button>
                     </div>
                 </div>

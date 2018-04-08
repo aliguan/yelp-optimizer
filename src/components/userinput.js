@@ -678,9 +678,6 @@ class Userinput extends Component {
               <GoogleApiWrapper results={this.state.resultsArray} center={this.state.center} />
             </div>
           </div>
-
-
-
         </div>
     )
   }
