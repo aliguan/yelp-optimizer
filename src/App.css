@@ -258,6 +258,7 @@ input[name="location"] {
     cursor: pointer;
     margin-top: 1px;
     color: #878787;
+    background-color: white;
 }
 
 .addIcon button:focus, input:focus {
