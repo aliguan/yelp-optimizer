@@ -7,7 +7,9 @@ import genAlgo from '../GA.js'
 import idb_keyval from 'idb-keyval'
 import globalStyles from '../App.css'
 import GoogleApiWrapper from './googlemaps.js';
-import Loader from './reactloading.js'
+import Loader from './reactloading.js';
+import UserEvent from './userEvent.js';
+
 import '../maps.css';
 
 import yelp_logo from '../images/yelp_burst.png';
@@ -148,16 +150,16 @@ class Userinput extends Component {
     })
   }
 
-  handleAddUserEvent(e) {
+  handleAddUserEvent(userItinSlot, userEventCost, userEventName) {
 
     const EVENT1_TIME = "0900";
     const EVENT2_TIME = "1200";
     const EVENT3_TIME = "1800";
     const EVENT4_TIME = "2400";
     const USERADDED_EVENT_RATING = 1000.0; // arbitrarily high
-    var itinSlot = parseInt(this.refs.userItinSlot.value);
+    var itinSlot = parseInt(userItinSlot);
     var cost = 0.0;
-    cost = parseFloat(this.refs.userEventCost.value);
+    cost = parseFloat(userEventCost);
     var time = EVENT4_TIME;
     if (itinSlot == 1) {
       time = EVENT1_TIME; // event 1
@@ -181,7 +183,7 @@ class Userinput extends Component {
       time = EVENT4_TIME; // event 4
     }
     var userAddedEventObj = {
-      name: this.refs.userEventName.value,
+      name: userEventName,
       url: "",
       rating: USERADDED_EVENT_RATING,
       time: time,
@@ -613,7 +615,7 @@ class Userinput extends Component {
                 <nav>
                   <div className="nav nav-tabs" id="nav-tab" role="tablist">
                     <a className="nav-item nav-link active" id="nav-plan-tab" data-toggle="tab" href="#nav-plan" role="tab" aria-controls="nav-plan" aria-selected="true"><i className="plane-icon fas fa-map-marker-alt"></i>Plan Your Trip</a>
-                    <a className="nav-item nav-link" id="nav-add-tab" data-toggle="tab" href="#nav-add" role="tab" aria-controls="nav-add" aria-selected="false">Add Event</a>
+                    <a className="nav-item nav-link" id="nav-add-tab" data-toggle="tab" href="#nav-add" role="tab" aria-controls="nav-add" aria-selected="false"><i className="fas fa-list-ul"></i> Add Event</a>
                     <a className="nav-item nav-link" id="nav-options-tab" data-toggle="tab" href="#nav-options" role="tab" aria-controls="nav-options" aria-selected="false">More Options</a>
                   </div>
                 </nav>
@@ -646,42 +648,9 @@ class Userinput extends Component {
                   <div className="tab-pane fade" id="nav-add" role="tabpanel" aria-labelledby="nav-add-tab">
                       <div className={optionStyles.join(' ')}>
                            <h5>Add Your Own Event:</h5>
-                          <form className="form-inline">
-                              {/* User added event slot  */}
-                              <div className="optionInputs">
-                                  <div className="optionSelect form-group">
-                                    <select className="textInput" id="slots" ref="userItinSlot">
-                                      <option>1</option>
-                                      <option>2</option>
-                                      <option>3</option>
-                                      <option>4</option>
-                                      <option>5</option>
-                                      <option>6</option>
-                                      <option>7</option>
-                                    </select>
-                                  </div>
-
-                                  {/* User added event name */}
-                                  <div className="form-group">
-                                    <input type="text" className="textInput" id="eventName" placeholder="Event Name" ref="userEventName"/>
-                                  </div>
-
-                                  {/* User added event cost */}
-                                  <div className="form-group">
-                                    <input type="number" class="textInput" id="cost" placeholder="$ Cost" min="0" ref="userEventCost"/>
-                                  </div>
-
-                                  <div className="addIcon">
-                                      <button type="button"><i className="fas fa-plus"></i></button>
-                                  </div>
-                              </div>
-
-                          </form>
-
-                          {/* Add event or clear all user added events*/}
-
-                          <a href="javascript:void(0)" onClick={this.handleAddUserEvent}> Add Event
-                          </a>
+                           <p>Include your own events and we will calculate your optimized itinerary based on events you've added!</p>
+                          <UserEvent handleAdd={this.handleAddUserEvent}/>
+                          {/* clear all user added events*/}
 
                           <a href="javascript:void(0)" onClick={this.handleClearUserEvents}> Clear All User Added Events
                           </a>
@@ -708,13 +677,11 @@ class Userinput extends Component {
                   {indents}
                 </tbody>
 
+              </table>}
 
               <div className="totalCost">
                 {total}
               </div>
-            </table>}
-
-
 
             </div>
             <div className="mapsfix col-md-6">
