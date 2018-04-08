@@ -57,7 +57,9 @@ class Userinput extends Component {
     this.handleMoreOptions = this.handleMoreOptions.bind(this);
     this.handleData = this.handleData.bind(this);
     this.handleAddUserEvent = this.handleAddUserEvent.bind(this);
+    this.handleDeleteUserEvent = this.handleDeleteUserEvent.bind(this);
     this.handleClearUserEvents = this.handleClearUserEvents.bind(this);
+
   }
 
   handleChange(e) {
@@ -149,7 +151,6 @@ class Userinput extends Component {
   }
 
   handleAddUserEvent(userItinSlot, userEventCost, userEventName) {
-
     const EVENT1_TIME = "0900";
     const EVENT2_TIME = "1200";
     const EVENT3_TIME = "1800";
@@ -201,7 +202,20 @@ class Userinput extends Component {
       userAddedEvents: userAddedEventsArray,
     })
 
-    console.log("User Added: " + userAddedEventObj.name)
+    console.log("User Added: " + userAddedEventObj.name);
+    console.log('user state ---->');
+    console.log(this.state.userAddedEvents);
+
+  }
+
+  handleDeleteUserEvent(userItinSlot, userEventCost, userEventName) {
+      var userAddedEvents = this.state.userAddedEvents;
+      userAddedEvents.find( (event, i) => {
+          if(event.name === userEventName) {
+              userAddedEvents.splice(i, 1);
+          }
+      });
+
 
   }
 
@@ -597,10 +611,12 @@ class Userinput extends Component {
       </li>);
     }
 
-    var userevents = [<UserEvent handleAdd={this.handleAddUserEvent}/>];
+    var userevents = [<UserEvent key="userEvent" handleDelete={this.handleDeleteUserEvent} handleAdd={this.handleAddUserEvent}/>];
     for (var i = 0; i < this.state.userAddedEvents.length; i++) {
-      userevents.push(<UserEvent handleAdd={this.handleAddUserEvent}/>);
+        var key = "userEvent" + i;
+      userevents.unshift(<UserEvent key={key} handleDelete={this.handleDeleteUserEvent} handleAdd={this.handleAddUserEvent}/>);
     }
+    console.log(userevents);
 
     return (
       <div className="Userinput">
