@@ -26,6 +26,11 @@
     display: inline;
 }
 
+#slots {
+    border: none;
+    background: white;
+}
+
 .textInput {
     background-color: white;
     border: none;

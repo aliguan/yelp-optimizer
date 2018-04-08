@@ -15,8 +15,9 @@ export class UserEvent extends Component {
         var userItinSlot = this.refs.userItinSlot.value;
 
         this.props.handleAdd(userItinSlot, userEventCost, userEventName);
-
     }
+
+
 
     render() {
         return(
@@ -24,7 +25,7 @@ export class UserEvent extends Component {
                 {/* User added event slot  */}
                 <div className="optionInputs">
                     <div className="optionSelect form-group">
-                      <select className="textInput" id="slots" ref="userItinSlot">
+                      <select id="slots" ref="userItinSlot">
                         <option>1</option>
                         <option>2</option>
                         <option>3</option>

@@ -41,12 +41,10 @@ class Userinput extends Component {
       eliminated: [0, 0, 0, 0, 0, 0, 0], // for displaying checked or unchecked in eliminating itinerary slots
       eventFilterFlags: [1, 1, 1, 1], // ordered left to right: meetup, eventbrite, seatgeek, google places
       totalCost: 0,
-      expanded: true,
-      options: false,
       itinTimes: [], // time string in AM/PM format for display
       userAddedEvents: [],
       center: {},
-      loading: false
+      loading: false,
     };
     this.apiService = new ApiService();
     this.handleChange = this.handleChange.bind(this);
@@ -300,7 +298,7 @@ class Userinput extends Component {
                       // Reset API data cached timestamp
                       resetAPIDataTimeStampToNow(myStorage);
 
-                      console.log("Do API calls!!!")                      
+                      console.log("Do API calls!!!")
                       // Do API requests and return a promise object to display results
                       var promiseObj = this.apiService.getData(this.state.term,
                         locationLatLong,
@@ -541,20 +539,6 @@ class Userinput extends Component {
     var formStyles = ['form-body'];
     var optionStyles = ['more-options', 'form-body'];
 
-    // if (this.state.resultsArray.length > 0 || this.state.expanded == false) {
-    //   formStyles.push('hidden');
-    // }
-    //
-    // if (this.state.resultsArray.length > 0 && this.state.expanded == true) {
-    //   formStyles = ['form-body'];
-    // }
-    //
-    // if (this.state.options == false) {
-    //   optionStyles.push('hidden');
-    // } else {
-    //   optionStyles = ['more-options'];
-    // }
-
     var origins = {
          yelp: yelp_logo,
          places: google_logo,
@@ -608,6 +592,10 @@ class Userinput extends Component {
       </li>);
     }
 
+    var userevents = [<UserEvent handleAdd={this.handleAddUserEvent}/>];
+    for (var i = 0; i < this.state.userAddedEvents.length; i++) {
+      userevents.push(<UserEvent handleAdd={this.handleAddUserEvent}/>);
+    }
 
     return (
       <div className="Userinput">
@@ -649,7 +637,9 @@ class Userinput extends Component {
                       <div className={optionStyles.join(' ')}>
                            <h5>Add Your Own Event:</h5>
                            <p>Include your own events and we will calculate your optimized itinerary based on events you've added!</p>
-                          <UserEvent handleAdd={this.handleAddUserEvent}/>
+
+                           {userevents}
+
                           {/* clear all user added events*/}
 
                           <a href="javascript:void(0)" onClick={this.handleClearUserEvents}> Clear All User Added Events
@@ -1121,8 +1111,8 @@ function convertTimeToAMPM(resultsArray_in) {
   return resultsArray_out;
 }
 
-// This function returns a flag to clear or not to clear the locally stored API data depending on if the data has been 
-// stored for 24 hours or not. This is for API terms and conditions compliance to ensure data is not cached longer 
+// This function returns a flag to clear or not to clear the locally stored API data depending on if the data has been
+// stored for 24 hours or not. This is for API terms and conditions compliance to ensure data is not cached longer
 // than 24 hours.
 function clearLocallyStoredAPIData(indexDBcompat_in,myStorage_in) {
   var TWENTYFOUR_HOURS = 24 * 60 * 60 * 1000; /* ms */
