@@ -1066,41 +1066,70 @@ function processAPIDataForGA(events_in, eventFilterFlags_in, savedEvents_in, sav
     console.log("user added events array:")
     console.log(userAddedEventsObjs_in)
     if (userAddedEventsFlag) {
+      var doOnceSlot1 = true;
+      var doOnceSlot2 = true;
+      var doOnceSlot3 = true;
+      var doOnceSlot4 = true;
+      var doOnceSlot5 = true;
+      var doOnceSlot6 = true;
+      var doOnceSlot7 = true;
+
       for (var iadded = 0; iadded < userAddedEventsObjs_in.length; iadded++) {
         if (userAddedEventsObjs_in[iadded].slot === 1) {
-          delete itineraries[0].Event1;
-          itineraries[0].Event1 = [];
-          itineraries[0].Event1[0] = userAddedEventsObjs_in[iadded];
+          if (doOnceSlot1) {
+            doOnceSlot1 = false;
+            delete itineraries[0].Event1;
+            itineraries[0].Event1 = [];
+          }
+          itineraries[0].Event1.push(userAddedEventsObjs_in[iadded]);
         }
         else if (userAddedEventsObjs_in[iadded].slot === 2) {
-          delete itineraries[1].Breakfast;
-          itineraries[1].Breakfast = [];
-          itineraries[1].Breakfast[0] = userAddedEventsObjs_in[iadded];
+          if (doOnceSlot2) {
+            doOnceSlot2 = false;
+            delete itineraries[1].Breakfast;
+            itineraries[1].Breakfast = [];
+          }
+          itineraries[1].Breakfast.push(userAddedEventsObjs_in[iadded]);
         }
-        else if (userAddedEventsObjs_in[iadded].slot=== 3) {
-          delete itineraries[2].Event2;
-          itineraries[2].Event2 = [];
-          itineraries[2].Event2[0] = userAddedEventsObjs_in[iadded];
+        else if (userAddedEventsObjs_in[iadded].slot === 3) {
+          if (doOnceSlot3) {
+            doOnceSlot3 = false;
+            delete itineraries[2].Event2;
+            itineraries[2].Event2 = [];
+          }
+          itineraries[2].Event2.push(userAddedEventsObjs_in[iadded]);
         }
         else if (userAddedEventsObjs_in[iadded].slot === 4) {
-          delete itineraries[3].Lunch;
-          itineraries[3].Lunch = [];
-          itineraries[3].Lunch[0] = userAddedEventsObjs_in[iadded];
+          if (doOnceSlot4) {
+            doOnceSlot4 = false;
+            delete itineraries[3].Lunch;
+            itineraries[3].Lunch = [];
+          }
+          itineraries[3].Lunch.push(userAddedEventsObjs_in[iadded]);
         }
         else if (userAddedEventsObjs_in[iadded].slot === 5) {
-          delete itineraries[4].Event3;
-          itineraries[4].Event3 = [];
-          itineraries[4].Event3[0] = userAddedEventsObjs_in[iadded];
+          if (doOnceSlot5) {
+            doOnceSlot5 = false;
+            delete itineraries[4].Event3;
+            itineraries[4].Event3 = [];
+          }
+          itineraries[4].Event3.push(userAddedEventsObjs_in[iadded]);
         }
         else if (userAddedEventsObjs_in[iadded].slot === 6) {
-          delete itineraries[5].Dinner;
-          itineraries[5].Dinner = [];
-          itineraries[5].Dinner[0] = userAddedEventsObjs_in[iadded];
+          if (doOnceSlot6) {
+            doOnceSlot6 = false;
+            delete itineraries[5].Dinner;
+            itineraries[5].Dinner = [];
+          }
+          itineraries[5].Dinner.push(userAddedEventsObjs_in[iadded]);
         }
         else {
-          delete itineraries[6].Event4;
-          itineraries[6].Event4 = [];
-          itineraries[6].Event4[0] = userAddedEventsObjs_in[iadded];
+          if (doOnceSlot7) {
+            doOnceSlot7 = false;
+            delete itineraries[6].Event4;
+            itineraries[6].Event4 = [];
+          }
+          itineraries[6].Event4.push(userAddedEventsObjs_in[iadded]);
         }
       }
     }
