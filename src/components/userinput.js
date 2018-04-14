@@ -588,36 +588,41 @@ class Userinput extends Component {
     const { term, budgetmax, budgetmin, location } = this.state;
     var indents = [];
 
-    // Form the itinerary results display
-    for (var i = 0; i < ITINERARY_LENGTH; i++) {
-      var origin = this.state.resultsArray[i].origin;
-      var moreInfoStyles = [];
-      moreInfoStyles.push(ITINCONTAINER_STYLE);
-      if (!this.state.showMoreInfo[i]) {
-        moreInfoStyles.push(HIDDEN);
-      }
+    if(this.state.resultsArray.length > 0) {
+        indents.push(<thead><tr><th colSpan="7"><h4>Optimized Itinerary</h4></th></tr></thead>);
+        // Form the itinerary results display
+        for (var i = 0; i < ITINERARY_LENGTH; i++) {
+          var origin = this.state.resultsArray[i].origin;
+          var moreInfoStyles = [];
+          moreInfoStyles.push(ITINCONTAINER_STYLE);
+          if (!this.state.showMoreInfo[i]) {
+            moreInfoStyles.push(HIDDEN);
+          }
 
-      var key = 'tbody-' + i;
-      indents.push(
-        <tbody key={key}>
-          <tr className="itinContainer">
-            <td><input checked={this.state.checked[i]} onChange={this.handleCheckbox} type='checkbox' value={i} /></td>
-            <td><input checked={this.state.eliminated[i]} onChange={this.handleEliminate} type='checkbox' value={i} /></td>
-            <td><img className="origin-logo" src={origins[origin]} /></td>
-            <td><strong>{this.state.itinTimes[i] ? this.state.itinTimes[i] : ''}</strong></td>
-            <td className="resultsName"><a href={this.state.resultsArray[i].url} target='_blank'>{this.state.resultsArray[i].name} </a><MoreInfoButton value={i} onButtonClick={this.handleMoreInfo} /></td>
-            <td className="text-success"><strong>${this.state.resultsArray[i].cost}</strong>  </td>
-          </tr>
-          <tr className={moreInfoStyles.join(' ')}>
-            <td colSpan="7">{this.state.resultsArray[i].description}</td>
-          </tr>
-        </tbody>
-      );
+          var key = 'tbody-' + i;
+          indents.push(
+            <tbody key={key}>
+              <tr>
+                <td><input checked={this.state.checked[i]} onChange={this.handleCheckbox} type='checkbox' value={i} /></td>
+                <td><input checked={this.state.eliminated[i]} onChange={this.handleEliminate} type='checkbox' value={i} /></td>
+                <td><img className="origin-logo" src={origins[origin]} /></td>
+                <td><strong>{this.state.itinTimes[i] ? this.state.itinTimes[i] : ''}</strong></td>
+                <td className="resultsName"><a href={this.state.resultsArray[i].url} target='_blank'>{this.state.resultsArray[i].name} </a><MoreInfoButton value={i} onButtonClick={this.handleMoreInfo} /></td>
+                <td className="text-success"><strong>${this.state.resultsArray[i].cost}</strong>  </td>
+              </tr>
+              <tr className={moreInfoStyles.join(' ')}>
+                <td colSpan="7">{this.state.resultsArray[i].description}</td>
+              </tr>
+            </tbody>
+          );
+        }
+
+        // The Total cost display
+        var total = [];
+        total.push(<div key="totalCostDiv"><b>Total Cost: ${this.state.totalCost} </b></div>)
     }
 
-    // The Total cost display
-    var total = [];
-    total.push(<div key="totalCostDiv"><b>Total Cost: ${this.state.totalCost} </b></div>)
+
 
     // More options display
     var options = [];
@@ -700,18 +705,21 @@ class Userinput extends Component {
 
 
         </div>
-          <div className="row eventsCont">
+        <div className="row eventsCont">
+
             <div className="col-md-6 itinerary">
             {this.state.loading == true ? <div className="loader"><Loader type="spinningBubbles" color="#2bc08487"></Loader><h5>Searching...</h5></div> :
-              <table>
-                  {indents}
-              </table>}
 
-              <div className="totalCost">
-                {total}
-              </div>
+                <table>
+                  {indents}
+                </table>}
+
+                <div className="totalCost">
+                    {total}
+                </div>
 
             </div>
+
             <div className="mapsfix col-md-6">
               <GoogleApiWrapper results={this.state.resultsArray} center={this.state.center} />
             </div>

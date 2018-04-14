@@ -142,9 +142,10 @@
     font-size: 1.2rem;
 }
 
-.itinContainer td {
-    padding: 20px 5px;
+td {
+    padding: 10px 5px;
     font-size: 0.8em;
+    border-bottom: 1px solid #f3f1f1;
 }
 
 .mapsfix {
@@ -154,6 +155,10 @@ table {
     margin-top: 25px;
     word-break: break-all;
     margin: auto;
+    width: 95%;
+}
+th {
+    padding: 25px 10px 10px 10px;
 }
 tbody {
     transition: background-color 0.3s ease;
@@ -232,7 +237,7 @@ input[name="location"] {
 
 .origin-logo {
     width: 100%;
-    max-width: 75px;
+    max-width: 60px;
     min-width: 50px;
 }
 
