@@ -149,11 +149,12 @@
 }
 
 .mapsfix {
-    padding-right: 0px!important;
+    padding: 0px!important;
 }
 table {
     margin-top: 25px;
     word-break: break-all;
+    margin: auto;
 }
 .totalCost {
     font-size: 1.4rem;
@@ -225,7 +226,7 @@ input[name="location"] {
 
 .origin-logo {
     width: 100%;
-    max-width: 100px;
+    max-width: 75px;
     min-width: 50px;
 }
 
@@ -275,6 +276,14 @@ input[name="location"] {
     margin-bottom: 1rem;
 }
 
+.block {
+    display: block;
+    margin: auto;
+}
+
+.resultsName {
+    max-width: 325px;
+}
 @keyframes App-logo-spin {
   from { transform: rotate(0deg); }
   to { transform: rotate(360deg); }

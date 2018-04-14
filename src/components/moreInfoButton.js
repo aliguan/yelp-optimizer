@@ -7,7 +7,7 @@ class MoreInfoButton extends Component {
 
     render() {
       return (
-        <input type="button" value="v" onClick={this.handleClick}/>
+        <input className="block" type="button" value="More Info" onClick={this.handleClick}/>
       );
     }
   }

@@ -597,18 +597,19 @@ class Userinput extends Component {
         moreInfoStyles.push(HIDDEN);
       }
 
+      var key = 'tbody-' + i;
       indents.push(
-        <tbody>
+        <tbody key={key}>
           <tr className="itinContainer">
             <td><input checked={this.state.checked[i]} onChange={this.handleCheckbox} type='checkbox' value={i} /></td>
             <td><strong>{this.state.itinTimes[i] ? this.state.itinTimes[i] : ''}</strong></td>
             <td><img className="origin-logo" src={origins[origin]} /></td>
-            <td><a href={this.state.resultsArray[i].url} target='_blank'>{this.state.resultsArray[i].name} </a><MoreInfoButton value={i} onButtonClick={this.handleMoreInfo} /></td>
+            <td className="resultsName"><a href={this.state.resultsArray[i].url} target='_blank'>{this.state.resultsArray[i].name} </a><MoreInfoButton value={i} onButtonClick={this.handleMoreInfo} /></td>
             <td className="text-success"><strong>${this.state.resultsArray[i].cost}</strong>  </td>
             <td><input checked={this.state.eliminated[i]} onChange={this.handleEliminate} type='checkbox' value={i} /></td>
           </tr>
           <tr className={moreInfoStyles.join(' ')}>
-            <td colspan="7">{this.state.resultsArray[i].description}</td>
+            <td colSpan="7">{this.state.resultsArray[i].description}</td>
           </tr>
         </tbody>
       );
@@ -616,7 +617,7 @@ class Userinput extends Component {
 
     // The Total cost display
     var total = [];
-    total.push(<div><b>Total Cost: ${this.state.totalCost} </b></div>)
+    total.push(<div key="totalCostDiv"><b>Total Cost: ${this.state.totalCost} </b></div>)
 
     // More options display
     var options = [];
@@ -624,7 +625,8 @@ class Userinput extends Component {
     var filters = [];
     var filterNames = ["Meetup", "Eventbrite", "Seatgeek", "Local Parks"];
     for (var i = 0; i < NUM_EVENT_APIS; i++) {
-      options.push(<li>
+        var event = 'event-' + i;
+      options.push(<li key={event}>
         <input checked={this.state.eventFilterFlags[i]} onChange={this.handleFilter} type='checkbox' value={i} />{filterNames[i]}
       </li>);
     }
@@ -700,12 +702,9 @@ class Userinput extends Component {
         </div>
           <div className="row eventsCont">
             <div className="col-md-6 itinerary">
-            {this.state.loading == true ? <div className="loader"><Loader type="spinningBubbles" color="#2CC185"></Loader><h5>Searching...</h5></div> :
+            {this.state.loading == true ? <div className="loader"><Loader type="spinningBubbles" color="#2bc08487"></Loader><h5>Searching...</h5></div> :
               <table>
-                <tbody>
                   {indents}
-                </tbody>
-
               </table>}
 
               <div className="totalCost">
