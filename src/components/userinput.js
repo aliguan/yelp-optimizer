@@ -575,7 +575,7 @@ class Userinput extends Component {
     var optionStyles = ['more-options', 'form-body'];
     const ITINCONTAINER_STYLE = 'itinContainer';
     const HIDDEN = 'hidden';
-
+    const OPEN = 'open';
 
     var origins = {
          yelp: yelp_logo,
@@ -595,6 +595,7 @@ class Userinput extends Component {
           var origin = this.state.resultsArray[i].origin;
           var moreInfoStyles = [];
           moreInfoStyles.push(ITINCONTAINER_STYLE);
+
           if (!this.state.showMoreInfo[i]) {
             moreInfoStyles.push(HIDDEN);
           }
