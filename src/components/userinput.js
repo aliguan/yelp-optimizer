@@ -210,6 +210,7 @@ class Userinput extends Component {
 
   handleDeleteUserEvent(userItinSlot, userEventCost, userEventName) {
       var userAddedEvents = this.state.userAddedEvents;
+
       userAddedEvents.find( (event, i) => {
           if(event.name === userEventName) {
               userAddedEvents.splice(i, 1);
@@ -682,7 +683,7 @@ class Userinput extends Component {
         </div>
           <div className="row eventsCont">
             <div className="col-md-6 itinerary">
-            {this.state.loading == true ? <div className="loader"><Loader type="spinningBubbles" color="black"></Loader><h5>Searching...</h5></div> :
+            {this.state.loading == true ? <div className="loader"><Loader type="spinningBubbles" color="#2CC185"></Loader><h5>Searching...</h5></div> :
               <table>
                 <tbody>
                   {indents}
