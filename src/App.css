@@ -144,8 +144,8 @@
 
 td {
     padding: 10px 5px;
-    font-size: 0.8em;
-    border-bottom: 1px solid #f3f1f1;
+    font-size: 0.9em;
+    border-bottom: 1px solid #f1f1f1;
 }
 
 .mapsfix {
@@ -288,14 +288,26 @@ input[name="location"] {
 }
 
 .block {
-    display: block;
+    display: block!important;
     margin: auto;
+}
+.moreInfoButton {
+    margin-top: 12px;
+    padding: .2rem .5rem!important;
+    font-size: .65rem!important;
+}
+*:focus {
+    outline: none!important;
+}
+.moreInfoRow {
+    border-bottom: 1px solid #f3f1f1;
 }
 
 .resultsName {
     max-width: 325px;
     white-space: pre-wrap;
 }
+
 @keyframes App-logo-spin {
   from { transform: rotate(0deg); }
   to { transform: rotate(360deg); }
