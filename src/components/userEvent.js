@@ -6,7 +6,11 @@ export class UserEvent extends Component {
         super(props);
 
         this.handleClick = this.handleClick.bind(this);
-
+        this.handleDelete = this.handleDelete.bind(this);
+        this.state = {
+            added: false,
+            disabled: false,
+        }
     }
 
     handleClick() {
@@ -15,17 +19,39 @@ export class UserEvent extends Component {
         var userItinSlot = this.refs.userItinSlot.value;
 
         this.props.handleAdd(userItinSlot, userEventCost, userEventName);
+
+        this.setState({
+            added: true,
+            disabled: true
+        });
     }
 
+    handleDelete() {
+        var userEventName = this.refs.userEventName.value;
+        var userEventCost = this.refs.userEventCost.value;
+        var userItinSlot = this.refs.userItinSlot.value;
 
+        this.props.handleDelete(userItinSlot, userEventCost, userEventName);
+    }
 
     render() {
+        var action = [];
+        if(this.state.added == false) {
+            action.push(<div key='add-action' className="addIcon textInput col-md-1">
+                <button onClick={this.handleClick} type="button">+</button>
+            </div>);
+        } else {
+            action.push(<div key='delete-action' className="addIcon textInput col-md-1">
+                <button onClick={this.handleDelete} type="button">-</button>
+            </div>);
+        }
+
         return(
             <form className="form-inline addEventForm">
                 {/* User added event slot  */}
                 <div className="optionInputs">
                     <div className="optionSelect form-group">
-                      <select id="slots" ref="userItinSlot">
+                      <select id="slots" ref="userItinSlot" disabled={this.state.disabled}>
                         <option>1</option>
                         <option>2</option>
                         <option>3</option>
@@ -38,17 +64,15 @@ export class UserEvent extends Component {
 
                     {/* User added event name */}
                     <div className="form-group col-md-7 eventName">
-                      <input type="text" className="textInput" id="eventName" placeholder="Event Name" ref="userEventName"/>
+                      <input type="text" className="textInput" id="eventName" placeholder="Event Name" ref="userEventName" disabled={this.state.disabled}/>
                     </div>
 
                     {/* User added event cost */}
                     <div className="form-group col-md-3">
-                      <input type="number" className="textInput" id="cost" placeholder="$ Cost" min="0" ref="userEventCost"/>
+                      <input type="number" className="textInput" id="cost" placeholder="$ Cost" min="0" ref="userEventCost" disabled={this.state.disabled}/>
                     </div>
 
-                    <div className="addIcon textInput col-md-1">
-                        <button onClick={this.handleClick} type="button">+</button>
-                    </div>
+                    {action}
                 </div>
 
             </form>

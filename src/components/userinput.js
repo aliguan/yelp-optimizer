@@ -59,6 +59,7 @@ class Userinput extends Component {
     this.handleMoreOptions = this.handleMoreOptions.bind(this);
     this.handleData = this.handleData.bind(this);
     this.handleAddUserEvent = this.handleAddUserEvent.bind(this);
+    this.handleDeleteUserEvent = this.handleDeleteUserEvent.bind(this);
     this.handleClearUserEvents = this.handleClearUserEvents.bind(this);
     this.handleMoreInfo = this.handleMoreInfo.bind(this);
   }
@@ -152,7 +153,6 @@ class Userinput extends Component {
   }
 
   handleAddUserEvent(userItinSlot, userEventCost, userEventName) {
-
     const EVENT1_TIME = "0900";
     const EVENT2_TIME = "1200";
     const EVENT3_TIME = "1800";
@@ -205,7 +205,21 @@ class Userinput extends Component {
       userAddedEvents: userAddedEventsArray,
     })
 
-    console.log("User Added: " + userAddedEventObj.name)
+    console.log("User Added: " + userAddedEventObj.name);
+    console.log('user state ---->');
+    console.log(this.state.userAddedEvents);
+
+  }
+
+  handleDeleteUserEvent(userItinSlot, userEventCost, userEventName) {
+      var userAddedEvents = this.state.userAddedEvents;
+
+      userAddedEvents.find( (event, i) => {
+          if(event.name === userEventName) {
+              userAddedEvents.splice(i, 1);
+          }
+      });
+
 
   }
 
@@ -221,7 +235,7 @@ class Userinput extends Component {
     tempShowMoreInfo[e] = !tempShowMoreInfo[e];
     this.setState({
       showMoreInfo: tempShowMoreInfo,
-    }) 
+    })
   }
 
   handleSubmit(e) {
@@ -560,8 +574,8 @@ class Userinput extends Component {
     var formStyles = ['form-body'];
     var optionStyles = ['more-options', 'form-body'];
     const ITINCONTAINER_STYLE = 'itinContainer';
-    const HIDDEN = 'hidden'; 
-    
+    const HIDDEN = 'hidden';
+
 
     var origins = {
          yelp: yelp_logo,
@@ -616,11 +630,12 @@ class Userinput extends Component {
       </li>);
     }
 
-    // Add user events display
-    var userevents = [<UserEvent handleAdd={this.handleAddUserEvent}/>];
+    var userevents = [<UserEvent key="userEvent" handleDelete={this.handleDeleteUserEvent} handleAdd={this.handleAddUserEvent}/>];
     for (var i = 0; i < this.state.userAddedEvents.length; i++) {
-      userevents.push(<UserEvent handleAdd={this.handleAddUserEvent}/>);
+        var key = "userEvent" + i;
+      userevents.unshift(<UserEvent key={key} handleDelete={this.handleDeleteUserEvent} handleAdd={this.handleAddUserEvent}/>);
     }
+    console.log(userevents);
 
     return (
       <div className="Userinput">
@@ -686,7 +701,7 @@ class Userinput extends Component {
         </div>
           <div className="row eventsCont">
             <div className="col-md-6 itinerary">
-            {this.state.loading == true ? <div className="loader"><Loader type="spinningBubbles" color="black"></Loader><h5>Searching...</h5></div> :
+            {this.state.loading == true ? <div className="loader"><Loader type="spinningBubbles" color="#2CC185"></Loader><h5>Searching...</h5></div> :
               <table>
                 <tbody>
                   {indents}
@@ -1201,5 +1216,4 @@ Userinput.propTypes = {}
 
 Userinput.defaultProps = {}
 
-export default Userinput
- 
+export default Userinput;
