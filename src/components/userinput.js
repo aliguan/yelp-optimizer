@@ -602,11 +602,11 @@ class Userinput extends Component {
         <tbody key={key}>
           <tr className="itinContainer">
             <td><input checked={this.state.checked[i]} onChange={this.handleCheckbox} type='checkbox' value={i} /></td>
-            <td><strong>{this.state.itinTimes[i] ? this.state.itinTimes[i] : ''}</strong></td>
+            <td><input checked={this.state.eliminated[i]} onChange={this.handleEliminate} type='checkbox' value={i} /></td>
             <td><img className="origin-logo" src={origins[origin]} /></td>
+            <td><strong>{this.state.itinTimes[i] ? this.state.itinTimes[i] : ''}</strong></td>
             <td className="resultsName"><a href={this.state.resultsArray[i].url} target='_blank'>{this.state.resultsArray[i].name} </a><MoreInfoButton value={i} onButtonClick={this.handleMoreInfo} /></td>
             <td className="text-success"><strong>${this.state.resultsArray[i].cost}</strong>  </td>
-            <td><input checked={this.state.eliminated[i]} onChange={this.handleEliminate} type='checkbox' value={i} /></td>
           </tr>
           <tr className={moreInfoStyles.join(' ')}>
             <td colSpan="7">{this.state.resultsArray[i].description}</td>

@@ -144,8 +144,7 @@
 
 .itinContainer td {
     padding: 20px 5px;
-    text-transform: uppercase;
-
+    font-size: 0.8em;
 }
 
 .mapsfix {
@@ -155,6 +154,13 @@ table {
     margin-top: 25px;
     word-break: break-all;
     margin: auto;
+}
+tbody {
+    transition: background-color 0.3s ease;
+}
+
+tbody:hover {
+    background-color: rgba(247, 247, 247, 0.95);
 }
 .totalCost {
     font-size: 1.4rem;
@@ -283,6 +289,7 @@ input[name="location"] {
 
 .resultsName {
     max-width: 325px;
+    white-space: pre-wrap;
 }
 @keyframes App-logo-spin {
   from { transform: rotate(0deg); }
