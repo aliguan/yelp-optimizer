@@ -226,6 +226,7 @@ input[name="location"] {
 .origin-logo {
     width: 100%;
     max-width: 100px;
+    min-width: 50px;
 }
 
 .optionInputs {

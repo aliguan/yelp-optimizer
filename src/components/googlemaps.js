@@ -43,6 +43,7 @@ export class MapContainer extends Component {
     }
 
     render() {
+        console.log(this.props);
         var markers = [];
         if(this.props.results.length > 0) {
             for(var i = 0; i < this.props.results.length; i++) {
