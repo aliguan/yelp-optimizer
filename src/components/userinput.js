@@ -8,7 +8,8 @@ import idb_keyval from 'idb-keyval'
 import globalStyles from '../App.css'
 import GoogleApiWrapper from './googlemaps.js';
 import Loader from './reactloading.js';
-import UserEvent from './userEvent.js';
+import DeleteUserEvent from './deleteUserEvent.js';
+import AddUserEvent from './addUserEvent.js';
 import MoreInfoButton from './moreInfoButton.js';
 
 import '../maps.css';
@@ -48,7 +49,7 @@ class Userinput extends Component {
       userAddedEvents: [],
       center: {},
       loading: false,
-      showMoreInfo: [false, false, false, false, false, false, false],
+      showMoreInfo: [false, false, false, false, false, false, false]
     };
     this.apiService = new ApiService();
     this.handleChange = this.handleChange.bind(this);
@@ -154,7 +155,7 @@ class Userinput extends Component {
     })
   }
 
-  handleAddUserEvent(userItinSlot, userEventCost, userEventName) {
+  handleAddUserEvent(userItinSlot, userEventCost, userEventName, render) {
     const EVENT1_TIME = "0900";
     const EVENT2_TIME = "1200";
     const EVENT3_TIME = "1800";
@@ -199,6 +200,7 @@ class Userinput extends Component {
       cost: cost,
       slot: itinSlot,
       description: "",
+      render: true
     }
 
     this.state.userAddedEvents.push(userAddedEventObj);
@@ -213,12 +215,15 @@ class Userinput extends Component {
 
   }
 
-  handleDeleteUserEvent(userItinSlot, userEventCost, userEventName, key) {
+  handleDeleteUserEvent(userItinSlot, userEventCost, userEventName) {
       var userAddedEvents = this.state.userAddedEvents;
-
+      var userAddedEventsArray = this.state.userAddedEvents.slice();
       userAddedEvents.find( (event, i) => {
           if(event.name === userEventName) {
-              userAddedEvents.splice(i, 1);
+              userAddedEventsArray.splice(i, 1);
+              this.setState({
+                  userAddedEvents: userAddedEventsArray
+             })
           }
       });
 
@@ -348,6 +353,8 @@ class Userinput extends Component {
                         var eliminatedEvents = [];
                         var bestItineraryIndicesParsed = [];
                         var bestItineraryObjsParsed = [];
+
+                        var userAddedEvents = [];
 
                         // Preprocess data for genetic algo
                         var dataForGA = processAPIDataForGA(data.data,
@@ -573,7 +580,7 @@ class Userinput extends Component {
           }
           else {
             this.setState({
-              loading: false,              
+              loading: false,
             });
           }
         }.bind(this))
@@ -648,12 +655,11 @@ class Userinput extends Component {
       </li>);
     }
 
-    var userevents = [<UserEvent key="userEvent" handleDelete={this.handleDeleteUserEvent} handleAdd={this.handleAddUserEvent}/>];
+    var userevents = [];
     for (var i = 0; i < this.state.userAddedEvents.length; i++) {
-        var key = "userEvent" + i;
-        userevents.unshift(<UserEvent key={key} handleDelete={this.handleDeleteUserEvent} handleAdd={this.handleAddUserEvent}/>);
+        userevents.unshift(<DeleteUserEvent key={key} userevent={this.state.userAddedEvents[i]} handleDelete={this.handleDeleteUserEvent}/> );
     }
-    console.log(userevents);
+
 
     return (
       <div className="Userinput">
@@ -695,7 +701,7 @@ class Userinput extends Component {
                       <div className={optionStyles.join(' ')}>
                            <h5>Add Your Own Event:</h5>
                            <p>Include your own events and we will calculate your optimized itinerary based on events you've added!</p>
-
+                           <AddUserEvent handleAdd={this.handleAddUserEvent}/>
                            {userevents}
 
                           {/* clear all user added events*/}

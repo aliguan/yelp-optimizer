@@ -1,15 +1,10 @@
 import 'bootstrap/dist/css/bootstrap.min.css';
 import React, { Component } from 'react';
 
-export class UserEvent extends Component {
+export class AddUserEvent extends Component {
     constructor(props) {
         super(props);
-
         this.handleClick = this.handleClick.bind(this);
-        this.handleDelete = this.handleDelete.bind(this);
-        this.state = {
-            added: false,
-        }
     }
 
     handleClick() {
@@ -19,38 +14,35 @@ export class UserEvent extends Component {
 
         this.props.handleAdd(userItinSlot, userEventCost, userEventName);
 
-        this.setState({
-            added: true,
-        });
+        this.refs.userEventName.value = '';
+        this.refs.userEventCost.value = '';
+
     }
 
-    handleDelete() {
-        var userEventName = this.refs.userEventName.value;
-        var userEventCost = this.refs.userEventCost.value;
-        var userItinSlot = this.refs.userItinSlot.value;
-        var key = this.props.key;
-
-        this.props.handleDelete(userItinSlot, userEventCost, userEventName, key);
-    }
+    // handleDelete() {
+    //     var userEventName = this.refs.userEventName.value;
+    //     var userEventCost = this.refs.userEventCost.value;
+    //     var userItinSlot = this.refs.userItinSlot.value;
+    //
+    //     this.props.handleDelete(userItinSlot, userEventCost, userEventName);
+    // }
 
     render() {
         var action = [];
-        if(this.state.added == false) {
-            action.push(<div key='add-action' className="addIcon textInput col-md-1">
-                <button onClick={this.handleClick} type="button">+</button>
-            </div>);
-        } else {
-            action.push(<div key='delete-action' className="addIcon textInput col-md-1">
-                <button onClick={this.handleDelete} type="button">-</button>
-            </div>);
-        }
+
+        action.push(<div key='add-action' className="addIcon textInput col-md-1">
+            <button onClick={this.handleClick} type="button">+</button>
+        </div>);
+
+
+        var formStyle = ['form-inline', 'addEventForm'];
 
         return(
-            <form className="form-inline addEventForm">
+            <form className={formStyle.join(' ')}>
                 {/* User added event slot  */}
                 <div className="optionInputs">
                     <div className="optionSelect form-group">
-                      <select id="slots" ref="userItinSlot">
+                      <select className="slot" id="addslot" ref="userItinSlot">
                         <option>1</option>
                         <option>2</option>
                         <option>3</option>
@@ -79,4 +71,4 @@ export class UserEvent extends Component {
     }
 }
 
-export default UserEvent;
+export default AddUserEvent;
