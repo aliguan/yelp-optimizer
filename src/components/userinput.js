@@ -11,6 +11,7 @@ import Loader from './reactloading.js';
 import DeleteUserEvent from './deleteUserEvent.js';
 import AddUserEvent from './addUserEvent.js';
 import MoreInfoButton from './moreInfoButton.js';
+import MoreInfoView from './moreInfoView.js';
 
 import '../maps.css';
 
@@ -200,7 +201,6 @@ class Userinput extends Component {
       cost: cost,
       slot: itinSlot,
       description: "",
-      render: true
     }
 
     this.state.userAddedEvents.push(userAddedEventObj);
@@ -630,7 +630,16 @@ class Userinput extends Component {
                 <td className="text-success"><strong>${this.state.resultsArray[i].cost}</strong>  </td>
               </tr>
               <tr className={moreInfoStyles.join(' ')}>
-                <td colSpan="7">{this.state.resultsArray[i].description}</td>
+                <td colSpan="7"><MoreInfoView desc={this.state.resultsArray[i].description}
+                phone={this.state.resultsArray[i].phone}
+                address={this.state.resultsArray[i].address}
+                duration={this.state.resultsArray[i].duration}
+                otherInfo={this.state.resultsArray[i].other}
+                origin={this.state.resultsArray[i].origin}
+                thumbnail={this.state.resultsArray[i].thumbnail}
+                url={this.state.resultsArray[i].url}
+                approxFeeFlag={this.state.resultsArray[i].approximateFee}
+                defaultDurationFlag={this.state.resultsArray[i].defaultDuration}/></td>
               </tr>
             </tbody>
           );
@@ -941,6 +950,7 @@ function processAPIDataForGA(events_in, eventFilterFlags_in, savedEvents_in, sav
       rating: 4.4,
       time: "9999",
       location: {},
+      origin: 'noneitem',
     }
     const NONE_ITEM_EVENT = {
       name: "None/Free Itinerary Slot",
@@ -948,6 +958,7 @@ function processAPIDataForGA(events_in, eventFilterFlags_in, savedEvents_in, sav
       rating: 10.5,
       time: "9999",
       location: {},
+      origin: 'noneitem',
     }
 
     // Initialize array that will be returned and formatted for the GA

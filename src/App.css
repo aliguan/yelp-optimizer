@@ -326,3 +326,14 @@ input[name="location"] {
   from { transform: rotate(0deg); }
   to { transform: rotate(360deg); }
 }
+
+.moreInfoTable {
+    text-align:justify;
+}
+
+.moreInfoThumbnail {
+    width: 100%;
+    max-width: 120px;
+    float: left;
+    margin-right: 10px;
+}
