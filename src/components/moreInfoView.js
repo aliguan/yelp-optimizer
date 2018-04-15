@@ -49,7 +49,13 @@ class MoreInfoView extends Component {
 
     render() {
         var eventDuration = this.props.duration;
-        eventDuration += HOURS_TEXT;
+        if (eventDuration === undefined) {
+            eventDuration = "";
+        }
+        else {
+            eventDuration += HOURS_TEXT;
+        }
+        
         if (this.props.origin != ORIGINS_NONE || this.props.origin != ORIGINS_USER) {
             if (this.props.duration > 24) {
                 eventDuration = MULTI_DAY_EVENT_MSG;
