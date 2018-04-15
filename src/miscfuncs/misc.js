@@ -2,7 +2,10 @@ module.exports = {
     convertMilTime: function (milTime) {
         if (milTime.localeCompare("9999")===0){ //None item is populated with 999 military time
             return "";
-        }        
+        }
+        else if (milTime.localeCompare("Food")===0) {
+            return "Food"
+        }
         if (milTime.length > 0) {            
             if (milTime.length == 3) {
                 milTime = "0" + milTime;
