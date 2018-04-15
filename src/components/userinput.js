@@ -607,7 +607,7 @@ class Userinput extends Component {
     var indents = [];
 
     if(this.state.resultsArray.length > 0) {
-        indents.push(<thead><tr><th colSpan="7"><h4>Optimized Itinerary</h4></th></tr></thead>);
+        indents.push(<thead><tr><th colSpan="7"><h4>Your Itinerary</h4></th></tr></thead>);
         // Form the itinerary results display
         for (var i = 0; i < ITINERARY_LENGTH; i++) {
           var origin = this.state.resultsArray[i].origin;
@@ -626,7 +626,10 @@ class Userinput extends Component {
                 <td><input checked={this.state.eliminated[i]} onChange={this.handleEliminate} type='checkbox' value={i} /></td>
                 <td><img className="origin-logo" src={origins[origin]} /></td>
                 <td><strong>{this.state.itinTimes[i] ? this.state.itinTimes[i] : ''}</strong></td>
-                <td className="resultsName"><a href={this.state.resultsArray[i].url} target='_blank'>{this.state.resultsArray[i].name} </a><MoreInfoButton value={i} onButtonClick={this.handleMoreInfo} /></td>
+                <td className="resultsName">
+                {this.state.resultsArray[i].url=="" ? this.state.resultsArray[i].name :
+                <a href={this.state.resultsArray[i].url} target='_blank'>{this.state.resultsArray[i].name} </a>}
+                <MoreInfoButton value={i} onButtonClick={this.handleMoreInfo} /></td>
                 <td className="text-success"><strong>${this.state.resultsArray[i].cost}</strong>  </td>
               </tr>
               <tr className={moreInfoStyles.join(' ')}>
@@ -647,7 +650,7 @@ class Userinput extends Component {
 
         // The Total cost display
         var total = [];
-        total.push(<div key="totalCostDiv"><b>Total Cost: ${this.state.totalCost} </b></div>)
+        total.push(<div key="totalCostDiv"><b>Approx. Total Cost: ${this.state.totalCost} </b></div>)
     }
 
 
