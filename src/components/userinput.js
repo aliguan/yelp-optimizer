@@ -201,6 +201,7 @@ class Userinput extends Component {
       cost: cost,
       slot: itinSlot,
       description: "",
+      origin: 'userevent'
     }
 
     this.state.userAddedEvents.push(userAddedEventObj);
@@ -628,8 +629,9 @@ class Userinput extends Component {
                 <td><strong>{this.state.itinTimes[i] ? this.state.itinTimes[i] : ''}</strong></td>
                 <td className="resultsName">
                 {this.state.resultsArray[i].url=="" ? this.state.resultsArray[i].name :
-                <a href={this.state.resultsArray[i].url} target='_blank'>{this.state.resultsArray[i].name} </a>}
-                <MoreInfoButton value={i} onButtonClick={this.handleMoreInfo} /></td>
+                    <a href={this.state.resultsArray[i].url} target='_blank'>{this.state.resultsArray[i].name} </a>}
+                    {this.state.resultsArray[i].origin === 'noneitem' || this.state.resultsArray[i].origin === 'userevent' ? '' : <MoreInfoButton value={i} onButtonClick={this.handleMoreInfo} />}
+                </td>
                 <td className="text-success"><strong>${this.state.resultsArray[i].cost}</strong>  </td>
               </tr>
               <tr className={moreInfoStyles.join(' ')}>
