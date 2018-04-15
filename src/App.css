@@ -258,21 +258,21 @@ input[name="location"] {
     outline: none;
     -webkit-font-smoothing: antialiased;
     border-radius: 2px;
+    width: 60px;
+    justify-self: end;
 }
 
 .addIcon {
     font-size: 26px;
-    line-height: 0.5;
-    padding: 0.5em 0.32em;
-
+    justify-self: start;
 }
 
 .addIcon button {
     border: none;
-    cursor: pointer;
-    margin-top: 1px;
+    width: 60px;
     color: #878787;
     background-color: white;
+    cursor: pointer;
 }
 
 .addIcon button:focus, input:focus {
@@ -285,6 +285,9 @@ input[name="location"] {
 
 .addEventForm {
     margin-bottom: 1rem;
+    display: grid!important;
+    grid-template-columns: repeat(4, 1fr);
+    grid-gap: 20px;
 }
 
 .block {

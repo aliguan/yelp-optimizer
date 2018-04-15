@@ -20,7 +20,7 @@ export class DeleteUserEvent extends Component {
     render() {
         var action = [];
 
-        action.push(<div key='delete-action' className="addIcon textInput col-md-1">
+        action.push(<div key='delete-action' className="addIcon">
             <button onClick={this.handleDelete} type="button">-</button>
         </div>);
 
@@ -30,9 +30,8 @@ export class DeleteUserEvent extends Component {
         return(
             <form className={formStyle.join(' ')}>
                 {/* User added event slot  */}
-                <div className="optionInputs">
                     <div className="optionSelect form-group">
-                      <select className="slot" ref="userItinSlot" value={this.props.userevent.slot}>
+                      <select className="slot" ref="userItinSlot" value={this.props.userevent.slot} disabled="disabled">
                         <option>1</option>
                         <option>2</option>
                         <option>3</option>
@@ -44,17 +43,16 @@ export class DeleteUserEvent extends Component {
                     </div>
 
                     {/* User added event name */}
-                    <div className="form-group col-md-7 eventName">
-                      <input type="text" className="textInput" id="eventName" placeholder="Event Name" value={this.props.userevent.name} ref="userEventName" />
+                    <div className="form-group eventName">
+                      <input type="text" className="textInput" id="eventName" placeholder="Event Name" value={this.props.userevent.name} ref="userEventName" disabled="disabled" />
                     </div>
 
                     {/* User added event cost */}
-                    <div className="form-group col-md-3">
-                      <input type="number" className="textInput" id="cost" placeholder="$ Cost" min="0" value={this.props.userevent.cost} ref="userEventCost"/>
+                    <div className="form-group">
+                      <input type="number" className="textInput" id="cost" placeholder="$ Cost" min="0" value={this.props.userevent.cost} ref="userEventCost" disabled="disabled"/>
                     </div>
 
                     {action}
-                </div>
 
             </form>
         )

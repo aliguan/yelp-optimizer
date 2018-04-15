@@ -607,7 +607,7 @@ class Userinput extends Component {
     var indents = [];
 
     if(this.state.resultsArray.length > 0) {
-        indents.push(<thead><tr><th colSpan="7"><h4>Optimized Itinerary</h4></th></tr></thead>);
+        indents.push(<thead key="tablehead"><tr><th colSpan="7"><h4>Your Itinerary</h4></th></tr></thead>);
         // Form the itinerary results display
         for (var i = 0; i < ITINERARY_LENGTH; i++) {
           var origin = this.state.resultsArray[i].origin;

@@ -16,7 +16,7 @@ export class AddUserEvent extends Component {
 
         this.refs.userEventName.value = '';
         this.refs.userEventCost.value = '';
-
+        this.refs.userItinSlot.value = 1;
     }
 
     // handleDelete() {
@@ -30,7 +30,7 @@ export class AddUserEvent extends Component {
     render() {
         var action = [];
 
-        action.push(<div key='add-action' className="addIcon textInput col-md-1">
+        action.push(<div key='add-action' className="addIcon">
             <button onClick={this.handleClick} type="button">+</button>
         </div>);
 
@@ -40,7 +40,7 @@ export class AddUserEvent extends Component {
         return(
             <form className={formStyle.join(' ')}>
                 {/* User added event slot  */}
-                <div className="optionInputs">
+
                     <div className="optionSelect form-group">
                       <select className="slot" id="addslot" ref="userItinSlot">
                         <option>1</option>
@@ -54,17 +54,17 @@ export class AddUserEvent extends Component {
                     </div>
 
                     {/* User added event name */}
-                    <div className="form-group col-md-7 eventName">
+                    <div className="form-group">
                       <input type="text" className="textInput" id="eventName" placeholder="Event Name" ref="userEventName" />
                     </div>
 
                     {/* User added event cost */}
-                    <div className="form-group col-md-3">
+                    <div className="form-group">
                       <input type="number" className="textInput" id="cost" placeholder="$ Cost" min="0" ref="userEventCost"/>
                     </div>
 
                     {action}
-                </div>
+
 
             </form>
         )

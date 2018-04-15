@@ -38,7 +38,7 @@ class MoreInfoView extends Component {
             return <tr><td>
                 <a href={this.props.url} target="_blank">{SG_LINK_TEXT}</a>
                 <p>Lowest Priced Ticket: <b>${this.props.otherInfo[1]}</b></p>
-                <p>Highest Priced Ticket: <b>${this.props.otherInfo[2]}</b></p>                       
+                <p>Highest Priced Ticket: <b>${this.props.otherInfo[2]}</b></p>
                 </td></tr>;
         }
         else if (this.props.origin == ORIGINS_NONE) {
@@ -64,6 +64,7 @@ class MoreInfoView extends Component {
 
         return (
             <table className="moreInfoTable">
+                <tbody>
                 {this.renderElement()}
                 <tr>
                   <td><b>Phone Number: </b>{this.props.phone}</td>
@@ -78,6 +79,7 @@ class MoreInfoView extends Component {
                   <td><p><b>Description: </b></p><a href={this.props.thumbnail} target="_blank">
                   <img className="moreInfoThumbnail"  src={this.props.thumbnail}/></a>{this.props.desc}</td>
               </tr>
+              </tbody>
           </table>
       );
     }
