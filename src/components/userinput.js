@@ -564,9 +564,17 @@ class Userinput extends Component {
 
             }
             else {
+              this.setState({
+                loading: false,
+              });
               console.log(data_latlon)
               console.log("invalid location input!")
             } // end if (data_latlon.results)
+          }
+          else {
+            this.setState({
+              loading: false,              
+            });
           }
         }.bind(this))
       }
