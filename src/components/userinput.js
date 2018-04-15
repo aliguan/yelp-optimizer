@@ -703,7 +703,7 @@ class Userinput extends Component {
                                     <input required className="textInput" min="0" type="number" name="budgetmax" value={budgetmax} onChange={this.handleChange} placeholder="$ Max" />
                                   </div>
                                   <div className="col-md-2 search-btn">
-                                      <input className="btn btn-sm go-btn" type="submit" value={this.state.expanded == true ? 'GO!' : 'Find Again'} />
+                                      <input className="btn btn-sm go-btn" type="submit" value="GO!" />
                                   </div>
                               </div>
                           </div>
@@ -737,7 +737,7 @@ class Userinput extends Component {
         </div>
         <div className="row eventsCont">
             <div className="col-md-6 itinerary">
-            {this.state.resultsArray.length == 0 && this.state.loading == false ? <div className="greeting"><h4>Get Started Planning Your Trip Above!</h4><img src={globe}></img></div> : ' '}
+            {this.state.resultsArray.length === 0 && this.state.loading === false ? <div className="greeting"><h4>Get Started Planning Your Trip Above!</h4><img src={globe}></img></div> : ' '}
             {this.state.loading == true ? <div className="loader"><Loader type="spinningBubbles" color="#6c757d"></Loader><h5>Searching...</h5></div> :
 
                 <table>
