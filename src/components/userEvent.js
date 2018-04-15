@@ -9,7 +9,6 @@ export class UserEvent extends Component {
         this.handleDelete = this.handleDelete.bind(this);
         this.state = {
             added: false,
-            disabled: false,
         }
     }
 
@@ -22,7 +21,6 @@ export class UserEvent extends Component {
 
         this.setState({
             added: true,
-            disabled: true
         });
     }
 
@@ -30,8 +28,9 @@ export class UserEvent extends Component {
         var userEventName = this.refs.userEventName.value;
         var userEventCost = this.refs.userEventCost.value;
         var userItinSlot = this.refs.userItinSlot.value;
+        var key = this.props.key;
 
-        this.props.handleDelete(userItinSlot, userEventCost, userEventName);
+        this.props.handleDelete(userItinSlot, userEventCost, userEventName, key);
     }
 
     render() {
@@ -51,7 +50,7 @@ export class UserEvent extends Component {
                 {/* User added event slot  */}
                 <div className="optionInputs">
                     <div className="optionSelect form-group">
-                      <select id="slots" ref="userItinSlot" disabled={this.state.disabled}>
+                      <select id="slots" ref="userItinSlot">
                         <option>1</option>
                         <option>2</option>
                         <option>3</option>
@@ -64,12 +63,12 @@ export class UserEvent extends Component {
 
                     {/* User added event name */}
                     <div className="form-group col-md-7 eventName">
-                      <input type="text" className="textInput" id="eventName" placeholder="Event Name" ref="userEventName" disabled={this.state.disabled}/>
+                      <input type="text" className="textInput" id="eventName" placeholder="Event Name" ref="userEventName" />
                     </div>
 
                     {/* User added event cost */}
                     <div className="form-group col-md-3">
-                      <input type="number" className="textInput" id="cost" placeholder="$ Cost" min="0" ref="userEventCost" disabled={this.state.disabled}/>
+                      <input type="number" className="textInput" id="cost" placeholder="$ Cost" min="0" ref="userEventCost"/>
                     </div>
 
                     {action}

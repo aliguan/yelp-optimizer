@@ -18,6 +18,8 @@ import google_logo from '../images/google_places.png';
 import meetup_logo from '../images/meetup_logo.png';
 import eventbrite_logo from '../images/eventbrite_logo.png';
 import seatgeek_logo from '../images/seatgeek_logo.png';
+import globe from '../images/globe.png';
+
 
 import 'react-datepicker/dist/react-datepicker.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
@@ -211,7 +213,7 @@ class Userinput extends Component {
 
   }
 
-  handleDeleteUserEvent(userItinSlot, userEventCost, userEventName) {
+  handleDeleteUserEvent(userItinSlot, userEventCost, userEventName, key) {
       var userAddedEvents = this.state.userAddedEvents;
 
       userAddedEvents.find( (event, i) => {
@@ -220,7 +222,8 @@ class Userinput extends Component {
           }
       });
 
-
+      console.log('user state (delete) ---->');
+      console.log(this.state.userAddedEvents);
   }
 
   handleClearUserEvents(e) {
@@ -640,7 +643,7 @@ class Userinput extends Component {
     var userevents = [<UserEvent key="userEvent" handleDelete={this.handleDeleteUserEvent} handleAdd={this.handleAddUserEvent}/>];
     for (var i = 0; i < this.state.userAddedEvents.length; i++) {
         var key = "userEvent" + i;
-      userevents.unshift(<UserEvent key={key} handleDelete={this.handleDeleteUserEvent} handleAdd={this.handleAddUserEvent}/>);
+        userevents.unshift(<UserEvent key={key} handleDelete={this.handleDeleteUserEvent} handleAdd={this.handleAddUserEvent}/>);
     }
     console.log(userevents);
 
@@ -707,9 +710,9 @@ class Userinput extends Component {
 
         </div>
         <div className="row eventsCont">
-
             <div className="col-md-6 itinerary">
-            {this.state.loading == true ? <div className="loader"><Loader type="spinningBubbles" color="#2bc08487"></Loader><h5>Searching...</h5></div> :
+            {this.state.resultsArray.length == 0 && this.state.loading == false ? <div className="greeting"><h4>Get Started Planning Your Trip Above!</h4><img src={globe}></img></div> : ' '}
+            {this.state.loading == true ? <div className="loader"><Loader type="spinningBubbles" color="#6c757d"></Loader><h5>Searching...</h5></div> :
 
                 <table>
                   {indents}

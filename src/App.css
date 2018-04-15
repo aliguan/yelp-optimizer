@@ -308,6 +308,20 @@ input[name="location"] {
     white-space: pre-wrap;
 }
 
+.greeting {
+    margin-top: 60px;
+    color: #cbcbcb;
+    font-size: 3em;
+    width: 50%;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.greeting img {
+    width: 40%;
+    opacity: 0.2;
+}
+
 @keyframes App-logo-spin {
   from { transform: rotate(0deg); }
   to { transform: rotate(360deg); }
