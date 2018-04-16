@@ -44,7 +44,7 @@ class Userinput extends Component {
       eliminatedEvents: [], // indices of the user eliminated itinerary slots (0-6)
       checked: [0, 0, 0, 0, 0, 0, 0], // for displaying checked or unchecked in user saved events
       eliminated: [0, 0, 0, 0, 0, 0, 0], // for displaying checked or unchecked in eliminating itinerary slots
-      eventFilterFlags: [1, 1, 1, 1], // ordered left to right: meetup, eventbrite, seatgeek, google places
+      eventFilterFlags: [1, 1, 1, 1, 1], // ordered left to right: meetup, eventbrite, seatgeek, google places, select/unselect all options
       totalCost: 0,
       itinTimes: [], // time string in AM/PM format for display
       userAddedEvents: [],
@@ -81,18 +81,29 @@ class Userinput extends Component {
   }
 
   handleFilter(e) {
-    // If the checkbox is checked, add the checkbox index to the states
-    let eventFilterFlags = this.state.eventFilterFlags.slice();
-    if (e.target.checked) {
-      eventFilterFlags[e.target.value] = 1;
-      this.setState({ eventFilterFlags: eventFilterFlags });
+    if (e.target.value === "selectAllOption") {
+      if (e.target.checked) {
+        this.setState({ eventFilterFlags: [1,1,1,1,1] });
+      }
+      else {
+        this.setState({ eventFilterFlags: [0,0,0,0,0] });
+      }
     }
-    // If the checkbox is unchecked, find and remove the checkbox index from the states
     else {
-      eventFilterFlags[e.target.value] = 0;
-      this.setState({ eventFilterFlags: eventFilterFlags });
+      // If the checkbox is checked, add the checkbox index to the states
+      let eventFilterFlags = this.state.eventFilterFlags.slice();
+      if (e.target.checked) {
+        eventFilterFlags[e.target.value] = 1;
+        this.setState({ eventFilterFlags: eventFilterFlags });
+      }
+      // If the checkbox is unchecked, find and remove the checkbox index from the states
+      else {
+        eventFilterFlags[e.target.value] = 0;
+        this.setState({ eventFilterFlags: eventFilterFlags });
+      }
     }
   }
+
 
   handleCheckbox(e) {
     // If the checkbox is checked, add the checkbox index to the states
@@ -662,6 +673,8 @@ class Userinput extends Component {
     const NUM_EVENT_APIS = 4;
     var filters = [];
     var filterNames = ["Meetup", "Eventbrite", "Seatgeek", "Local Parks"];
+    options.push(<li key={event}>
+      <input checked={this.state.eventFilterFlags[NUM_EVENT_APIS]} onChange={this.handleFilter} type='checkbox' value='selectAllOption'/>Select All</li>)
     for (var i = 0; i < NUM_EVENT_APIS; i++) {
         var event = 'event-' + i;
       options.push(<li key={event}>
@@ -746,9 +759,9 @@ class Userinput extends Component {
                   {indents}
                 </table>}
 
-                <div className="totalCost">
+                {this.state.loading == false ? <div className="totalCost">
                     {total}
-                </div>
+                </div> : ''}
 
             </div>
 
