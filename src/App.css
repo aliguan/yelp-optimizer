@@ -105,7 +105,10 @@
 
 .options{
     width: 100%;
-    margin-top: 5px;
+    margin-top: 20px;
+    display: grid!important;
+    grid-template-columns: repeat(5, 1fr);
+    grid-gap: 20px;
 }
 
 .results {
@@ -135,7 +138,7 @@
 .options li {
     list-style-type: none;
     display: inline-block;
-    width: calc(100%/4);
+    margin: 10px;
 }
 
 .itinContainer {

@@ -673,12 +673,12 @@ class Userinput extends Component {
     const NUM_EVENT_APIS = 4;
     var filters = [];
     var filterNames = ["Meetup", "Eventbrite", "Seatgeek", "Local Parks"];
-    options.push(<li key={event}>
-      <input checked={this.state.eventFilterFlags[NUM_EVENT_APIS]} onChange={this.handleFilter} type='checkbox' value='selectAllOption'/>Select All</li>)
+    options.push(<li key="eventFilterFlags">
+      <input checked={this.state.eventFilterFlags[NUM_EVENT_APIS]} onChange={this.handleFilter} type='checkbox' value='selectAllOption'/> Select All</li>)
     for (var i = 0; i < NUM_EVENT_APIS; i++) {
         var event = 'event-' + i;
       options.push(<li key={event}>
-        <input checked={this.state.eventFilterFlags[i]} onChange={this.handleFilter} type='checkbox' value={i} />{filterNames[i]}
+        <input checked={this.state.eventFilterFlags[i]} onChange={this.handleFilter} type='checkbox' value={i} /> {filterNames[i]}
       </li>);
     }
 
