@@ -974,7 +974,7 @@ function processAPIDataForGA(events_in, eventFilterFlags_in, savedEvents_in, sav
     const NONE_ITEM = {
       name: "None/Free Itinerary Slot",
       cost: 0,
-      rating: 4.4,
+      rating: 4.0,
       time: "9999",
       location: {},
       origin: 'noneitem',
@@ -982,7 +982,7 @@ function processAPIDataForGA(events_in, eventFilterFlags_in, savedEvents_in, sav
     const NONE_ITEM_EVENT = {
       name: "None/Free Itinerary Slot",
       cost: 0,
-      rating: 10.5,
+      rating: 10.4,
       time: "9999",
       location: {},
       origin: 'noneitem',
