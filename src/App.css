@@ -350,3 +350,10 @@ img{
     max-width: 100%;
 }
 
+.costStr {
+    text-align: left;
+}
+
+.cost  {
+    text-align: right;
+}

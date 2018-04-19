@@ -663,7 +663,16 @@ class Userinput extends Component {
 
         // The Total cost display
         var total = [];
-        total.push(<div key="totalCostDiv"><b>Approx. Total Cost: ${this.state.totalCost} </b></div>)
+        total.push(<div key="totalCostDiv"><table>
+          <tr>
+            <td className="costStr">
+              <b>Approx. Total Cost:</b> 
+              </td>
+              <td className="cost">
+              <b>${this.state.totalCost}</b>
+              </td>
+              </tr>
+              </table></div>)
     }
 
 
