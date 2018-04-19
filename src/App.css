@@ -357,3 +357,19 @@ img{
 .cost  {
     text-align: right;
 }
+
+input[type="checkbox"] {
+    display: none;
+    cursor: pointer;
+}
+
+.lock {
+    max-width: 25px;
+    cursor: pointer;
+}
+
+.elim {
+    max-width: 15px;
+    margin-top: 10px;
+    cursor: pointer;
+}

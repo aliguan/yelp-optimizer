@@ -21,7 +21,10 @@ import meetup_logo from '../images/meetup_logo.png';
 import eventbrite_logo from '../images/eventbrite_logo.png';
 import seatgeek_logo from '../images/seatgeek_logo.png';
 import globe from '../images/globe.png';
-
+import lock from '../images/lock.png';
+import unlock from '../images/unlock.png';
+import dark from '../images/dark.png';
+import light from '../images/light.png';
 
 import 'react-datepicker/dist/react-datepicker.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
@@ -629,13 +632,23 @@ class Userinput extends Component {
           if (!this.state.showMoreInfo[i]) {
             moreInfoStyles.push(HIDDEN);
           }
+          var lock_icon = lock
+          if(!this.state.checked[i]) {
+              lock_icon = unlock;
+          }
+
+          var elim_icon = light
+          if(!this.state.eliminated[i]) {
+              elim_icon = dark;
+          }
 
           var key = 'tbody-' + i;
+          var id = 'checkbox-' + i;
+          var elim_id = 'elim-' + i;
           indents.push(
             <tbody key={key}>
               <tr>
-                <td><input checked={this.state.checked[i]} onChange={this.handleCheckbox} type='checkbox' value={i} /></td>
-                <td><input checked={this.state.eliminated[i]} onChange={this.handleEliminate} type='checkbox' value={i} /></td>
+
                 <td><img className="origin-logo" src={origins[origin]} /></td>
                 <td><strong>{this.state.itinTimes[i] ? this.state.itinTimes[i] : ''}</strong></td>
                 <td className="resultsName">
@@ -644,6 +657,8 @@ class Userinput extends Component {
                     {this.state.resultsArray[i].origin === 'noneitem' || this.state.resultsArray[i].origin === 'userevent' ? '' : <MoreInfoButton value={i} onButtonClick={this.handleMoreInfo} />}
                 </td>
                 <td className="text-success"><strong>${this.state.resultsArray[i].cost}</strong>  </td>
+                    <td><label htmlFor={id}><img className="lock" src={lock_icon} /></label><input id={id} checked={this.state.checked[i]} onChange={this.handleCheckbox} type="checkbox" value={i} /></td>
+                    <td><label htmlFor={elim_id}><img className="elim" src={elim_icon} /></label><input id={elim_id} checked={this.state.eliminated[i]} onChange={this.handleEliminate} type='checkbox' value={i} /></td>
               </tr>
               <tr className={moreInfoStyles.join(' ')}>
                 <td colSpan="7"><MoreInfoView desc={this.state.resultsArray[i].description}
@@ -663,16 +678,20 @@ class Userinput extends Component {
 
         // The Total cost display
         var total = [];
-        total.push(<div key="totalCostDiv"><table>
-          <tr>
-            <td className="costStr">
-              <b>Approx. Total Cost:</b> 
-              </td>
-              <td className="cost">
-              <b>${this.state.totalCost}</b>
-              </td>
-              </tr>
-              </table></div>)
+        total.push(<div key="totalCostDiv">
+            <table>
+                <tbody>
+                    <tr>
+                    <td className="costStr">
+                        <b>Approx. Total Cost:</b>
+                    </td>
+                    <td className="cost">
+                        <b>${this.state.totalCost}</b>
+                    </td>
+                    </tr>
+                </tbody>
+              </table>
+          </div>)
     }
 
 
