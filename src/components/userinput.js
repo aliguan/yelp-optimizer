@@ -673,14 +673,23 @@ class Userinput extends Component {
     const NUM_EVENT_APIS = 4;
     var filters = [];
     var filterNames = ["Meetup", "Eventbrite", "Seatgeek", "Local Parks"];
-    options.push(<li key="eventFilterFlags">
+    var filterDesc = [
+            "Meetup brings people together to create thriving communities.",
+            "Eventbrite brings people together through live experiences. Discover events that match your passions, or create your own with online ticketing tools.",
+            "SeatGeek is the Web's largest event ticket search engine. Discover events you love, search all ticket sites, see seat locations and get the best deals on tickets.",
+            "Local Parks and Places are grabbed from Google Places API, a service to  connect people to places with the power of location awareness."
+        ]
+    options.push(<li className="filter" key="eventFilterFlags">
       <input checked={this.state.eventFilterFlags[NUM_EVENT_APIS]} onChange={this.handleFilter} type='checkbox' value='selectAllOption'/> Select All</li>)
+    options.push(<li key="alleventsdesc">Use events from all services.</li>);
     for (var i = 0; i < NUM_EVENT_APIS; i++) {
         var event = 'event-' + i;
-      options.push(<li key={event}>
-        <input checked={this.state.eventFilterFlags[i]} onChange={this.handleFilter} type='checkbox' value={i} /> {filterNames[i]}
-      </li>);
-    }
+        var desc = 'desc-' + i;
+      options.push(<li className="filter" key={event}>
+          <input checked={this.state.eventFilterFlags[i]} onChange={this.handleFilter} type='checkbox' value={i} /> {filterNames[i]}</li>
+        );
+        options.push(<li key={desc}><p>{filterDesc[i]}</p></li>);
+     }
 
     var userevents = [];
     for (var i = 0; i < this.state.userAddedEvents.length; i++) {
