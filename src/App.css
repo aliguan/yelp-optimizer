@@ -334,12 +334,14 @@ input[name="location"] {
 }
 
 .moreInfoTable {
-    text-align:justify;
+    text-align: left;
 }
 
 .moreInfoThumbnail {
     width: 100%;
-    max-width: 120px;
-    float: left;
-    margin-right: 10px;
 }
+
+img{
+    max-width: 100%;
+}
+

@@ -1,4 +1,5 @@
 import React, { Component } from 'react'
+import renderHTML from 'react-render-html';
 const ORIGINS_YELP = 'yelp';
 const ORIGINS_EB = 'eventbrite';
 const ORIGINS_GP = 'places';
@@ -21,7 +22,7 @@ class MoreInfoView extends Component {
 
     }
 
-    renderElement() {
+    renderCTAElement() {
         if (this.props.origin == ORIGINS_YELP) {
             return <tr><td><a href={this.props.url} target="_blank">{YELP_LINK_TEXT}</a></td></tr>;
         }
@@ -45,6 +46,36 @@ class MoreInfoView extends Component {
             return;
         }
         return;
+    }
+
+    renderDescElement() {
+        var desc = this.props.desc;
+        if (desc === undefined) {
+            desc = "";
+        }
+        if (this.props.origin == ORIGINS_YELP) {
+            return (
+                <td>
+                    <p><b>Description: </b></p>
+                    {renderHTML(desc)}
+                    <a href={this.props.thumbnail} target="_blank">
+                        <img className="moreInfoThumbnail" src={this.props.thumbnail} />
+                    </a>
+                </td>
+            );
+        }
+        else {
+            return (
+                <td>
+                    <p><b>Description: </b></p>                    
+                    <a href={this.props.thumbnail} target="_blank">
+                        <img className="moreInfoThumbnail" src={this.props.thumbnail} />
+                    </a>
+                    {renderHTML(desc)}
+                </td>
+            );
+        }
+
     }
 
     render() {
@@ -71,7 +102,7 @@ class MoreInfoView extends Component {
         return (
             <table className="moreInfoTable">
                 <tbody>
-                {this.renderElement()}
+                {this.renderCTAElement()}
                 <tr>
                   <td><b>Phone Number: </b>{this.props.phone}</td>
               </tr>
@@ -82,8 +113,7 @@ class MoreInfoView extends Component {
                   <td><b>Duration: </b>{eventDuration}</td>
               </tr>
               <tr>
-                  <td><p><b>Description: </b></p><a href={this.props.thumbnail} target="_blank">
-                  <img className="moreInfoThumbnail"  src={this.props.thumbnail}/></a>{this.props.desc}</td>
+                  {this.renderDescElement()}
               </tr>
               </tbody>
           </table>
