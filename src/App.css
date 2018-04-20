@@ -358,7 +358,7 @@ img{
     text-align: right;
 }
 
-input[type="checkbox"] {
+.lock_checkbox, .elim_checkbox {
     display: none;
     cursor: pointer;
 }
@@ -372,4 +372,8 @@ input[type="checkbox"] {
     max-width: 15px;
     margin-top: 10px;
     cursor: pointer;
+}
+
+.filterDesc  {
+    font-size: .75rem;
 }

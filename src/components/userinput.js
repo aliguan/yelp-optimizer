@@ -657,8 +657,8 @@ class Userinput extends Component {
                     {this.state.resultsArray[i].origin === 'noneitem' || this.state.resultsArray[i].origin === 'userevent' ? '' : <MoreInfoButton value={i} onButtonClick={this.handleMoreInfo} />}
                 </td>
                 <td className="text-success"><strong>${this.state.resultsArray[i].cost}</strong>  </td>
-                    <td><label htmlFor={id}><img className="lock" src={lock_icon} /></label><input id={id} checked={this.state.checked[i]} onChange={this.handleCheckbox} type="checkbox" value={i} /></td>
-                    <td><label htmlFor={elim_id}><img className="elim" src={elim_icon} /></label><input id={elim_id} checked={this.state.eliminated[i]} onChange={this.handleEliminate} type='checkbox' value={i} /></td>
+                    <td><label htmlFor={id}><img className="lock" src={lock_icon} /></label><input className="lock_checkbox" id={id} checked={this.state.checked[i]} onChange={this.handleCheckbox} type="checkbox" value={i} /></td>
+                    <td><label htmlFor={elim_id}><img className="elim" src={elim_icon} /></label><input className="elim_checkbox" id={elim_id} checked={this.state.eliminated[i]} onChange={this.handleEliminate} type='checkbox' value={i} /></td>
               </tr>
               <tr className={moreInfoStyles.join(' ')}>
                 <td colSpan="7"><MoreInfoView desc={this.state.resultsArray[i].description}
@@ -709,14 +709,14 @@ class Userinput extends Component {
         ]
     options.push(<li className="filter" key="eventFilterFlags">
       <input checked={this.state.eventFilterFlags[NUM_EVENT_APIS]} onChange={this.handleFilter} type='checkbox' value='selectAllOption'/> Select All</li>)
-    options.push(<li key="alleventsdesc">Use events from all services.</li>);
+    options.push(<li key="alleventsdesc" className="filterDesc">Use events from all services.</li>);
     for (var i = 0; i < NUM_EVENT_APIS; i++) {
         var event = 'event-' + i;
         var desc = 'desc-' + i;
       options.push(<li className="filter" key={event}>
           <input checked={this.state.eventFilterFlags[i]} onChange={this.handleFilter} type='checkbox' value={i} /> {filterNames[i]}</li>
         );
-        options.push(<li key={desc}><p>{filterDesc[i]}</p></li>);
+        options.push(<li key={desc}><p className="filterDesc">{filterDesc[i]}</p></li>);
      }
 
     var userevents = [];
