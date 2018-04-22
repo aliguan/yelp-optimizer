@@ -1211,7 +1211,7 @@ function convertTimeToAMPM(resultsArray_in) {
 // stored for 24 hours or not. This is for API terms and conditions compliance to ensure data is not cached longer
 // than 24 hours.
 function clearLocallyStoredAPIData(myStorage_in) {
-  var TWENTYFOUR_HOURS = 24 * 60 * 60 * 1000; /* ms */
+  const TWENTYFOUR_HOURS = 24 * 60 * 60 * 1000; /* ms */
   var currentTimeStamp = new Date();
   var currentTimeStampStr = currentTimeStamp.getTime().toString(); // ms
   var currentTimeStampMilSec = currentTimeStamp.getTime();
