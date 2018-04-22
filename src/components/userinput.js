@@ -43,7 +43,7 @@ class Userinput extends Component {
       location: 'San Francisco, CA',
       resultsArray: [],
       startDate: moment(),
-      savedEvents: [], // acutal indices of the user saved events
+      savedEvents: [], // actual indices of the user saved events
       eliminatedEvents: [], // indices of the user eliminated itinerary slots (0-6)
       checked: [0, 0, 0, 0, 0, 0, 0], // for displaying checked or unchecked in user saved events
       eliminated: [0, 0, 0, 0, 0, 0, 0], // for displaying checked or unchecked in eliminating itinerary slots
@@ -107,44 +107,56 @@ class Userinput extends Component {
     }
   }
 
+  // This function updates the checked state to toggle checkboxes and update which items are "locked" or choosen
+  // by the user
+  handleCheckbox(e) {    
+    // i_checkbox is the checkbox value and should only have integer values from 0-6 (e.target.value is a string type though)
+    // each checkbox corresponds to an item in the itinerary
+    var i_checkbox = parseInt(e.target.value);
 
-  handleCheckbox(e) {
     // If the checkbox is checked, add the checkbox index to the states
     let checked = this.state.checked.slice();
     if (e.target.checked) {
-      this.state.savedEvents.push(e.target.value);   // e.target.value should be an integer value
-      // from 0 to 6 inclusive
-      checked[e.target.value] = 1;
+      if (!misc.include(this.state.savedEvents,i_checkbox)) { // if i_checkbox is not already in the savedEvents array
+        this.state.savedEvents.push(i_checkbox);   
+      }
+      checked[i_checkbox] = 1;
       this.setState({ checked: checked });
     }
     // If the checkbox is NOT checked, find and remove the checkbox index from the states
     else {
-      var index = this.state.savedEvents.indexOf(e.target.value); // e.target.value should be an integer value
-      // from 0 to 6 inclusive
+      var index = this.state.savedEvents.indexOf(i_checkbox); 
       if (index > -1) {
         this.state.savedEvents.splice(index, 1);
-        checked[e.target.value] = 0;
+        checked[i_checkbox] = 0;
         this.setState({ checked: checked });
       }
     }
   }
 
+  // This function updates the eliminated state to toggle checkboxes and update which items are "nulled"
+  // or chosen by the user to be empty (ie none/free itinerary slot)
   handleEliminate(e) {
+    // i_checkbox is the checkbox value and should only have integer values from 0-6 (e.target.value is a string type though)
+    // each checkbox corresponds to an item in the itinerary
+    var i_checkbox = parseInt(e.target.value);
+
     // If the checkbox is checked, add the checkbox index to the states
     let eliminated = this.state.eliminated.slice();
     if (e.target.checked) {
-      this.state.eliminatedEvents.push(e.target.value);   // e.target.value should be an integer value
-      // from 0 to 6 inclusive
-      eliminated[e.target.value] = 1;
+      if (!misc.include(this.state.eliminatedEvents,i_checkbox)) { // if i_checkbox is not already in the eliminatedEvents array
+        this.state.eliminatedEvents.push(i_checkbox);   
+      }
+      eliminated[i_checkbox] = 1;
       this.setState({ eliminated: eliminated });
     }
     // If the checkbox is unchecked, find and remove the checkbox index from the states
     else {
-      var index = this.state.eliminatedEvents.indexOf(e.target.value); // e.target.value should be an integer value
+      var index = this.state.eliminatedEvents.indexOf(i_checkbox);
       // from 0 to 6 inclusive
       if (index > -1) {
         this.state.eliminatedEvents.splice(index, 1);
-        eliminated[e.target.value] = 0;
+        eliminated[i_checkbox] = 0;
         this.setState({ eliminated: eliminated });
       }
     }
