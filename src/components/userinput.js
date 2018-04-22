@@ -12,7 +12,11 @@ import DeleteUserEvent from './deleteUserEvent.js';
 import AddUserEvent from './addUserEvent.js';
 import MoreInfoButton from './moreInfoButton.js';
 import MoreInfoView from './moreInfoView.js';
-
+import EditCostComponent from './editCostComponent.js';
+import misc from '../miscfuncs/misc.js'
+import 'react-datepicker/dist/react-datepicker.css';
+import 'bootstrap/dist/css/bootstrap.min.css';
+import 'bootstrap/dist/js/bootstrap.min.js';
 import '../maps.css';
 
 import yelp_logo from '../images/yelp_burst.png';
@@ -26,11 +30,15 @@ import unlock from '../images/unlock.png';
 import dark from '../images/dark.png';
 import light from '../images/light.png';
 
-import 'react-datepicker/dist/react-datepicker.css';
-import 'bootstrap/dist/css/bootstrap.min.css';
-import 'bootstrap/dist/js/bootstrap.min.js';
-import misc from '../miscfuncs/misc.js'
 
+const ORIGINS_YELP = 'yelp';
+const ORIGINS_EB = 'eventbrite';
+const ORIGINS_GP = 'places';
+const ORIGINS_MU = 'meetup';
+const ORIGINS_SG = 'seatgeek';
+const ORIGINS_NONE = 'noneitem';
+const ORIGINS_USER = 'useradded';
+// keys/fields in the itinerary object
 const eventKeys = [
   'Event1',
   'Breakfast',
@@ -40,6 +48,17 @@ const eventKeys = [
   'Dinner',
   'Event4',
 ];
+// api keys are the keys/fields in the apiData object
+const apiKeys = [
+  'eventbriteGlobal',
+  'googlePlacesGlobal',
+  'meetupItemsGlobal',
+  'seatgeekItemsGlobal',
+  'yelpBreakfastItemsGlobal',
+  'yelpLunchItemsGlobal',
+  'yelpDinnerItemsGlobal',
+  'yelpEventsGlobal',
+]
 
 class Userinput extends Component {
   constructor(props) {
@@ -78,6 +97,7 @@ class Userinput extends Component {
     this.handleDeleteUserEvent = this.handleDeleteUserEvent.bind(this);
     this.handleClearUserEvents = this.handleClearUserEvents.bind(this);
     this.handleMoreInfo = this.handleMoreInfo.bind(this);
+    this.handleEventCostChange = this.handleEventCostChange.bind(this);
   }
 
   handleChange(e) {
@@ -279,6 +299,136 @@ class Userinput extends Component {
     this.setState({
       showMoreInfo: tempShowMoreInfo,
     })
+  }
+
+  handleEventCostChange(edittedEventCost, edittedEventName, i_resultsArray, edittedEventOrigin) {
+    // If you want to lock the event if the user updates the cost, set this flag to true
+    const AUTO_LOCK_UPDATED_EVENT = true;
+
+    var indexDBcompat = window.indexedDB;
+    var myStorage = window.localStorage;
+
+    // edittedEventCost is a float
+    if (edittedEventCost !== null &&
+      edittedEventCost !== undefined &&
+      !isNaN(edittedEventCost) &&
+      indexDBcompat && myStorage) {
+
+      i_resultsArray = parseInt(i_resultsArray);
+      let checked = this.state.checked.slice();
+
+      if (AUTO_LOCK_UPDATED_EVENT) {
+        // Auto check the event in the results if the user has updated/editted the cost (as it is assumed they will be interested in that event)        
+        if (checked[i_resultsArray] !== 1) {
+          checked[i_resultsArray] = 1;
+        }
+
+        // if the event is not already saved/locked by the user, add it
+        if (!misc.include(this.state.savedEvents, i_resultsArray)) { // uses indexof, so MAY have problems with IE
+          this.state.savedEvents.push(i_resultsArray);
+        }
+
+        // save the change in the user-saved objects persistent data
+        var bestItineraryObjsParsed = JSON.parse(myStorage.getItem("prevBestItinerarySavedObjects"));
+        bestItineraryObjsParsed[eventKeys[i_resultsArray]].cost = edittedEventCost;
+        myStorage.setItem("prevBestItinerarySavedObjects", JSON.stringify(bestItineraryObjsParsed));
+      }
+
+      // For display only
+      var tempTotalCost = this.state.totalCost - this.state.resultsArray[i_resultsArray].cost;
+      tempTotalCost = misc.round2NearestHundredth(tempTotalCost + edittedEventCost);
+      this.state.resultsArray[i_resultsArray].cost = edittedEventCost; 
+
+      this.setState({
+        checked: checked,
+        resultsArray: this.state.resultsArray,
+        totalCost: tempTotalCost,
+      });
+
+      // Update persistent api data in browser
+      idb_keyval.get('apiData').then(apiData_in => {
+        if (apiData_in !== null || apiData_in !== undefined) {
+          
+          var apiKey = 'none'; // field/key in the apiData object (ie meetupItemsGlobal,...,yelpDinnerItemsGlobal )
+          var arr = []; // event array
+          var elementPos = -1; //where the event is matched in the event array
+
+          // apiData_in has following structure:
+          // { meetupItemsGlobal, eventbriteGlobal, ... , yelpDinnerItemsGlobal}
+          // where
+          // { meetupItemsGlobal:{Event1:[...], Event2:[...] , ... , Event4:[...] } }
+          // .
+          // .
+          // .
+          // { yelpDinnerItemsGlobal:[{Obj1}, ..., {Objn}]
+          if (edittedEventOrigin.localeCompare(ORIGINS_EB) === 0) {
+            apiKey = apiKeys[0];
+          }
+          else if (edittedEventOrigin.localeCompare(ORIGINS_GP) === 0) {
+            apiKey = apiKeys[1];
+          }
+          else if (edittedEventOrigin.localeCompare(ORIGINS_MU) === 0) {
+            apiKey = apiKeys[2];
+          }
+          else if (edittedEventOrigin.localeCompare(ORIGINS_SG) === 0) {
+            apiKey = apiKeys[3];
+          }
+          else if (edittedEventOrigin.localeCompare(ORIGINS_YELP) === 0) {
+            if (i_resultsArray === 1) {
+              apiKey = apiKeys[4];
+            }
+            else if (i_resultsArray === 3) {
+              apiKey = apiKeys[5];
+            }
+            else if (i_resultsArray === 5) {
+              apiKey = apiKeys[6];
+            }
+          }
+
+          if (apiKey.localeCompare('none') !== 0) {
+            if (edittedEventOrigin.localeCompare(ORIGINS_YELP) === 0) {
+              arr = apiData_in[apiKey];
+            }
+            else {
+              arr = apiData_in[apiKey][eventKeys[i_resultsArray]];
+            }
+
+            // Find the index within the proper array of event objects that has an event name that matches with
+            // edittedEventName
+            elementPos = misc.findEventObjectByName(arr, edittedEventName);
+            // If match is found, update the cost to whatever the user set
+            if (elementPos !== -1) {
+              if (edittedEventOrigin.localeCompare(ORIGINS_YELP) === 0) {
+                apiData_in[apiKey][elementPos].cost = edittedEventCost;
+              }
+              else {
+                apiData_in[apiKey][eventKeys[i_resultsArray]][elementPos].cost = edittedEventCost;
+              }
+            }
+          }
+          return apiData_in;
+        }
+        else {
+          return -1;
+        }
+      }, function (err) {
+        return err;
+      }).catch(err => console.log('Error updating the cost handleEventCostChange!', err))
+        .then(function (apiDataCostUpdated) {
+          // Everything is good and updated, now restore the api data in the browser
+          if (apiDataCostUpdated !== -1) {
+            idb_keyval.set('apiData', apiDataCostUpdated)
+              .then(function (e) {
+                // do nothing
+              })
+              .catch(err => console.log('It failed!', err));
+          }
+
+        }, function (err) {
+          return err;
+        }).catch(err => console.log('Error setting the new api data with updated cost in handleEventCostChange!', err));
+
+    }
   }
 
   handleSubmit(e) {
@@ -695,6 +845,16 @@ class Userinput extends Component {
             </tbody>
           );
         }
+
+      // edit cost debug
+      // for (var i = 0; i < ITINERARY_LENGTH; i++) {
+      //   indents.push(<tbody><tr><td colSpan="7"><EditCostComponent
+      //     name={this.state.resultsArray[i].name}
+      //     cost={this.state.resultsArray[i].cost}
+      //     handleCostChange={this.handleEventCostChange}
+      //     i_resultsArray={i}
+      //     origin={this.state.resultsArray[i].origin} /></td></tr></tbody>)
+      // }
 
         // The Total cost display
         var total = [];
