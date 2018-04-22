@@ -31,6 +31,15 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap/dist/js/bootstrap.min.js';
 import misc from '../miscfuncs/misc.js'
 
+const eventKeys = [
+  'Event1',
+  'Breakfast',
+  'Event2',
+  'Lunch',
+  'Event3',
+  'Dinner',
+  'Event4',
+];
 
 class Userinput extends Component {
   constructor(props) {
@@ -188,7 +197,7 @@ class Userinput extends Component {
     const USERADDED_EVENT_RATING = 1000.0; // arbitrarily high
     var itinSlot = 1;
     if (userItinSlot){ 
-      itinSlot = parseInt(userItinSlot);
+      itinSlot = parseInt(userItinSlot); // 1- 7 only
     }
     var cost = 0.0;
     if (userEventCost) {
@@ -236,8 +245,30 @@ class Userinput extends Component {
   }
 
   handleClearUserEvents(e) {
+
+    // clear the saved event/checked slots if they coincide with the user added events
+    var itinSlotIndex; // 0-6
+    var index;
+    var savedEventsState = this.state.savedEvents.slice();
+    var checkedState = this.state.checked.slice();
+    if (savedEventsState.length>0) {
+      for (var i = 0; i < this.state.userAddedEvents.length; i++) {
+        itinSlotIndex = this.state.userAddedEvents[i].slot - 1; // 0-6
+        index = savedEventsState.indexOf(itinSlotIndex);
+        if (index !== -1) {
+          savedEventsState.splice(index, 1); //at index, remove 1 item
+          checkedState[itinSlotIndex] = 0; // at slot itinSlotIndex, set to 0 (ie unchecking the box)
+        }
+        if (savedEventsState.length === 0) {
+          break;
+        }
+      }
+    }
+
     this.setState({
       userAddedEvents: [],
+      savedEvents: savedEventsState,
+      checked: checkedState,
     })
     console.log("All user added events cleared.")
   }
@@ -1117,71 +1148,20 @@ function processAPIDataForGA(events_in, eventFilterFlags_in, savedEvents_in, sav
     console.log("user added events array:")
     console.log(userAddedEventsObjs_in)
     if (userAddedEventsFlag) {
-      var doOnceSlot1 = true;
-      var doOnceSlot2 = true;
-      var doOnceSlot3 = true;
-      var doOnceSlot4 = true;
-      var doOnceSlot5 = true;
-      var doOnceSlot6 = true;
-      var doOnceSlot7 = true;
 
+      var doOnce = [true,true,true,true,true,true,true];
+      var itinSlot = 1;
       for (var iadded = 0; iadded < userAddedEventsObjs_in.length; iadded++) {
-        if (userAddedEventsObjs_in[iadded].slot === 1) {
-          if (doOnceSlot1) {
-            doOnceSlot1 = false;
-            delete itineraries[0].Event1;
-            itineraries[0].Event1 = [];
-          }
-          itineraries[0].Event1.push(userAddedEventsObjs_in[iadded]);
+        itinSlot = userAddedEventsObjs_in[iadded].slot; // should be 1-7 from dropdown menu in "add event" tab
+        itinSlot = itinSlot - 1; // shift down one for indexing
+        if (doOnce[itinSlot]) {
+          // if user has added an event in a particular itinerary slot, delete all data in that slot 
+          delete itineraries[itinSlot][eventKeys[itinSlot]]; // (ie if itinSlot = 0 -> itineraries[0].Event1)
+          itineraries[itinSlot][eventKeys[itinSlot]] = [];  // (ie if itinslot = 1 -> itineraries[1].Breakfast = [];)          
+          doOnce[itinSlot] = false;
         }
-        else if (userAddedEventsObjs_in[iadded].slot === 2) {
-          if (doOnceSlot2) {
-            doOnceSlot2 = false;
-            delete itineraries[1].Breakfast;
-            itineraries[1].Breakfast = [];
-          }
-          itineraries[1].Breakfast.push(userAddedEventsObjs_in[iadded]);
-        }
-        else if (userAddedEventsObjs_in[iadded].slot === 3) {
-          if (doOnceSlot3) {
-            doOnceSlot3 = false;
-            delete itineraries[2].Event2;
-            itineraries[2].Event2 = [];
-          }
-          itineraries[2].Event2.push(userAddedEventsObjs_in[iadded]);
-        }
-        else if (userAddedEventsObjs_in[iadded].slot === 4) {
-          if (doOnceSlot4) {
-            doOnceSlot4 = false;
-            delete itineraries[3].Lunch;
-            itineraries[3].Lunch = [];
-          }
-          itineraries[3].Lunch.push(userAddedEventsObjs_in[iadded]);
-        }
-        else if (userAddedEventsObjs_in[iadded].slot === 5) {
-          if (doOnceSlot5) {
-            doOnceSlot5 = false;
-            delete itineraries[4].Event3;
-            itineraries[4].Event3 = [];
-          }
-          itineraries[4].Event3.push(userAddedEventsObjs_in[iadded]);
-        }
-        else if (userAddedEventsObjs_in[iadded].slot === 6) {
-          if (doOnceSlot6) {
-            doOnceSlot6 = false;
-            delete itineraries[5].Dinner;
-            itineraries[5].Dinner = [];
-          }
-          itineraries[5].Dinner.push(userAddedEventsObjs_in[iadded]);
-        }
-        else {
-          if (doOnceSlot7) {
-            doOnceSlot7 = false;
-            delete itineraries[6].Event4;
-            itineraries[6].Event4 = [];
-          }
-          itineraries[6].Event4.push(userAddedEventsObjs_in[iadded]);
-        }
+        // after the previous api data was deleted, push all the user added events in a particular slot
+        itineraries[itinSlot][eventKeys[itinSlot]].push(userAddedEventsObjs_in[iadded]); // (ie if itinSlot = 2 -> itineraries[2].Event2.push(userAddedEventsObjs_in[iadded]);)
       }
     }
 
@@ -1189,42 +1169,12 @@ function processAPIDataForGA(events_in, eventFilterFlags_in, savedEvents_in, sav
     console.log("saved events array:")
     console.log(savedEvents_in)
     if (savedUserInputs) {
+      var itinSlot = 1;
       for (var isaved = 0; isaved < savedEvents_in.length; isaved++) {
-        if (savedEvents_in[isaved] === 0) {
-          delete itineraries[0].Event1;
-          itineraries[0].Event1 = [];
-          itineraries[0].Event1[0] = savedEventsObjs_in.Event1;
-        }
-        else if (savedEvents_in[isaved] === 1) {
-          delete itineraries[1].Breakfast;
-          itineraries[1].Breakfast = [];
-          itineraries[1].Breakfast[0] = savedEventsObjs_in.Breakfast;
-        }
-        else if (savedEvents_in[isaved] === 2) {
-          delete itineraries[2].Event2;
-          itineraries[2].Event2 = [];
-          itineraries[2].Event2[0] = savedEventsObjs_in.Event2;
-        }
-        else if (savedEvents_in[isaved] === 3) {
-          delete itineraries[3].Lunch;
-          itineraries[3].Lunch = [];
-          itineraries[3].Lunch[0] = savedEventsObjs_in.Lunch;
-        }
-        else if (savedEvents_in[isaved] === 4) {
-          delete itineraries[4].Event3;
-          itineraries[4].Event3 = [];
-          itineraries[4].Event3[0] = savedEventsObjs_in.Event3;
-        }
-        else if (savedEvents_in[isaved] === 5) {
-          delete itineraries[5].Dinner;
-          itineraries[5].Dinner = [];
-          itineraries[5].Dinner[0] = savedEventsObjs_in.Dinner;
-        }
-        else {
-          delete itineraries[6].Event4;
-          itineraries[6].Event4 = [];
-          itineraries[6].Event4[0] = savedEventsObjs_in.Event4;
-        }
+        itinSlot = savedEvents_in[isaved]; // indices 0-6
+        delete itineraries[itinSlot][eventKeys[itinSlot]]; // (ie if itinslot = 0 -> delete itineraries[0].Event1;)
+        itineraries[itinSlot][eventKeys[itinSlot]] = []; // (ie if itinslot = 1 -> itineraries[1].Breakfast =[];)
+        itineraries[itinSlot][eventKeys[itinSlot]][0] = savedEventsObjs_in[eventKeys[itinSlot]]; // (ie if itinslot = 3 -> itineraries[3].Lunch[0] = savedEventsObjs_in.Lunch;)
       }
     }
 
