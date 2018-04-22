@@ -1,4 +1,18 @@
 module.exports = {
+    include: function(arr,obj) {
+        return (arr.indexOf(obj) != -1);
+    },
+
+    // Returns the index of an object in an array of objects that matches the "name" field
+    findEventObjectByName: function(arr,name) {
+        // note: the "name" field is hardcoded here (ie an array of objects that contain a key/field called "name"
+        // is required!)
+        if (arr.length > 0) {
+            return arr.map(function (x) { return x.name; }).indexOf(name);
+        }
+        else return -1;        
+    },
+
     convertMilTime: function (milTime) {
         if (milTime.localeCompare("9999")===0){ //None item is populated with 999 military time
             return "";
@@ -34,5 +48,9 @@ module.exports = {
         } else {
             return "";
         }
-    }
+    },
+
+    round2NearestHundredth: function (number) {
+        return Math.round(100*number)/100;
+    },
 }
