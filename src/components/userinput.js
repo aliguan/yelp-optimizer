@@ -183,41 +183,18 @@ class Userinput extends Component {
   }
 
   handleAddUserEvent(userItinSlot, userEventCost, userEventName, render) {
-    const EVENT1_TIME = "0900";
-    const EVENT2_TIME = "1200";
-    const EVENT3_TIME = "1800";
-    const EVENT4_TIME = "2200";
+    // Note: userItinSlot is the string from the dropdown menu in the add user events tab (ie 1-7 only)
+    const EVENT_TIMES = ["0900","","1200","","1800","","2200"]
     const USERADDED_EVENT_RATING = 1000.0; // arbitrarily high
     var itinSlot = 1;
-    if (userItinSlot){
+    if (userItinSlot){ 
       itinSlot = parseInt(userItinSlot);
     }
     var cost = 0.0;
     if (userEventCost) {
       cost = parseFloat(userEventCost);
     }
-    var time = EVENT4_TIME;
-    if (itinSlot == 1) {
-      time = EVENT1_TIME; // event 1
-    }
-    else if (itinSlot == 2) {
-      time = ""; // breakfast
-    }
-    else if (itinSlot == 3) {
-      time = EVENT2_TIME; // event 2
-    }
-    else if (itinSlot == 4) {
-      time = ""; // lunch
-    }
-    else if (itinSlot == 5) {
-      time = EVENT3_TIME; // event 3
-    }
-    else if (itinSlot == 6) {
-      time = ""; // dinner
-    }
-    else if (itinSlot == 7) {
-      time = EVENT4_TIME; // event 4
-    }
+    var time = EVENT_TIMES[itinSlot-1];
     var userAddedEventObj = {
       name: userEventName,
       url: "",
@@ -227,7 +204,7 @@ class Userinput extends Component {
       cost: cost,
       slot: itinSlot,
       description: "",
-      origin: 'userevent'
+      origin: 'userevent',
     }
 
     this.state.userAddedEvents.push(userAddedEventObj);
@@ -1136,49 +1113,6 @@ function processAPIDataForGA(events_in, eventFilterFlags_in, savedEvents_in, sav
     itineraries[4].Event3.push(NONE_ITEM_EVENT);
     itineraries[6].Event4.push(NONE_ITEM_EVENT);
 
-    // Save certain itinerary events/items (from API calls) based on user input by overwriting previous assignments
-    console.log("saved events array:")
-    console.log(savedEvents_in)
-    if (savedUserInputs) {
-      for (var isaved = 0; isaved < savedEvents_in.length; isaved++) {
-        if (savedEvents_in[isaved] === 0) {
-          delete itineraries[0].Event1;
-          itineraries[0].Event1 = [];
-          itineraries[0].Event1[0] = savedEventsObjs_in.Event1;
-        }
-        else if (savedEvents_in[isaved] === 1) {
-          delete itineraries[1].Breakfast;
-          itineraries[1].Breakfast = [];
-          itineraries[1].Breakfast[0] = savedEventsObjs_in.Breakfast;
-        }
-        else if (savedEvents_in[isaved] === 2) {
-          delete itineraries[2].Event2;
-          itineraries[2].Event2 = [];
-          itineraries[2].Event2[0] = savedEventsObjs_in.Event2;
-        }
-        else if (savedEvents_in[isaved] === 3) {
-          delete itineraries[3].Lunch;
-          itineraries[3].Lunch = [];
-          itineraries[3].Lunch[0] = savedEventsObjs_in.Lunch;
-        }
-        else if (savedEvents_in[isaved] === 4) {
-          delete itineraries[4].Event3;
-          itineraries[4].Event3 = [];
-          itineraries[4].Event3[0] = savedEventsObjs_in.Event3;
-        }
-        else if (savedEvents_in[isaved] === 5) {
-          delete itineraries[5].Dinner;
-          itineraries[5].Dinner = [];
-          itineraries[5].Dinner[0] = savedEventsObjs_in.Dinner;
-        }
-        else {
-          delete itineraries[6].Event4;
-          itineraries[6].Event4 = [];
-          itineraries[6].Event4[0] = savedEventsObjs_in.Event4;
-        }
-      }
-    }
-
     // Save user added event by overwriting previous assignments
     console.log("user added events array:")
     console.log(userAddedEventsObjs_in)
@@ -1250,6 +1184,50 @@ function processAPIDataForGA(events_in, eventFilterFlags_in, savedEvents_in, sav
         }
       }
     }
+
+    // Save certain itinerary events/items (from API calls) based on user input by overwriting previous assignments
+    console.log("saved events array:")
+    console.log(savedEvents_in)
+    if (savedUserInputs) {
+      for (var isaved = 0; isaved < savedEvents_in.length; isaved++) {
+        if (savedEvents_in[isaved] === 0) {
+          delete itineraries[0].Event1;
+          itineraries[0].Event1 = [];
+          itineraries[0].Event1[0] = savedEventsObjs_in.Event1;
+        }
+        else if (savedEvents_in[isaved] === 1) {
+          delete itineraries[1].Breakfast;
+          itineraries[1].Breakfast = [];
+          itineraries[1].Breakfast[0] = savedEventsObjs_in.Breakfast;
+        }
+        else if (savedEvents_in[isaved] === 2) {
+          delete itineraries[2].Event2;
+          itineraries[2].Event2 = [];
+          itineraries[2].Event2[0] = savedEventsObjs_in.Event2;
+        }
+        else if (savedEvents_in[isaved] === 3) {
+          delete itineraries[3].Lunch;
+          itineraries[3].Lunch = [];
+          itineraries[3].Lunch[0] = savedEventsObjs_in.Lunch;
+        }
+        else if (savedEvents_in[isaved] === 4) {
+          delete itineraries[4].Event3;
+          itineraries[4].Event3 = [];
+          itineraries[4].Event3[0] = savedEventsObjs_in.Event3;
+        }
+        else if (savedEvents_in[isaved] === 5) {
+          delete itineraries[5].Dinner;
+          itineraries[5].Dinner = [];
+          itineraries[5].Dinner[0] = savedEventsObjs_in.Dinner;
+        }
+        else {
+          delete itineraries[6].Event4;
+          itineraries[6].Event4 = [];
+          itineraries[6].Event4[0] = savedEventsObjs_in.Event4;
+        }
+      }
+    }
+
     return itineraries;
   }
   catch (e) {
