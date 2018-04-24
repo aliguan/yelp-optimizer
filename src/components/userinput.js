@@ -844,7 +844,8 @@ class Userinput extends Component {
               </tr>
             </tbody>
           );
-        }
+      }
+
 
       // edit cost debug
       // for (var i = 0; i < ITINERARY_LENGTH; i++) {
@@ -856,22 +857,37 @@ class Userinput extends Component {
       //     origin={this.state.resultsArray[i].origin} /></td></tr></tbody>)
       // }
 
-        // The Total cost display
-        var total = [];
-        total.push(<div key="totalCostDiv">
-            <table>
-                <tbody>
-                    <tr>
-                    <td className="costStr">
-                        <b>Approx. Total Cost:</b>
-                    </td>
-                    <td className="cost">
-                        <b>${this.state.totalCost}</b>
-                    </td>
-                    </tr>
-                </tbody>
-              </table>
-          </div>)
+      // The Total cost display
+      var total = [];
+      total.push(<div key="totalCostDiv">
+        <table>
+          <tbody>
+            <tr>
+              <td className="costStr">
+                <b>Approx. Total Cost:</b>
+              </td>
+              <td className="cost">
+                <b>${this.state.totalCost}</b>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>)
+
+      var goAgainButton = [];
+      if (this.state.resultsArray.length > 0) {
+        goAgainButton.push(
+          <table>
+          <tbody>
+            <tr>
+              <td className="itinGoBtn">
+          <input className="btn btn-sm go-btn" type="submit" onClick={this.handleSubmit} value="Search Again!" />
+          </td>
+          </tr>
+          </tbody>
+          </table>
+        );
+      }
     }
 
 
@@ -978,7 +994,11 @@ class Userinput extends Component {
 
                 {this.state.loading == false ? <div className="totalCost">
                     {total}
-                </div> : ''}
+                </div> : ''}                
+
+                {this.state.loading == false ? <div>
+                  {goAgainButton}</div>
+                : ''}
 
             </div>
 

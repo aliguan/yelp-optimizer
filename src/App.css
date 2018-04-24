@@ -377,3 +377,8 @@ img{
 .filterDesc  {
     font-size: .75rem;
 }
+
+.itinGoBtn {
+    float: right;
+    /* width: 100%; */
+}
