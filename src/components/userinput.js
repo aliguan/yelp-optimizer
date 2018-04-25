@@ -141,7 +141,7 @@ class Userinput extends Component {
   handleCheckbox(e) {    
     // i_checkbox is the checkbox value and should only have integer values from 0-6 (e.target.value is a string type though)
     // each checkbox corresponds to an item in the itinerary
-    var i_checkbox = parseInt(e.target.value);
+    var i_checkbox = parseInt(e.target.value,10);
 
     // If the checkbox is checked, add the checkbox index to the states
     let checked = this.state.checked.slice();
@@ -168,7 +168,7 @@ class Userinput extends Component {
   handleEliminate(e) {
     // i_checkbox is the checkbox value and should only have integer values from 0-6 (e.target.value is a string type though)
     // each checkbox corresponds to an item in the itinerary
-    var i_checkbox = parseInt(e.target.value);
+    var i_checkbox = parseInt(e.target.value,10);
 
     // If the checkbox is checked, add the checkbox index to the states
     let eliminated = this.state.eliminated.slice();
@@ -217,7 +217,7 @@ class Userinput extends Component {
     const USERADDED_EVENT_RATING = 1000.0; // arbitrarily high
     var itinSlot = 1;
     if (userItinSlot){ 
-      itinSlot = parseInt(userItinSlot); // 1- 7 only
+      itinSlot = parseInt(userItinSlot,10); // 1- 7 only
     }
     var cost = 0.0;
     if (userEventCost) {
@@ -314,7 +314,7 @@ class Userinput extends Component {
       !isNaN(edittedEventCost) &&
       indexDBcompat && myStorage) {
 
-      i_resultsArray = parseInt(i_resultsArray);
+      i_resultsArray = parseInt(i_resultsArray,10);
       let checked = this.state.checked.slice();
 
       if (AUTO_LOCK_UPDATED_EVENT) {
@@ -536,10 +536,7 @@ class Userinput extends Component {
                         // saved events selected by the user.
                         var savedEvents = [];
                         var eliminatedEvents = [];
-                        var bestItineraryIndicesParsed = [];
                         var bestItineraryObjsParsed = [];
-
-                        var userAddedEvents = [];
 
                         // Preprocess data for genetic algo
                         var dataForGA = processAPIDataForGA(data.data,
@@ -575,7 +572,7 @@ class Userinput extends Component {
                             resultsArray: resultsArrayOutput,
                             checked: [0, 0, 0, 0, 0, 0, 0], //reset the checkboxes to being unchecked
                             eliminated: [0, 0, 0, 0, 0, 0, 0], //reset the checkboxes for the eliminated slots
-                            totalCost: optimItinerary.totalCost,
+                            // totalCost: optimItinerary.totalCost,
                             savedEvents: [],
                             eliminatedEvents: [],
                             itinTimes: [],
@@ -700,7 +697,7 @@ class Userinput extends Component {
                               resultsArray: resultsArrayOutput,
                               checked: [0, 0, 0, 0, 0, 0, 0], //reset the checkboxes to being unchecked
                               eliminated: [0, 0, 0, 0, 0, 0, 0], //reset the checkboxes for the eliminated slots
-                              totalCost: optimItinerary.totalCost,
+                              // totalCost: optimItinerary.totalCost,
                               savedEvents: [],
                               eliminatedEvents: [],
                               itinTimes: [],
@@ -819,16 +816,16 @@ class Userinput extends Component {
             <tbody key={key}>
               <tr>
 
-                <td><img className="origin-logo" src={origins[origin]} /></td>
+                <td><img className="origin-logo" alt="" src={origins[origin]} /></td>
                 <td><strong>{this.state.itinTimes[i] ? this.state.itinTimes[i] : ''}</strong></td>
                 <td className="resultsName">
-                {this.state.resultsArray[i].url=="" ? this.state.resultsArray[i].name :
+                {this.state.resultsArray[i].url==="" ? this.state.resultsArray[i].name :
                     <a href={this.state.resultsArray[i].url} target='_blank'>{this.state.resultsArray[i].name} </a>}
                     {this.state.resultsArray[i].origin === 'noneitem' || this.state.resultsArray[i].origin === 'userevent' ? '' : <MoreInfoButton value={i} onButtonClick={this.handleMoreInfo} />}
                 </td>
                 <td className="text-success"><strong>${this.state.resultsArray[i].cost}</strong>  </td>
-                    <td><label htmlFor={id}><img className="lock" src={lock_icon} /></label><input className="lock_checkbox" id={id} checked={this.state.checked[i]} onChange={this.handleCheckbox} type="checkbox" value={i} /></td>
-                    <td><label htmlFor={elim_id}><img className="elim" src={elim_icon} /></label><input className="elim_checkbox" id={elim_id} checked={this.state.eliminated[i]} onChange={this.handleEliminate} type='checkbox' value={i} /></td>
+                    <td><label htmlFor={id}><img alt="lock icon" className="lock" src={lock_icon} /></label><input className="lock_checkbox" id={id} checked={this.state.checked[i]} onChange={this.handleCheckbox} type="checkbox" value={i} /></td>
+                    <td><label htmlFor={elim_id}><img alt="eliminate icon" className="elim" src={elim_icon} /></label><input className="elim_checkbox" id={elim_id} checked={this.state.eliminated[i]} onChange={this.handleEliminate} type='checkbox' value={i} /></td>
               </tr>
               <tr className={moreInfoStyles.join(' ')}>
                 <td colSpan="7"><MoreInfoView desc={this.state.resultsArray[i].description}
@@ -906,7 +903,7 @@ class Userinput extends Component {
     options.push(<li className="filter" key="eventFilterFlags">
       <input checked={this.state.eventFilterFlags[NUM_EVENT_APIS]} onChange={this.handleFilter} type='checkbox' value='selectAllOption'/> Select All</li>)
     options.push(<li key="alleventsdesc" className="filterDesc">Use events from all services.</li>);
-    for (var i = 0; i < NUM_EVENT_APIS; i++) {
+    for (i = 0; i < NUM_EVENT_APIS; i++) {
         var event = 'event-' + i;
         var desc = 'desc-' + i;
       options.push(<li className="filter" key={event}>
@@ -916,7 +913,7 @@ class Userinput extends Component {
      }
 
     var userevents = [];
-    for (var i = 0; i < this.state.userAddedEvents.length; i++) {
+    for (i = 0; i < this.state.userAddedEvents.length; i++) {
         userevents.unshift(<DeleteUserEvent key={key} userevent={this.state.userAddedEvents[i]} handleDelete={this.handleDeleteUserEvent}/> );
     }
 
@@ -985,18 +982,18 @@ class Userinput extends Component {
         </div>
         <div className="row eventsCont">
             <div className="col-md-6 itinerary">
-            {this.state.resultsArray.length === 0 && this.state.loading === false ? <div className="greeting"><h4>Get Started Planning Your Trip Above!</h4><img src={globe}></img></div> : ' '}
-            {this.state.loading == true ? <div className="loader"><Loader type="spinningBubbles" color="#6c757d"></Loader><h5>Searching...</h5></div> :
+            {this.state.resultsArray.length === 0 && this.state.loading === false ? <div className="greeting"><h4>Get Started Planning Your Trip Above!</h4><img alt="globe" src={globe}></img></div> : ' '}
+            {this.state.loading === true ? <div className="loader"><Loader type="spinningBubbles" color="#6c757d"></Loader><h5>Searching...</h5></div> :
 
                 <table>
                   {indents}
                 </table>}
 
-                {this.state.loading == false ? <div className="totalCost">
+                {this.state.loading === false ? <div className="totalCost">
                     {total}
                 </div> : ''}                
 
-                {this.state.loading == false ? <div>
+                {this.state.loading === false ? <div>
                   {goAgainButton}</div>
                 : ''}
 
@@ -1371,20 +1368,8 @@ function processAPIDataForGA(events_in, eventFilterFlags_in, savedEvents_in, sav
       { Event3: [] }, //4
       { Dinner: [] }, //5
       { Event4: [] }, //6
-    ];;
+    ];
   }
-}
-
-function convertTimeToAMPM(resultsArray_in) {
-  var resultsArray_out = resultsArray_in.slice();
-  var timeConverted;
-  for (var i = 0; i < resultsArray_out.length; i++) {
-    timeConverted = misc.convertMilTime(resultsArray_out[i].time);
-    if (timeConverted != -1) {
-      resultsArray_out[i].time = timeConverted;
-    }
-  }
-  return resultsArray_out;
 }
 
 // This function returns a flag to clear or not to clear the locally stored API data depending on if the data has been
@@ -1406,7 +1391,7 @@ function clearLocallyStoredAPIData(myStorage_in) {
     // If there is the timestamp key in local storage, compare it to the current time and calculate
     // if the difference is greater than 24 hours ago
     else {
-      var prevTimeStamp = parseInt(lastLocalTimeStampForAPIDataDeletion);
+      var prevTimeStamp = parseInt(lastLocalTimeStampForAPIDataDeletion,10);
       if (currentTimeStampMilSec - prevTimeStamp >= TWENTYFOUR_HOURS) {
         clearApiData = true;
         myStorage_in.setItem('timestamp', currentTimeStampStr);

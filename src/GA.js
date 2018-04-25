@@ -180,7 +180,7 @@ module.exports = {
         // This assumes that the "none/free itinerary" item is ALWAYS the last item in the choices from parsedDataAll
         // The "none/free itinerary" is added in api-router.js in formatAllData function.
         if (eliminateItems) {
-          for (var ielim = 0; ielim < eliminatedEvents_in.length; ielim++) {
+          for (ielim = 0; ielim < eliminatedEvents_in.length; ielim++) {
             if (eliminatedEvents_in[ielim] === 0) {
               tempItinerary1[0] = numItemsArray[0] - 1;
               tempItinerary2[0] = numItemsArray[0] - 1;

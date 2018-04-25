@@ -23,26 +23,26 @@ class MoreInfoView extends Component {
     }
 
     renderCTAElement() {
-        if (this.props.origin == ORIGINS_YELP) {
+        if (this.props.origin === ORIGINS_YELP) {
             return <tr><td><a href={this.props.url} target="_blank">{YELP_LINK_TEXT}</a></td></tr>;
         }
-        else if (this.props.origin == ORIGINS_EB) {
+        else if (this.props.origin === ORIGINS_EB) {
             return <tr><td><a href={this.props.url} target="_blank">{EB_LINK_TEXT}</a></td></tr>;
         }
-        else if (this.props.origin == ORIGINS_MU) {
+        else if (this.props.origin === ORIGINS_MU) {
             return <tr><td><a href={this.props.url} target="_blank">{MU_LINK_TEXT}</a></td></tr>;
         }
-        else if (this.props.origin == ORIGINS_GP) {
+        else if (this.props.origin === ORIGINS_GP) {
             return <tr><td><a href={this.props.url} target="_blank">{GP_LINK_TEXT}</a></td></tr>;
         }
-        else if (this.props.origin == ORIGINS_SG) {
+        else if (this.props.origin === ORIGINS_SG) {
             return <tr><td>
                 <a href={this.props.url} target="_blank">{SG_LINK_TEXT}</a>
                 <p>Lowest Priced Ticket: <b>${this.props.otherInfo[1]}</b></p>
                 <p>Highest Priced Ticket: <b>${this.props.otherInfo[2]}</b></p>
                 </td></tr>;
         }
-        else if (this.props.origin == ORIGINS_NONE) {
+        else if (this.props.origin === ORIGINS_NONE) {
             return;
         }
         return;
@@ -53,7 +53,7 @@ class MoreInfoView extends Component {
         if (desc === undefined) {
             desc = "";
         }
-        if (this.props.origin == ORIGINS_YELP) {
+        if (this.props.origin === ORIGINS_YELP) {
             return (
                 <td>
                     <p><b>Description: </b></p>
@@ -87,7 +87,7 @@ class MoreInfoView extends Component {
             eventDuration += HOURS_TEXT;
         }
         
-        if (this.props.origin != ORIGINS_NONE || this.props.origin != ORIGINS_USER) {
+        if (this.props.origin !== ORIGINS_NONE || this.props.origin !== ORIGINS_USER) {
             if (this.props.duration > 24) {
                 eventDuration = MULTI_DAY_EVENT_MSG;
             }
