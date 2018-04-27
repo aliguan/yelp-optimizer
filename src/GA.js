@@ -1,7 +1,8 @@
 module.exports = {
+
   // categories: breakfast, lunch, dinner, event
   doGA: function (allData, budgetmax_in, budgetmin_in, eliminatedEvents_in) {
-
+    const LOW_BUDGET_THRESHOLD = 40;
 
     console.log("eliminated events array:")
     console.log(eliminatedEvents_in)
@@ -44,20 +45,22 @@ module.exports = {
     }
 
     // Initialize constants for GA
-    var maxIter = 100 * 2+1; //100;                              // max iterations
-
-    var elitek = 5; //1                                // number of elite iteneraries passed onto the next generation
-    var popSize = 60 + elitek;                      // population size for each generation
-    var crossRate = 50;                             // crossover rate (%)
-    var mutateRate = 85;                            // mutation rate (%)
+    var maxIter = 100 * 2 + 1;                      // max iterations, was 100*2+1
+    var popSize = 100;                               // population size for each generation, was 60
+    var elitek = Math.floor(popSize*.01);           // number of elite iteneraries passed onto the next generation
+    if (elitek < 1) {
+      elitek = 1;
+    }
+    var crossRate = 60;                             // crossover rate (%), was 50
+    var mutateRate = 65;                            // mutation rate (%), was 85
     var numItemsArray = new Array(itinerarySize);
     numItemsArray = parsedDataAll.numItemsArrayOut.slice();
 
     // Tune for low budget scenarios with saved user inputs
-    if (budgetmax_in <= 30) {
-      popSize = 120 + elitek;
-      mutateRate = 95;
-      crossRate = 70;
+    if (budgetmax_in <= LOW_BUDGET_THRESHOLD) {
+      popSize = popSize * 2 + elitek; // was 120 + elitek
+      mutateRate = 75;                // was 95
+      crossRate = 75;                 // was 70
     }
 
 
@@ -144,12 +147,12 @@ module.exports = {
         // Use roulette selection or randomized
         var pick = randomIntFromInterval(1, 2);
         if (pick === 1) {
-          iItineraryPick1 = rouletteSelect(allItineraryRatings, allItineraryRatingsSum);
-          iItineraryPick2 = rouletteSelect(allItineraryRatings, allItineraryRatingsSum);
-        }
-        else {
           iItineraryPick1 = randomIntFromInterval(0, popSize - 1);
           iItineraryPick2 = pickRandomItineraryItemExcluding(popSize, iItineraryPick1);
+        }
+        else {
+          iItineraryPick1 = rouletteSelect(allItineraryRatings, allItineraryRatingsSum);
+          iItineraryPick2 = rouletteSelect(allItineraryRatings, allItineraryRatingsSum);
         }
 
         var tempItinerary1 = itineraryPopulation[iItineraryPick1];
@@ -168,12 +171,12 @@ module.exports = {
         // Mutate the two itineraries if randomly chosen to do so
         irand = randomIntFromInterval(1, 100);
         if (irand < mutateRate) {
-          tempItinerary1 = mutate(tempItinerary1, numItemsArray);
+          tempItinerary1 = mutate(tempItinerary1, numItemsArray, budgetmax_in);
         }
 
         irand = randomIntFromInterval(1, 100);
         if (irand < mutateRate) {
-          tempItinerary2 = mutate(tempItinerary2, numItemsArray);
+          tempItinerary2 = mutate(tempItinerary2, numItemsArray, budgetmax_in);
         }
 
         // This portion of code sets the itinerary item slot to always be "none/free itinerary" item if user has checked some of those checkboexes.
@@ -775,15 +778,32 @@ function round2NearestHundredth(number) {
   return Math.round(100 * number) / 100;
 }
 
-function mutate(itinerary_in, numItemsArray_in) {
-  var irand = randomIntFromInterval(0, 10); // If 0-6 chosen, individual items will be mutated
+function mutate(itinerary_in, numItemsArray_in, budgetmax_in) {
+  const LOW_BUDGET_THRESHOLD = 40;
+
+  // If 0-6 chosen, individual items will be mutated
   // If 7-10 chosen, pairs of items will be mutated
+  var irand = randomIntFromInterval(0, 10); 
   var iItemMutate = 0;
+  var iNoneItinItem;
   var mutatedItinerary = itinerary_in.slice(0);
   // Mutate individual items
   if (irand <= 6) {
-    iItemMutate = pickRandomItineraryItemExcluding(numItemsArray_in[irand], itinerary_in[irand]);
-    mutatedItinerary[irand] = iItemMutate;
+    iNoneItinItem = numItemsArray_in[irand] - 1;
+    // if there is a low max budget, need to mutate the itinerary item to "none/free itin." slot
+    // this is to help with the problem of generating NO itineraries at low budgets because the initial
+    // population almost never has two "none/free itin." slots
+    if (budgetmax_in <= LOW_BUDGET_THRESHOLD) {
+      mutatedItinerary[irand] = iNoneItinItem; // this is the "none/free itin." slot
+      if (irand < 6) {
+        iNoneItinItem = numItemsArray_in[irand + 1] - 1; // the irand + 1 th slot
+        mutatedItinerary[irand + 1] = iNoneItinItem; 
+      }
+    }
+    else { //this is the "normal" path when budget is higher than the low budget threshold
+      iItemMutate = pickRandomItineraryItemExcluding(numItemsArray_in[irand], itinerary_in[irand]);
+      mutatedItinerary[irand] = iItemMutate;
+    }
   }
   // Mutate pairs of items
   else {
@@ -816,6 +836,7 @@ function mutate(itinerary_in, numItemsArray_in) {
       mutatedItinerary[i] = iItemMutate;
     }
   }
+
 
   return mutatedItinerary;
 }
