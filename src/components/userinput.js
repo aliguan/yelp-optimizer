@@ -639,8 +639,13 @@ class Userinput extends Component {
                       }.bind(this), function (err) {
                         return err;
                       }).catch(function (e) {
+                        this.setState({
+                          loading: false,
+                          resultsArray: [],
+                        });
+                        myStorage.clear();
                         console.log(e)
-                      }); //end then
+                      }.bind(this)); //end then
 
                     }
                     // No need to do the API calls from yelp, meetup, etc because inputs (date and location)
