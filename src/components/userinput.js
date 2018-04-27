@@ -449,6 +449,13 @@ class Userinput extends Component {
       console.log('Clearing API Data!!')
     }
 
+    if (this.state.budgetmax <= this.state.budgetmin) {
+      this.setState({
+        loading: false,
+        resultsArray: [],
+      });
+      return;
+    }
     const EMPTY_ITINERARY = {
       name: "No itinerary found. Try changing the inputs.",
       url: "",
