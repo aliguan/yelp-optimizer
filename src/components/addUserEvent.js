@@ -11,12 +11,14 @@ export class AddUserEvent extends Component {
         var userEventName = this.refs.userEventName.value;
         var userEventCost = this.refs.userEventCost.value;
         var userItinSlot = this.refs.userItinSlot.value;
+        var userEventTime = this.refs.userEventTime.value;
 
-        this.props.handleAdd(userItinSlot, userEventCost, userEventName);
+        this.props.handleAdd(userItinSlot, userEventCost, userEventName, userEventTime);
 
         this.refs.userEventName.value = '';
         this.refs.userEventCost.value = '';
         this.refs.userItinSlot.value = 1;
+        this.refs.userEventTime.value = "09:00";
     }
 
     // handleDelete() {
@@ -41,8 +43,8 @@ export class AddUserEvent extends Component {
             <form className={formStyle.join(' ')}>
                 {/* User added event slot  */}
 
-                    <div className="optionSelect form-group">
-                      <select className="slot" id="addslot" ref="userItinSlot">
+                    <div className="optionSelect form-group"> 
+                       <select className="slot" id="addslot" ref="userItinSlot">
                         <option>1</option>
                         <option>2</option>
                         <option>3</option>
@@ -51,6 +53,9 @@ export class AddUserEvent extends Component {
                         <option>6</option>
                         <option>7</option>
                       </select>
+                      </div>
+                    <div className="form-group">
+                      <input type="time" id="addTime" ref="userEventTime" className="timeInput" step="300" defaultValue="09:00"/>
                     </div>
 
                     {/* User added event name */}

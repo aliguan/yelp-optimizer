@@ -26,6 +26,8 @@ export class DeleteUserEvent extends Component {
 
 
         var formStyle = ['form-inline', 'addEventForm'];
+        var timeStr = this.props.userevent.time;
+        timeStr = timeStr.slice(0,2) + ":" + timeStr.slice(2,4);
 
         return(
             <form className={formStyle.join(' ')}>
@@ -40,6 +42,10 @@ export class DeleteUserEvent extends Component {
                         <option>6</option>
                         <option>7</option>
                       </select>
+                    </div>
+
+                    <div className="form-group">
+                      <input type="time" id="eventTime" ref="eventTime" className="timeInput" value={timeStr} ref="userEventTime" disabled="disabled"/>
                     </div>
 
                     {/* User added event name */}

@@ -211,7 +211,7 @@ class Userinput extends Component {
     })
   }
 
-  handleAddUserEvent(userItinSlot, userEventCost, userEventName, render) {
+  handleAddUserEvent(userItinSlot, userEventCost, userEventName, userEventTime) {
     // Note: userItinSlot is the string from the dropdown menu in the add user events tab (ie 1-7 only)
     const EVENT_TIMES = ["0900","","1200","","1800","","2200"]
     const USERADDED_EVENT_RATING = 1000.0; // arbitrarily high
@@ -223,7 +223,12 @@ class Userinput extends Component {
     if (userEventCost) {
       cost = parseFloat(userEventCost);
     }
-    var time = EVENT_TIMES[itinSlot-1];
+
+    var time = userEventTime;
+    time = time.replace(":","");
+    if (time.localeCompare("") === 0) {
+      time = EVENT_TIMES[0];
+    }
     var userAddedEventObj = {
       name: userEventName,
       url: "",
@@ -231,7 +236,7 @@ class Userinput extends Component {
       time: time,
       location: {},
       cost: cost,
-      slot: itinSlot,
+      slot: itinSlot, // this is very important! the slot needs to be 1-7 integer
       description: "",
       origin: 'userevent',
     }
@@ -969,7 +974,7 @@ class Userinput extends Component {
                   <div className="tab-pane fade" id="nav-add" role="tabpanel" aria-labelledby="nav-add-tab">
                       <div className={optionStyles.join(' ')}>
                            <h5>Add Your Own Event:</h5>
-                           <p>Include your own events and we will calculate your optimized itinerary based on events you've added!</p>
+                           <p>Generate an optimized itinerary including events you've added!</p>
                            <AddUserEvent handleAdd={this.handleAddUserEvent}/>
                            {userevents}
 
