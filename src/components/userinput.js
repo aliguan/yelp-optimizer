@@ -81,7 +81,8 @@ class Userinput extends Component {
       userAddedEvents: [],
       center: {},
       loading: false,
-      showMoreInfo: [false, false, false, false, false, false, false]
+      showMoreInfo: [false, false, false, false, false, false, false],
+      message: '',
     };
     this.apiService = new ApiService();
     this.handleChange = this.handleChange.bind(this);
@@ -591,6 +592,7 @@ class Userinput extends Component {
                             totalCost: 0,
                             loading: false,
                             showMoreInfo: [false, false, false, false, false, false, false],
+                            message: '',
                           });
                         }
                         else { // GA produced an optimal itinerary. Display results
@@ -617,6 +619,7 @@ class Userinput extends Component {
                             totalCost: optimItinerary.totalCost,
                             loading: false,
                             showMoreInfo: [false, false, false, false, false, false, false],
+                            message: optimItinerary.maxCost,
                           });
 
                           this.setState(prevState => ({
@@ -721,6 +724,7 @@ class Userinput extends Component {
                               totalCost: 0,
                               loading: false,
                               showMoreInfo: [false, false, false, false, false, false, false],
+                              message: '',
                             });
                           }
                           else { // GA produced an optimal itinerary. Display results
@@ -757,6 +761,7 @@ class Userinput extends Component {
                               totalCost: optimItinerary.totalCost,
                               loading: false,
                               showMoreInfo: [false, false, false, false, false, false, false],
+                              message: optimItinerary.maxCost,
                             });
                           }
 
@@ -841,8 +846,8 @@ class Userinput extends Component {
                     {this.state.resultsArray[i].origin === 'noneitem' || this.state.resultsArray[i].origin === 'userevent' ? '' : <MoreInfoButton value={i} onButtonClick={this.handleMoreInfo} />}
                 </td>
                 <td className="text-success"><strong>${this.state.resultsArray[i].cost}</strong>  </td>
-                    <td><label htmlFor={id}><img alt="lock icon" className="lock" src={lock_icon} /></label><input className="lock_checkbox" id={id} checked={this.state.checked[i]} onChange={this.handleCheckbox} type="checkbox" value={i} /></td>
-                    <td><label htmlFor={elim_id}><img alt="eliminate icon" className="elim" src={elim_icon} /></label><input className="elim_checkbox" id={elim_id} checked={this.state.eliminated[i]} onChange={this.handleEliminate} type='checkbox' value={i} /></td>
+                <td><label htmlFor={id}><img alt="lock icon" className="lock" src={lock_icon} /></label><input className="lock_checkbox" id={id} checked={this.state.checked[i]} onChange={this.handleCheckbox} type="checkbox" value={i} /></td>
+                <td><label htmlFor={elim_id}><img alt="eliminate icon" className="elim" src={elim_icon} /></label><input className="elim_checkbox" id={elim_id} checked={this.state.eliminated[i]} onChange={this.handleEliminate} type='checkbox' value={i} /></td>
               </tr>
               <tr className={moreInfoStyles.join(' ')}>
                 <td colSpan="7"><MoreInfoView desc={this.state.resultsArray[i].description}
@@ -872,33 +877,43 @@ class Userinput extends Component {
       // }
 
       // The Total cost display
-      var total = [];
-      total.push(<div key="totalCostDiv">
-        <table>
-          <tbody>
-            <tr>
-              <td className="costStr">
-                <b>Approx. Total Cost:</b>
-              </td>
-              <td className="cost">
-                <b>${this.state.totalCost}</b>
-              </td>
-            </tr>
-          </tbody>
-        </table>
-      </div>)
-
-      var goAgainButton = [];
       if (this.state.resultsArray.length > 0) {
+        var total = [];
+        total.push(<div key="totalCostDiv">
+          <table>
+            <tbody>
+              <tr>
+                <td className="costStr">
+                  <b>Approx. Total Cost:</b>
+                </td>
+                <td className="cost">
+                  <b>${this.state.totalCost}</b>
+                </td>
+              </tr>
+
+
+                  {this.state.message === -1 ? '' : 
+                    <tr><td colSpan="2"> 
+                    <div className="message">The max event cost is <b>${this.state.message}</b>. Increase your budget to include more events!</div>
+                    </td></tr>
+                    }
+
+
+            </tbody>
+          </table>
+        </div>)
+
+        var goAgainButton = [];
+
         goAgainButton.push(
           <table>
-          <tbody>
-            <tr>
-              <td className="itinGoBtn">
-          <input className="btn btn-sm go-btn" type="submit" onClick={this.handleSubmit} value="Search Again!" />
-          </td>
-          </tr>
-          </tbody>
+            <tbody>
+              <tr>
+                <td className="itinGoBtn">
+                  <input className="btn btn-sm go-btn" type="submit" onClick={this.handleSubmit} value="Search Again!" />
+                </td>
+              </tr>
+            </tbody>
           </table>
         );
       }
@@ -979,8 +994,7 @@ class Userinput extends Component {
                            {userevents}
 
                           {/* clear all user added events*/}
-
-                          <a href="javascript:void(0)" onClick={this.handleClearUserEvents}> Clear All User Added Events
+                          <a href="javascript:void(0)" onClick={this.handleClearUserEvents}> Clear All Added Events
                           </a>
 
                       </div>
@@ -1147,7 +1161,8 @@ function xHoursPassed(currentDateTimeMoment, locallyStoredDateTimeStr, elapsedHo
 }
 
 
-function processAPIDataForGA(events_in, eventFilterFlags_in, savedEvents_in, savedEventsObjs_in, userAddedEventsObjs_in) {
+function processAPIDataForGA(events_in, eventFilterFlags_in, savedEvents_in, 
+                             savedEventsObjs_in, userAddedEventsObjs_in) {
   try {
     // Define whether or not user choose to save an event or restaurant to eat at
     // savedEvents_in is the indices of the saved events [0-6]

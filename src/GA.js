@@ -2,7 +2,7 @@ module.exports = {
 
   // categories: breakfast, lunch, dinner, event
   doGA: function (allData, budgetmax_in, budgetmin_in, eliminatedEvents_in) {
-    const LOW_BUDGET_THRESHOLD = 40;
+    const LOW_BUDGET_THRESHOLD = 40; // dollar amount to run low budget logic
 
     console.log("eliminated events array:")
     console.log(eliminatedEvents_in)
@@ -20,7 +20,7 @@ module.exports = {
     var iBestItinerary= new Array(itinerarySize);
 
     // Format data
-    var parsedDataAll = this.preProcessData(allData);
+    var parsedDataAll = this.preProcessData(allData,budgetmax_in);
     if (parsedDataAll === 0) {
       bestItinerary[0] = 'No Itineraries found.';
       bestItinerary[1] = '';
@@ -181,7 +181,6 @@ module.exports = {
 
         // This portion of code sets the itinerary item slot to always be "none/free itinerary" item if user has checked some of those checkboexes.
         // This assumes that the "none/free itinerary" item is ALWAYS the last item in the choices from parsedDataAll
-        // The "none/free itinerary" is added in api-router.js in formatAllData function.
         if (eliminateItems) {
           for (ielim = 0; ielim < eliminatedEvents_in.length; ielim++) {
             if (eliminatedEvents_in[ielim] === 0) {
@@ -297,7 +296,6 @@ module.exports = {
       totalCost = 0;
     }
 
-
     return {
       bestItinerary: bestItinerary,
       bestItineraryIndices: iBestItinerary,
@@ -305,11 +303,11 @@ module.exports = {
       bestUrls: urls,
       bestLocations: locations,
       totalCost: totalCost,
+      maxCost: parsedDataAll.maxCost,
     };
   },
 
-  preProcessData: function (allData_in) {
-
+  preProcessData: function (allData_in,budgetmax_in) {
     // Initialize return obj (unnecessary?)
     var parsedDataObj = {
       numItemsArrayOut: [0, 0, 0, 0, 0, 0, 0],
@@ -331,6 +329,7 @@ module.exports = {
       Event4Cost: [0],
       Event4Rating: [0],
       Event4Time: [0],
+      maxCost: 0,
     };
     try {
       var numEvent1 = allData_in[0].Event1.length;
@@ -339,6 +338,7 @@ module.exports = {
       event1Costs = allData_in[0].Event1.map(a => a.cost);
       event1Ratings = allData_in[0].Event1.map(a => a.rating);
       var event1Time = allData_in[0].Event1.map(a => a.time);
+
 
       var numBreakfast = allData_in[1].Breakfast.length;
       var breakfastCosts = new Array(numBreakfast);
@@ -472,6 +472,13 @@ module.exports = {
       event4Ratings = allData_in[6].Event4.map(a => a.rating);
       var event4Time = allData_in[6].Event4.map(a => a.time);
 
+      // Calculate event's maximum cost for displaying to user
+      var maxCost = Math.max.apply(Math, breakfastCosts.concat(lunchCosts).concat(dinnerCosts).concat(event1Costs).concat(event2Costs).concat(event3Costs).concat(event4Costs));
+      if (budgetmax_in > maxCost) {
+        maxCost = -1;
+      }
+      
+
       parsedDataObj = {
         numItemsArrayOut: [numEvent1, numBreakfast, numEvent2, numLunch, numEvent3, numDinner, numEvent4],
         Event1Cost: event1Costs,
@@ -492,11 +499,12 @@ module.exports = {
         Event4Cost: event4Costs,
         Event4Rating: event4Ratings,
         Event4Time: event4Time,
+        maxCost: maxCost,
       }
       return parsedDataObj;
     }
     catch (err) {
-      //error message here
+      console.log(err)
       return 0;
     }
   },
@@ -655,8 +663,8 @@ function getTotalRating(itinerary_in, allData_in) {
   var totalRating = 0;
   var itineraryItemRating = 0;
   var len = itinerary_in.length;
-  var MAX_DTIME_MORNING = 270; // equavilant to 2.5? hours (set this to something very small to avoid running this logic)
-  var MAX_DTIME_AFTERNOON = 300; // equavilant to 3 hours (set this to something very small to avoid running this logic)
+  var MAX_DTIME_MORNING = 200; // set this to something very small to avoid running this logic
+  var MAX_DTIME_AFTERNOON = 200; // equavilant to 2 hours (set this to something very small to avoid running this logic)
   var RATING_SF = 0.75;
 
   for (var i = 0; i < len; i++) {
