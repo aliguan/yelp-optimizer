@@ -139,7 +139,7 @@ class Userinput extends Component {
 
   // This function updates the checked state to toggle checkboxes and update which items are "locked" or choosen
   // by the user
-  handleCheckbox(e) {    
+  handleCheckbox(e) {
     // i_checkbox is the checkbox value and should only have integer values from 0-6 (e.target.value is a string type though)
     // each checkbox corresponds to an item in the itinerary
     var i_checkbox = parseInt(e.target.value,10);
@@ -148,14 +148,14 @@ class Userinput extends Component {
     let checked = this.state.checked.slice();
     if (e.target.checked) {
       if (!misc.include(this.state.savedEvents,i_checkbox)) { // if i_checkbox is not already in the savedEvents array
-        this.state.savedEvents.push(i_checkbox);   
+        this.state.savedEvents.push(i_checkbox);
       }
       checked[i_checkbox] = 1;
       this.setState({ checked: checked });
     }
     // If the checkbox is NOT checked, find and remove the checkbox index from the states
     else {
-      var index = this.state.savedEvents.indexOf(i_checkbox); 
+      var index = this.state.savedEvents.indexOf(i_checkbox);
       if (index > -1) {
         this.state.savedEvents.splice(index, 1);
         checked[i_checkbox] = 0;
@@ -175,7 +175,7 @@ class Userinput extends Component {
     let eliminated = this.state.eliminated.slice();
     if (e.target.checked) {
       if (!misc.include(this.state.eliminatedEvents,i_checkbox)) { // if i_checkbox is not already in the eliminatedEvents array
-        this.state.eliminatedEvents.push(i_checkbox);   
+        this.state.eliminatedEvents.push(i_checkbox);
       }
       eliminated[i_checkbox] = 1;
       this.setState({ eliminated: eliminated });
@@ -217,7 +217,7 @@ class Userinput extends Component {
     const EVENT_TIMES = ["0900","","1200","","1800","","2200"]
     const USERADDED_EVENT_RATING = 1000.0; // arbitrarily high
     var itinSlot = 1;
-    if (userItinSlot){ 
+    if (userItinSlot){
       itinSlot = parseInt(userItinSlot,10); // 1- 7 only
     }
     var cost = 0.0;
@@ -324,7 +324,7 @@ class Userinput extends Component {
       let checked = this.state.checked.slice();
 
       if (AUTO_LOCK_UPDATED_EVENT) {
-        // Auto check the event in the results if the user has updated/editted the cost (as it is assumed they will be interested in that event)        
+        // Auto check the event in the results if the user has updated/editted the cost (as it is assumed they will be interested in that event)
         if (checked[i_resultsArray] !== 1) {
           checked[i_resultsArray] = 1;
         }
@@ -343,7 +343,7 @@ class Userinput extends Component {
       // For display only
       var tempTotalCost = this.state.totalCost - this.state.resultsArray[i_resultsArray].cost;
       tempTotalCost = misc.round2NearestHundredth(tempTotalCost + edittedEventCost);
-      this.state.resultsArray[i_resultsArray].cost = edittedEventCost; 
+      this.state.resultsArray[i_resultsArray].cost = edittedEventCost;
 
       this.setState({
         checked: checked,
@@ -354,7 +354,7 @@ class Userinput extends Component {
       // Update persistent api data in browser
       idb_keyval.get('apiData').then(apiData_in => {
         if (apiData_in !== null || apiData_in !== undefined) {
-          
+
           var apiKey = 'none'; // field/key in the apiData object (ie meetupItemsGlobal,...,yelpDinnerItemsGlobal )
           var arr = []; // event array
           var elementPos = -1; //where the event is matched in the event array
@@ -845,7 +845,12 @@ class Userinput extends Component {
                     <a href={this.state.resultsArray[i].url} target='_blank'>{this.state.resultsArray[i].name} </a>}
                     {this.state.resultsArray[i].origin === 'noneitem' || this.state.resultsArray[i].origin === 'userevent' ? '' : <MoreInfoButton value={i} onButtonClick={this.handleMoreInfo} />}
                 </td>
-                <td className="text-success"><strong>${this.state.resultsArray[i].cost}</strong>  </td>
+                <td className="edit-cost text-success"><EditCostComponent
+                  name={this.state.resultsArray[i].name}
+                  cost={this.state.resultsArray[i].cost}
+                  handleCostChange={this.handleEventCostChange}
+                  i_resultsArray={i}
+                  origin={this.state.resultsArray[i].origin} /> </td>
                 <td><label htmlFor={id}><img alt="lock icon" className="lock" src={lock_icon} /></label><input className="lock_checkbox" id={id} checked={this.state.checked[i]} onChange={this.handleCheckbox} type="checkbox" value={i} /></td>
                 <td><label htmlFor={elim_id}><img alt="eliminate icon" className="elim" src={elim_icon} /></label><input className="elim_checkbox" id={elim_id} checked={this.state.eliminated[i]} onChange={this.handleEliminate} type='checkbox' value={i} /></td>
               </tr>
@@ -865,17 +870,6 @@ class Userinput extends Component {
           );
       }
 
-
-      // edit cost debug
-      // for (var i = 0; i < ITINERARY_LENGTH; i++) {
-      //   indents.push(<tbody><tr><td colSpan="7"><EditCostComponent
-      //     name={this.state.resultsArray[i].name}
-      //     cost={this.state.resultsArray[i].cost}
-      //     handleCostChange={this.handleEventCostChange}
-      //     i_resultsArray={i}
-      //     origin={this.state.resultsArray[i].origin} /></td></tr></tbody>)
-      // }
-
       // The Total cost display
       if (this.state.resultsArray.length > 0) {
         var total = [];
@@ -892,13 +886,11 @@ class Userinput extends Component {
               </tr>
 
 
-                  {this.state.message === -1 ? '' : 
-                    <tr><td colSpan="2"> 
-                    <div className="message">The max event cost is <b>${this.state.message}</b>. Increase your budget to include more events!</div>
+                  {this.state.message === -1 ? '' :
+                    <tr><td colSpan="2">
+                    <div className="message"><i className="text-warning fas fa-exclamation-triangle"></i> The max event cost is <b>${this.state.message}</b>. Increase your budget to include more events!</div>
                     </td></tr>
                     }
-
-
             </tbody>
           </table>
         </div>)
@@ -955,7 +947,7 @@ class Userinput extends Component {
         <div className="form-header">
                 <nav>
                   <div className="nav nav-tabs" id="nav-tab" role="tablist">
-                    <a className="nav-item nav-link active" id="nav-plan-tab" data-toggle="tab" href="#nav-plan" role="tab" aria-controls="nav-plan" aria-selected="true"><i className="plane-icon fas fa-map-marker-alt"></i>Plan Your Trip</a>
+                    <a className="nav-item nav-link active" id="nav-plan-tab" data-toggle="tab" href="#nav-plan" role="tab" aria-controls="nav-plan" aria-selected="true"><i className="plane-icon fas fa-map-marker-alt"></i>Plan Your Day</a>
                     <a className="nav-item nav-link" id="nav-add-tab" data-toggle="tab" href="#nav-add" role="tab" aria-controls="nav-add" aria-selected="false"><i className="fas fa-list-ul"></i> Add Event</a>
                     <a className="nav-item nav-link" id="nav-options-tab" data-toggle="tab" href="#nav-options" role="tab" aria-controls="nav-options" aria-selected="false">More Options</a>
                   </div>
@@ -1013,7 +1005,7 @@ class Userinput extends Component {
         </div>
         <div className="row eventsCont">
             <div className="col-md-6 itinerary">
-            {this.state.resultsArray.length === 0 && this.state.loading === false ? <div className="greeting"><h4>Get Started Planning Your Trip Above!</h4><img alt="globe" src={globe}></img></div> : ' '}
+            {this.state.resultsArray.length === 0 && this.state.loading === false ? <div className="greeting"><h4>Get Started Planning Your Trip / Day Above!</h4><img alt="globe" src={globe}></img></div> : ' '}
             {this.state.loading === true ? <div className="loader"><Loader type="spinningBubbles" color="#6c757d"></Loader><h5>Searching...</h5></div> :
 
                 <table>
@@ -1022,7 +1014,7 @@ class Userinput extends Component {
 
                 {this.state.loading === false ? <div className="totalCost">
                     {total}
-                </div> : ''}                
+                </div> : ''}
 
                 {this.state.loading === false ? <div>
                   {goAgainButton}</div>
@@ -1161,7 +1153,7 @@ function xHoursPassed(currentDateTimeMoment, locallyStoredDateTimeStr, elapsedHo
 }
 
 
-function processAPIDataForGA(events_in, eventFilterFlags_in, savedEvents_in, 
+function processAPIDataForGA(events_in, eventFilterFlags_in, savedEvents_in,
                              savedEventsObjs_in, userAddedEventsObjs_in) {
   try {
     // Define whether or not user choose to save an event or restaurant to eat at
@@ -1364,9 +1356,9 @@ function processAPIDataForGA(events_in, eventFilterFlags_in, savedEvents_in,
         itinSlot = userAddedEventsObjs_in[iadded].slot; // should be 1-7 from dropdown menu in "add event" tab
         itinSlot = itinSlot - 1; // shift down one for indexing
         if (doOnce[itinSlot]) {
-          // if user has added an event in a particular itinerary slot, delete all data in that slot 
+          // if user has added an event in a particular itinerary slot, delete all data in that slot
           delete itineraries[itinSlot][eventKeys[itinSlot]]; // (ie if itinSlot = 0 -> itineraries[0].Event1)
-          itineraries[itinSlot][eventKeys[itinSlot]] = [];  // (ie if itinslot = 1 -> itineraries[1].Breakfast = [];)          
+          itineraries[itinSlot][eventKeys[itinSlot]] = [];  // (ie if itinslot = 1 -> itineraries[1].Breakfast = [];)
           doOnce[itinSlot] = false;
         }
         // after the previous api data was deleted, push all the user added events in a particular slot

@@ -151,7 +151,7 @@
 }
 
 td {
-    padding: 10px 5px;
+    padding: 10px 8px;
     font-size: 0.9em;
     border-bottom: 1px solid #f1f1f1;
 }
@@ -399,4 +399,21 @@ img{
 .message {
     font-size: .5em;
     text-align: right;
+}
+
+.edit-cost-cont {
+    display: grid;
+    grid-template-columns: 1fr 2fr;
+}
+
+.edit-cost-cont span {
+    margin-top: calc(25px/4);
+}
+
+.edit-cost {
+    width: 20%;
+}
+
+.edit-cost-cont input {
+    font-size: 1em;
 }
