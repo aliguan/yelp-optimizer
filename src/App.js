@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types'
-import logo from './logo.svg';
+// import logo from './logo.svg';
 import './App.css';
 import Userinput from './components/userinput.js';
 import jquery from 'jquery';
