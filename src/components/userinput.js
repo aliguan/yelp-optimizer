@@ -839,7 +839,7 @@ class Userinput extends Component {
             <tbody key={key}>
               <tr>
 
-                <td><img className="origin-logo" alt="" src={origins[origin]} /></td>
+                <td><a href={this.state.resultsArray[i].url} ><img className="origin-logo" alt="" src={origins[origin]} /></a></td>
                 <td><strong>{this.state.itinTimes[i] ? this.state.itinTimes[i] : ''}</strong></td>
                 <td className="resultsName">
                 {this.state.resultsArray[i].url==="" ? this.state.resultsArray[i].name :
